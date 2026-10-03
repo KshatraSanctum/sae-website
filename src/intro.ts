@@ -30,6 +30,8 @@ export function initIntro(): void {
 function runIntro(): void {
   const overlay = document.getElementById('introOverlay');
   const canvas = document.getElementById('asciiCanvas') as HTMLCanvasElement | null;
+  const logoContainer = document.getElementById('introLogoContainer');
+  const logoShine = document.getElementById('introLogoShine');
   const subtitle = document.getElementById('introSubtitle');
   const skipBtn = document.getElementById('introSkipBtn');
 
@@ -53,6 +55,7 @@ function runIntro(): void {
       overlay?.classList.add('done');
     } else {
       overlay?.classList.add('fading');
+      if (logoContainer) logoContainer.classList.add('fading');
       setTimeout(() => {
         done = true;
         cancelAnimationFrame(animId);
@@ -112,6 +115,16 @@ function runIntro(): void {
     const centerX = width / 2;
     const centerY = startTop + totalH / 2;
 
+    const logoSize = Math.min(totalW, totalH);
+    const radius = logoSize / 2;
+
+    if (logoContainer) {
+      logoContainer.style.width = `${logoSize}px`;
+      logoContainer.style.height = `${logoSize}px`;
+      logoContainer.style.left = `${startLeft + (totalW - logoSize) / 2}px`;
+      logoContainer.style.top = `${startTop + (totalH - logoSize) / 2}px`;
+    }
+
     activeFontSize = Math.max(9, Math.round(charWidth * 1.5));
 
     particles = [];
@@ -123,6 +136,14 @@ function runIntro(): void {
       for (let c = 0; c < LOGO_COLS; c++) {
         const ch = asciiRow[c] || ' ';
         if (ch === ' ') continue;
+
+        const tx = startLeft + c * charWidth + charWidth / 2;
+        const ty = startTop + r * charHeight + charHeight / 2;
+
+        // Ensure particles strictly stay within circular emblem area
+        // Eliminates stray ASCII characters outside the circular logo border
+        const distFromCenter = Math.hypot(tx - centerX, ty - centerY);
+        if (distFromCenter > radius * 0.985) continue;
 
         const colorCode = colorRow[c] || 'M';
         let color = '#94a3b8';
@@ -145,9 +166,6 @@ function runIntro(): void {
           glowColor = 'transparent';
         }
 
-        const tx = startLeft + c * charWidth + charWidth / 2;
-        const ty = startTop + r * charHeight + charHeight / 2;
-
         // Choose random spawn side (0: top, 1: bottom, 2: left, 3: right)
         const side = Math.floor(Math.random() * 4);
         let sx = 0;
@@ -168,9 +186,9 @@ function runIntro(): void {
           sy = Math.random() * height;
         }
 
-        // Staggered flight timing
-        const delay = Math.random() * 950; // 0 to 950ms
-        const duration = 1200 + Math.random() * 350; // 1200 to 1550ms
+        // Staggered flight timing (fast, high-velocity stream)
+        const delay = Math.random() * 420; // 0 to 420ms
+        const duration = 650 + Math.random() * 220; // 650 to 870ms
 
         // Outward disperse vector for disappearance
         const dx = tx - centerX;
@@ -224,37 +242,59 @@ function runIntro(): void {
     ctx!.textAlign = 'center';
     ctx!.textBaseline = 'middle';
 
-    // Animation phases
-    // Phase 1: Inflow & Assembly (0 - 2400ms)
-    // Phase 2: Formed & Hold with Shimmer (2400 - 4500ms)
-    // Phase 3: Disperse & Disappear (4500 - 5300ms)
-    // Phase 4: Fade to landing page (5100 - 5600ms)
+    // Animation phases (snappy, fast, & clean)
+    // Phase 1: Inflow & ASCII Assembly (0 - 1200ms)
+    // Phase 2: Formed & Switch to Real SVG Logo (1200ms - 1500ms)
+    // Phase 3: Metallic Shimmer sweeps across the Photo (1500ms - 2400ms)
+    // Phase 4: Smooth Fade to Landing Page (2500ms - 3000ms)
 
-    const isHoldPhase = elapsed >= 2400 && elapsed < 4500;
-    const isDispersePhase = elapsed >= 4500;
+    const isLogoFormed = elapsed >= 1200;
+    const isShinePhase = elapsed >= 1500;
+    const isExitPhase = elapsed >= 2500;
 
-    // Show subtitle when logo is formed
-    if (isHoldPhase && subtitle && !subtitle.classList.contains('visible')) {
+    // Show real logo and subtitle when ASCII logo is formed
+    if (isLogoFormed && logoContainer && !logoContainer.classList.contains('visible')) {
+      logoContainer.classList.add('visible');
+    }
+    if (isLogoFormed && subtitle && !subtitle.classList.contains('visible')) {
       subtitle.classList.add('visible');
     }
 
-    // Hide subtitle during disperse
-    if (isDispersePhase && subtitle && subtitle.classList.contains('visible')) {
-      subtitle.classList.remove('visible');
+    // Rapid cross-fade out of ASCII canvas as real logo takes over
+    if (isLogoFormed) {
+      const fadeProgress = Math.min(1, (elapsed - 1200) / 220);
+      canvas!.style.opacity = String(Math.max(0, 1 - fadeProgress));
+
+      // As soon as real logo is fully visible, completely clear and hide canvas
+      if (fadeProgress >= 1) {
+        canvas!.style.display = 'none';
+        ctx!.clearRect(0, 0, width, height);
+      }
+    } else {
+      canvas!.style.display = 'block';
+      canvas!.style.opacity = '1';
     }
 
-    // Auto-advance to landing page after animation finishes
-    if (elapsed >= 5100 && !overlay!.classList.contains('fading')) {
-      overlay!.classList.add('fading');
+    // Trigger metallic shine sweep across the real photo
+    if (isShinePhase && logoShine && !logoShine.classList.contains('shining')) {
+      logoShine.classList.add('shining');
     }
-    if (elapsed >= 5600) {
+
+    // Auto-advance to landing page after animation completes
+    if (isExitPhase && !overlay!.classList.contains('fading')) {
+      overlay!.classList.add('fading');
+      if (logoContainer) logoContainer.classList.add('fading');
+    }
+    if (elapsed >= 3000) {
       endIntro(true);
       return;
     }
 
-    // Shimmer sweep wave position during hold phase
-    const shimmerProgress = isHoldPhase ? (elapsed - 2400) / 2100 : -1;
-    const shimmerX = shimmerProgress >= 0 ? width * (shimmerProgress * 1.4 - 0.2) : -9999;
+    // Once canvas is completely faded out and hidden, skip particle drawing to save CPU/GPU
+    if (elapsed >= 1420) {
+      animId = requestAnimationFrame(render);
+      return;
+    }
 
     const len = particles.length;
     for (let i = 0; i < len; i++) {
@@ -265,58 +305,39 @@ function runIntro(): void {
       let currentColor = p.color;
       let currentAlpha = 1;
 
-      if (!isDispersePhase) {
-        // Still flying in or holding
-        const flightTime = elapsed - p.delay;
-        if (flightTime <= 0) {
-          // Particle hasn't started moving yet
-          continue;
-        }
+      // Particle flight timing
+      const flightTime = elapsed - p.delay;
+      if (flightTime <= 0) {
+        continue;
+      }
 
-        const progress = Math.min(1, flightTime / p.duration);
+      const progress = Math.min(1, flightTime / p.duration);
 
-        if (progress < 1) {
-          // In flight: interpolate position and scramble character
-          const ease = easeOutQuart(progress);
-          currentX = p.sx + (p.tx - p.sx) * ease;
-          currentY = p.sy + (p.ty - p.sy) * ease;
-          currentAlpha = Math.min(1, progress * 3);
+      if (progress < 1) {
+        // In flight: interpolate position and scramble character
+        const ease = easeOutQuart(progress);
+        currentX = p.sx + (p.tx - p.sx) * ease;
+        currentY = p.sy + (p.ty - p.sy) * ease;
+        currentAlpha = Math.min(1, progress * 3);
 
-          // Scramble characters while flying
-          const scrambleIndex = (Math.floor(now / 45) + i * 3) % SCRAMBLE_GLYPHS.length;
-          currentChar = SCRAMBLE_GLYPHS[scrambleIndex];
-          currentColor = '#38bdf8'; // Glowing cyan while in flight
-        } else {
-          // Arrived and locked
-          if (!p.arrivedTime) p.arrivedTime = elapsed;
-          const timeSinceArrival = elapsed - p.arrivedTime;
-
-          // Brief flash upon lock-in
-          if (timeSinceArrival < 180) {
-            currentColor = '#ffffff';
-          }
-
-          // Shimmer wave effect
-          if (isHoldPhase && Math.abs(currentX - shimmerX) < 40) {
-            currentColor = '#ffffff';
-          }
-        }
+        const scrambleIndex = (Math.floor(now / 35) + i * 3) % SCRAMBLE_GLYPHS.length;
+        currentChar = SCRAMBLE_GLYPHS[scrambleIndex];
+        currentColor = '#38bdf8'; // Glowing cyan while in flight
       } else {
-        // Disperse / disappear phase: scatter outward & fade
-        const disperseElapsed = elapsed - 4500;
-        const disperseProgress = Math.min(1, disperseElapsed / 800);
-        const dt = disperseElapsed / 1000;
-        const accel = 1 + dt * 3.5;
+        // Arrived and locked in target slot
+        if (!p.arrivedTime) p.arrivedTime = elapsed;
+        const timeSinceArrival = elapsed - p.arrivedTime;
 
-        currentX = p.tx + p.scatterVx * dt * 45 * accel;
-        currentY = p.ty + p.scatterVy * dt * 45 * accel;
-        currentAlpha = Math.max(0, 1 - disperseProgress);
-
-        // Subtle scramble as it disintegrates
-        if (Math.random() < 0.2) {
-          const scrambleIndex = (Math.floor(now / 60) + i) % SCRAMBLE_GLYPHS.length;
-          currentChar = SCRAMBLE_GLYPHS[scrambleIndex];
+        // Brief flash upon lock-in
+        if (timeSinceArrival < 120) {
+          currentColor = '#ffffff';
         }
+      }
+
+      // If in cross-fade to real logo, multiply alpha by fadeProgress
+      if (isLogoFormed) {
+        const fadeProgress = Math.min(1, (elapsed - 1200) / 220);
+        currentAlpha *= Math.max(0, 1 - fadeProgress);
       }
 
       if (currentAlpha <= 0) continue;

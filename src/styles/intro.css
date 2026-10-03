@@ -12,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
 }
 
@@ -32,6 +32,84 @@
   width: 100vw;
   height: 100vh;
   display: block;
+  pointer-events: none;
+}
+
+/* ── Real Logo Materialize & Metallic Shimmer ── */
+.intro-logo-container {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(240, 155, 28, 0.35), 0 0 100px rgba(0, 0, 0, 0.95);
+}
+
+.intro-logo-container.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.intro-logo-container.fading {
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.45s ease-in, transform 0.45s ease-in;
+}
+
+.intro-real-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
+}
+
+.intro-logo-shine {
+  position: absolute;
+  top: -60%;
+  left: -160%;
+  width: 90%;
+  height: 220%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    rgba(255, 255, 255, 0.75) 48%,
+    rgba(254, 240, 138, 0.95) 52%,
+    rgba(255, 255, 255, 0.75) 55%,
+    rgba(255, 255, 255, 0.05) 70%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  opacity: 0;
+}
+
+.intro-logo-shine.shining {
+  opacity: 1;
+  animation: logoShineSweep 0.9s cubic-bezier(0.35, 0, 0.25, 1) forwards;
+}
+
+@keyframes logoShineSweep {
+  0% {
+    left: -150%;
+    opacity: 0.2;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    left: 170%;
+    opacity: 0;
+  }
 }
 
 /* ── Subtitle below the ASCII logo ── */
@@ -44,7 +122,7 @@
   pointer-events: none;
   z-index: 2;
   opacity: 0;
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .intro-sub.visible {

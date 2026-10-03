@@ -1,0 +1,234 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #030712;
+  --color-paper: #050505;
+  --color-surface: #0d0d0c;
+  --color-blue-deep: #211b08;
+  --color-signal: #f6b719;
+  --color-signal-dark: #d99a00;
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Barlow Condensed", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  font-family: var(--font-sans);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.23em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, white 48%, transparent);
+}
+
+.tech-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to right, transparent, black);
+}
+
+.hero-scene {
+  opacity: 0;
+  transform: scale(1.04);
+  filter: saturate(0.8);
+  transition:
+    opacity 700ms ease,
+    transform 1.2s cubic-bezier(0.2, 0.75, 0.25, 1),
+    filter 700ms ease;
+  will-change: opacity, transform;
+}
+
+.hero-scene.is-active {
+  opacity: 0.58;
+  transform: scale(1);
+  filter: saturate(1);
+}
+
+.slogan-word {
+  cursor: pointer;
+  line-height: 0.84;
+}
+
+.slogan-word::after {
+  position: absolute;
+  right: -0.35em;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  content: "";
+  background: var(--color-signal);
+  transition: width 400ms ease;
+}
+
+.slogan-word.is-active {
+  transform: translateX(0.08em);
+  text-shadow: 0 0 40px color-mix(in srgb, var(--color-signal) 25%, transparent);
+}
+
+.slogan-word.is-active::after {
+  width: 0.24em;
+}
+
+.hero-enter {
+  opacity: 0;
+  transform: translateY(28px);
+  animation: hero-enter 800ms cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+}
+
+.hero-delay-1 {
+  animation-delay: 100ms;
+}
+
+.hero-delay-2 {
+  animation-delay: 220ms;
+}
+
+.hero-delay-3 {
+  animation-delay: 360ms;
+}
+
+.hero-delay-4 {
+  animation-delay: 480ms;
+}
+
+.ambient-glow {
+  animation: glow-drift 7s ease-in-out infinite alternate;
+}
+
+.reveal-up,
+.reveal-side {
+  opacity: 0;
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-up {
+  transform: translateY(36px);
+}
+
+.reveal-side {
+  transform: translateX(-28px);
+}
+
+.reveal-up.is-visible,
+.reveal-side.is-visible {
+  opacity: 1;
+  transform: translate(0);
+}
+
+.reveal-delay {
+  transition-delay: 140ms;
+}
+
+.discipline-grid > :nth-child(2) {
+  transition-delay: 100ms;
+}
+
+.discipline-grid > :nth-child(3) {
+  transition-delay: 200ms;
+}
+
+.effect-shine {
+  position: relative;
+}
+
+.effect-shine::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 600ms ease;
+}
+
+.effect-shine:hover::after {
+  transform: translateX(120%);
+}
+
+.image-frame::after {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-signal) 55%, transparent);
+  content: "";
+  pointer-events: none;
+  transform: scale(0.97);
+  opacity: 0;
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+
+.image-frame:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes hero-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow-drift {
+  from {
+    transform: translate3d(0, -4%, 0) scale(0.9);
+    opacity: 0.35;
+  }
+  to {
+    transform: translate3d(-12%, 8%, 0) scale(1.1);
+    opacity: 0.65;
+  }
+}
+
+::selection {
+  background: var(--color-signal);
+  color: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .hero-enter,
+  .reveal-up,
+  .reveal-side {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-scene {
+    transition: none;
+  }
+}
