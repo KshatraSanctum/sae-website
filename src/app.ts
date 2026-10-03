@@ -1,8 +1,9 @@
 import {
   NEWS, EVENTS, COMPETITIONS, BEARERS,
-  TEAM_SECTIONS, DEPARTMENTS, FILTER_DEFS,
+  TEAM_SECTIONS, DEPARTMENTS, SPONSORS,
+  FILTER_DEFS, SPONSOR_FILTER_DEFS,
   TAG_CLASSES, PAGES,
-  type EventItem
+  type EventItem, type SponsorItem
 } from './data';
 
 // ===================== RENDER FUNCTIONS =====================
@@ -133,9 +134,102 @@ function renderDepartments(): void {
   </div>`).join("");
 }
 
+function renderSponsors(filter: string = "all"): void {
+  const el = document.getElementById("sponsorGrid");
+  if (!el) return;
+  const list: SponsorItem[] = filter === "all" ? SPONSORS : SPONSORS.filter(s => {
+    if (filter === "institutional") return s.tier === "institutional" || s.tier === "associate";
+    return s.tier === filter;
+  });
+
+  el.innerHTML = list.map(s => `
+    <div class="sponsor-card">
+      <div class="sponsor-logo-box">
+        <img src="${s.logo}" alt="${s.name} Logo" loading="lazy" class="sponsor-logo-img" />
+      </div>
+      <div class="sponsor-body">
+        <span class="sponsor-tier mono">${s.tierLabel}</span>
+        <h3>${s.name}</h3>
+        <span class="sponsor-cat">${s.category}</span>
+        <p>${s.description}</p>
+      </div>
+    </div>`).join("");
+}
+
+function renderSponsorFilters(): void {
+  const filtersEl = document.getElementById("sponsorFilters");
+  if (!filtersEl) return;
+
+  filtersEl.innerHTML = SPONSOR_FILTER_DEFS.map((f, i) =>
+    `<button class="chip ${i === 0 ? 'active' : ''}" data-sponsor-filter="${f[0]}">${f[1]}</button>`).join("");
+
+  const chips = filtersEl.querySelectorAll<HTMLButtonElement>(".chip");
+  chips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      chips.forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      renderSponsors(chip.dataset.sponsorFilter || "all");
+    });
+  });
+
+  renderSponsors("all");
+}
+
 function renderYear(): void {
   const el = document.getElementById("yr");
   if (el) el.textContent = new Date().getFullYear().toString();
+}
+
+function initJoinForm(): void {
+  const form = document.getElementById("joinForm") as HTMLFormElement | null;
+  const successMsg = document.getElementById("joinSuccessMsg");
+  const detailsText = document.getElementById("successDetailsText");
+  const resetBtn = document.getElementById("resetJoinFormBtn");
+  const scrollBtn = document.getElementById("scrollApplyBtn");
+
+  if (scrollBtn) {
+    scrollBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById("join-application");
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  }
+
+  if (form) {
+    form.addEventListener("submit", (e: Event) => {
+      e.preventDefault();
+      const nameInput = document.getElementById("applicantName") as HTMLInputElement | null;
+      const branchInput = document.getElementById("applicantBranch") as HTMLSelectElement | null;
+      const crewInput = document.getElementById("applicantCrew") as HTMLSelectElement | null;
+
+      const name = nameInput ? nameInput.value.trim() : "Applicant";
+      const branch = branchInput ? branchInput.value : "";
+      const crew = crewInput ? crewInput.value : "";
+
+      if (detailsText) {
+        detailsText.textContent = `Thank you, ${name}! Your application for ${crew || "our crew"} (${branch}) has been recorded. Our recruitment coordinators will review your submission and contact you via email and WhatsApp for the orientation session.`;
+      }
+
+      form.style.display = "none";
+      if (successMsg) {
+        successMsg.style.display = "block";
+      }
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (form) {
+        form.reset();
+        form.style.display = "block";
+      }
+      if (successMsg) {
+        successMsg.style.display = "none";
+      }
+    });
+  }
 }
 
 // ===================== RENDER ALL =====================
@@ -147,7 +241,9 @@ export function renderAll(): void {
   renderBearers();
   renderTeamSections();
   renderDepartments();
+  renderSponsorFilters();
   renderYear();
+  initJoinForm();
 }
 
 // ===================== ROUTER =====================
