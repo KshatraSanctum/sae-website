@@ -12,8 +12,6 @@ interface AsciiParticle {
   sy: number;       // Start Y
   delay: number;    // Start delay in ms
   duration: number; // Flight duration in ms
-  scatterVx: number;// Outward velocity X for disappear phase
-  scatterVy: number;// Outward velocity Y
   arrivedTime: number;
 }
 
@@ -31,46 +29,56 @@ function runIntro(): void {
   const overlay = document.getElementById('introOverlay');
   const canvas = document.getElementById('asciiCanvas') as HTMLCanvasElement | null;
   const logoContainer = document.getElementById('introLogoContainer');
-  const logoShine = document.getElementById('introLogoShine');
   const subtitle = document.getElementById('introSubtitle');
   const skipBtn = document.getElementById('introSkipBtn');
+  const navRing = document.getElementById('navBrandLogoRing');
 
   if (!overlay || !canvas) return;
-
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
+  // Initially hide the navbar logo so the animated logo is the only one visible
+  if (navRing) {
+    navRing.classList.add('nav-logo-hidden');
+  }
+
   let animId = 0;
   let done = false;
+  let hasShrunk = false;
   let particles: AsciiParticle[] = [];
   let startTime = 0;
   let activeFontSize = 12;
 
+  function revealNavLogo(): void {
+    if (navRing) {
+      navRing.classList.remove('nav-logo-hidden');
+      navRing.classList.add('nav-logo-docked');
+    }
+  }
+
   function endIntro(immediate = false): void {
     if (done) return;
+    done = true;
+    cancelAnimationFrame(animId);
+    revealNavLogo();
     if (immediate) {
-      done = true;
-      cancelAnimationFrame(animId);
       overlay?.classList.add('done');
     } else {
       overlay?.classList.add('fading');
-      if (logoContainer) logoContainer.classList.add('fading');
       setTimeout(() => {
-        done = true;
-        cancelAnimationFrame(animId);
         overlay?.classList.add('done');
-      }, 400);
+      }, 300);
     }
   }
 
   // Expose global skip function
-  (window as any).skipIntro = () => endIntro(false);
+  (window as any).skipIntro = () => endIntro(true);
 
   if (skipBtn) {
     skipBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      endIntro(false);
+      endIntro(true);
     });
   }
 
@@ -78,14 +86,14 @@ function runIntro(): void {
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape' || e.key === ' ') {
       window.removeEventListener('keydown', onKeyDown);
-      endIntro(false);
+      endIntro(true);
     }
   };
   window.addEventListener('keydown', onKeyDown);
 
   // Click anywhere to skip
   overlay.addEventListener('click', () => {
-    endIntro(false);
+    endIntro(true);
   });
 
   // Setup / resize particles grid
@@ -118,7 +126,7 @@ function runIntro(): void {
     const logoSize = Math.min(totalW, totalH);
     const radius = logoSize / 2;
 
-    if (logoContainer) {
+    if (logoContainer && !hasShrunk) {
       logoContainer.style.width = `${logoSize}px`;
       logoContainer.style.height = `${logoSize}px`;
       logoContainer.style.left = `${startLeft + (totalW - logoSize) / 2}px`;
@@ -140,29 +148,28 @@ function runIntro(): void {
         const tx = startLeft + c * charWidth + charWidth / 2;
         const ty = startTop + r * charHeight + charHeight / 2;
 
-        // Ensure particles strictly stay within circular emblem area
-        // Eliminates stray ASCII characters outside the circular logo border
+        // Ensure particles stay within circular emblem area
         const distFromCenter = Math.hypot(tx - centerX, ty - centerY);
         if (distFromCenter > radius * 0.985) continue;
 
         const colorCode = colorRow[c] || 'M';
-        let color = '#94a3b8';
-        let glowColor = 'rgba(148, 163, 184, 0.4)';
+        let color = '#f6b719';
+        let glowColor = 'rgba(246, 183, 25, 0.4)';
 
         if (colorCode === 'G') {
-          color = '#f59e0b';
-          glowColor = 'rgba(245, 158, 11, 0.8)';
+          color = '#f6b719';
+          glowColor = 'rgba(246, 183, 25, 0.85)';
         } else if (colorCode === 'W') {
           color = '#ffffff';
           glowColor = 'rgba(255, 255, 255, 0.7)';
         } else if (colorCode === 'S') {
-          color = '#e2e8f0';
-          glowColor = 'rgba(226, 232, 240, 0.5)';
+          color = '#fde68a';
+          glowColor = 'rgba(253, 230, 138, 0.5)';
         } else if (colorCode === 'M') {
-          color = '#94a3b8';
-          glowColor = 'rgba(148, 163, 184, 0.3)';
+          color = '#f59e0b';
+          glowColor = 'rgba(245, 158, 11, 0.4)';
         } else {
-          color = '#475569';
+          color = '#d97706';
           glowColor = 'transparent';
         }
 
@@ -187,15 +194,8 @@ function runIntro(): void {
         }
 
         // Staggered flight timing (fast, high-velocity stream)
-        const delay = Math.random() * 420; // 0 to 420ms
-        const duration = 650 + Math.random() * 220; // 650 to 870ms
-
-        // Outward disperse vector for disappearance
-        const dx = tx - centerX;
-        const dy = ty - centerY;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const scatterAngle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.6;
-        const scatterSpeed = 5 + Math.random() * 9 + (dist / 80);
+        const delay = Math.random() * 380;
+        const duration = 600 + Math.random() * 220;
 
         particles.push({
           char: ch,
@@ -207,8 +207,6 @@ function runIntro(): void {
           sy,
           delay,
           duration,
-          scatterVx: Math.cos(scatterAngle) * scatterSpeed,
-          scatterVy: Math.sin(scatterAngle) * scatterSpeed,
           arrivedTime: 0
         });
       }
@@ -217,7 +215,7 @@ function runIntro(): void {
 
   setupParticles();
   window.addEventListener('resize', () => {
-    if (!done) setupParticles();
+    if (!done && !hasShrunk) setupParticles();
   });
 
   // Easing function: smooth exponential deceleration into place
@@ -242,15 +240,12 @@ function runIntro(): void {
     ctx!.textAlign = 'center';
     ctx!.textBaseline = 'middle';
 
-    // Animation phases (snappy, fast, & clean)
-    // Phase 1: Inflow & ASCII Assembly (0 - 1200ms)
-    // Phase 2: Formed & Switch to Real SVG Logo (1200ms - 1500ms)
-    // Phase 3: Metallic Shimmer sweeps across the Photo (1500ms - 2400ms)
-    // Phase 4: Smooth Fade to Landing Page (2500ms - 3000ms)
-
-    const isLogoFormed = elapsed >= 1200;
-    const isShinePhase = elapsed >= 1500;
-    const isExitPhase = elapsed >= 2500;
+    // Animation phases:
+    // Phase 1: Inflow & ASCII Assembly in YELLOW (0 - 1050ms)
+    // Phase 2: Formed & Real SAE Logo Appears in Center (1050ms - 1350ms)
+    // Phase 3: SAE Logo Shrinks into Navbar & Website Appears (1350ms - 2150ms)
+    const isLogoFormed = elapsed >= 1050;
+    const isShrinkPhase = elapsed >= 1350;
 
     // Show real logo and subtitle when ASCII logo is formed
     if (isLogoFormed && logoContainer && !logoContainer.classList.contains('visible')) {
@@ -262,10 +257,9 @@ function runIntro(): void {
 
     // Rapid cross-fade out of ASCII canvas as real logo takes over
     if (isLogoFormed) {
-      const fadeProgress = Math.min(1, (elapsed - 1200) / 220);
+      const fadeProgress = Math.min(1, (elapsed - 1050) / 200);
       canvas!.style.opacity = String(Math.max(0, 1 - fadeProgress));
 
-      // As soon as real logo is fully visible, completely clear and hide canvas
       if (fadeProgress >= 1) {
         canvas!.style.display = 'none';
         ctx!.clearRect(0, 0, width, height);
@@ -275,24 +269,37 @@ function runIntro(): void {
       canvas!.style.opacity = '1';
     }
 
-    // Trigger metallic shine sweep across the real photo
-    if (isShinePhase && logoShine && !logoShine.classList.contains('shining')) {
-      logoShine.classList.add('shining');
+    // Shrink & glide directly into the navbar brand logo ring
+    if (isShrinkPhase && !hasShrunk) {
+      hasShrunk = true;
+
+      const targetRect = navRing
+        ? navRing.getBoundingClientRect()
+        : { top: 16, left: 24, width: 48, height: 48 };
+
+      // Reveal the website by fading the dark overlay backdrop to transparent
+      overlay!.classList.add('revealing');
+      if (subtitle) subtitle.classList.add('fading');
+
+      // Animate the logo container into the exact navbar ring slot
+      if (logoContainer) {
+        logoContainer.classList.add('flying-to-nav');
+        logoContainer.style.top = `${targetRect.top}px`;
+        logoContainer.style.left = `${targetRect.left}px`;
+        logoContainer.style.width = `${targetRect.width}px`;
+        logoContainer.style.height = `${targetRect.height}px`;
+      }
+
+      // Complete docking exactly when flight finishes (750ms later)
+      setTimeout(() => {
+        revealNavLogo();
+        endIntro(true);
+      }, 750);
     }
 
-    // Auto-advance to landing page after animation completes
-    if (isExitPhase && !overlay!.classList.contains('fading')) {
-      overlay!.classList.add('fading');
-      if (logoContainer) logoContainer.classList.add('fading');
-    }
-    if (elapsed >= 3000) {
-      endIntro(true);
-      return;
-    }
-
-    // Once canvas is completely faded out and hidden, skip particle drawing to save CPU/GPU
-    if (elapsed >= 1420) {
-      animId = requestAnimationFrame(render);
+    // If canvas is hidden, stop drawing particles
+    if (elapsed >= 1250) {
+      if (!done) animId = requestAnimationFrame(render);
       return;
     }
 
@@ -314,7 +321,7 @@ function runIntro(): void {
       const progress = Math.min(1, flightTime / p.duration);
 
       if (progress < 1) {
-        // In flight: interpolate position and scramble character
+        // In flight: interpolate position, scramble character, glowing yellow
         const ease = easeOutQuart(progress);
         currentX = p.sx + (p.tx - p.sx) * ease;
         currentY = p.sy + (p.ty - p.sy) * ease;
@@ -322,7 +329,7 @@ function runIntro(): void {
 
         const scrambleIndex = (Math.floor(now / 35) + i * 3) % SCRAMBLE_GLYPHS.length;
         currentChar = SCRAMBLE_GLYPHS[scrambleIndex];
-        currentColor = '#38bdf8'; // Glowing cyan while in flight
+        currentColor = '#f6b719'; // Yellow letters flying from outside the screen
       } else {
         // Arrived and locked in target slot
         if (!p.arrivedTime) p.arrivedTime = elapsed;
@@ -334,9 +341,9 @@ function runIntro(): void {
         }
       }
 
-      // If in cross-fade to real logo, multiply alpha by fadeProgress
+      // Cross-fade out as real logo appears
       if (isLogoFormed) {
-        const fadeProgress = Math.min(1, (elapsed - 1200) / 220);
+        const fadeProgress = Math.min(1, (elapsed - 1050) / 200);
         currentAlpha *= Math.max(0, 1 - fadeProgress);
       }
 

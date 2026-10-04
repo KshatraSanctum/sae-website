@@ -16,6 +16,14 @@
   user-select: none;
 }
 
+#introOverlay.revealing {
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: background-color 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 #introOverlay.fading {
   opacity: 0;
   pointer-events: none;
@@ -35,17 +43,18 @@
   pointer-events: none;
 }
 
-/* ── Real Logo Materialize & Metallic Shimmer ── */
+/* ── Real Logo Materialize & Shrink into Navbar ── */
 .intro-logo-container {
   position: absolute;
   pointer-events: none;
-  z-index: 5;
+  z-index: 100000;
   opacity: 0;
-  transform: scale(0.96);
+  transform: scale(0.95);
   transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  border-radius: 50%;
+  border-radius: 9999px;
   overflow: hidden;
-  box-shadow: 0 0 50px rgba(240, 155, 28, 0.35), 0 0 100px rgba(0, 0, 0, 0.95);
+  background-color: #ffffff;
+  box-shadow: 0 0 50px rgba(246, 183, 25, 0.45), 0 0 100px rgba(0, 0, 0, 0.95);
 }
 
 .intro-logo-container.visible {
@@ -53,62 +62,48 @@
   transform: scale(1);
 }
 
-.intro-logo-container.fading {
-  opacity: 0;
-  transform: scale(1.05);
-  transition: opacity 0.45s ease-in, transform 0.45s ease-in;
+.intro-logo-container.flying-to-nav {
+  transition:
+    top 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.75s ease;
+  box-shadow: 0 0 0 2px var(--color-ink, #030712), 0 0 0 4px rgba(246, 183, 25, 0.75);
 }
 
 .intro-real-logo {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
-  border-radius: 50%;
-  filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
+  border-radius: 9999px;
 }
 
-.intro-logo-shine {
-  position: absolute;
-  top: -60%;
-  left: -160%;
-  width: 90%;
-  height: 220%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 30%,
-    rgba(255, 255, 255, 0.75) 48%,
-    rgba(254, 240, 138, 0.95) 52%,
-    rgba(255, 255, 255, 0.75) 55%,
-    rgba(255, 255, 255, 0.05) 70%,
-    transparent 100%
-  );
-  transform: rotate(25deg);
-  pointer-events: none;
-  mix-blend-mode: color-dodge;
-  opacity: 0;
+/* ── Navbar logo docking state ── */
+.ref-brand-logo-ring.nav-logo-hidden {
+  opacity: 0 !important;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.intro-logo-shine.shining {
-  opacity: 1;
-  animation: logoShineSweep 0.9s cubic-bezier(0.35, 0, 0.25, 1) forwards;
+.ref-brand-logo-ring.nav-logo-docked {
+  opacity: 1 !important;
+  transform: scale(1);
+  animation: navLogoDockPulse 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-@keyframes logoShineSweep {
+@keyframes navLogoDockPulse {
   0% {
-    left: -150%;
-    opacity: 0.2;
+    transform: scale(1.22);
+    box-shadow: 0 0 0 2px var(--color-ink, #030712), 0 0 24px rgba(246, 183, 25, 1), 0 0 0 6px rgba(246, 183, 25, 0.85);
   }
-  25% {
-    opacity: 1;
-  }
-  75% {
-    opacity: 1;
+  60% {
+    transform: scale(0.96);
   }
   100% {
-    left: 170%;
-    opacity: 0;
+    transform: scale(1);
+    box-shadow: 0 0 0 2px var(--color-paper, #050505), 0 0 0 4px rgba(246, 183, 25, 0.7);
   }
 }
 
@@ -130,6 +125,12 @@
   transform: translateX(-50%) translateY(0);
 }
 
+.intro-sub.fading {
+  opacity: 0 !important;
+  transform: translateX(-50%) translateY(16px) !important;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
 .intro-title {
   font-family: 'Oswald', sans-serif;
   font-size: clamp(1rem, 2.5vw, 1.6rem);
@@ -137,7 +138,7 @@
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: #f1f5f9;
-  text-shadow: 0 0 15px rgba(240, 155, 28, 0.4), 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 15px rgba(246, 183, 25, 0.4), 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .intro-tag {
@@ -146,7 +147,7 @@
   font-family: 'IBM Plex Mono', monospace;
   font-size: clamp(0.7rem, 1.2vw, 0.85rem);
   letter-spacing: 0.25em;
-  color: #f09b1c;
+  color: #f6b719;
   opacity: 0.85;
 }
 
@@ -170,9 +171,9 @@
 }
 
 .intro-skip-btn:hover {
-  background: rgba(240, 155, 28, 0.15);
-  border-color: rgba(240, 155, 28, 0.6);
+  background: rgba(246, 183, 25, 0.15);
+  border-color: rgba(246, 183, 25, 0.6);
   color: #ffffff;
-  box-shadow: 0 0 15px rgba(240, 155, 28, 0.3);
+  box-shadow: 0 0 15px rgba(246, 183, 25, 0.3);
   transform: translateY(-1px);
 }

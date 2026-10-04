@@ -304,6 +304,7 @@ export function initScrollReveal(): void {
 
 export function initRouter(): void {
   function showPage(id: string): void {
+    if (id === "bearers") id = "team";
     if (!PAGES.includes(id)) id = "home";
     PAGES.forEach(p => {
       const pageEl = document.getElementById("page-" + p);
@@ -315,15 +316,30 @@ export function initRouter(): void {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function navigateTo(id: string): void {
+    if (id === "bearers") id = "team";
+    if (PAGES.includes(id)) {
+      showPage(id);
+    } else {
+      showPage("home");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }, 50);
+    }
+  }
+
   // Handle data-page clicks
   document.querySelectorAll<HTMLElement>("[data-page]").forEach(el => {
     el.addEventListener("click", (e: Event) => {
       e.preventDefault();
       const id = el.dataset.page || "home";
-      try { history.pushState(null, "", "#" + id); } catch (_) {
-        try { location.hash = "#" + id; } catch (_2) { /* noop */ }
+      const targetHash = id === "bearers" ? "team" : id;
+      try {
+        history.pushState(null, "", "#" + targetHash);
+      } catch (_) {
+        try { location.hash = "#" + targetHash; } catch (_2) { /* noop */ }
       }
-      showPage(id);
+      navigateTo(targetHash);
     });
   });
 
@@ -350,25 +366,16 @@ export function initRouter(): void {
 
   window.addEventListener("popstate", () => {
     const hash = location.hash.replace("#", "") || "home";
-    if (PAGES.includes(hash)) {
-      showPage(hash);
-    } else {
-      showPage("home");
-      setTimeout(() => {
-        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
-      }, 50);
-    }
+    navigateTo(hash);
+  });
+
+  window.addEventListener("hashchange", () => {
+    const hash = location.hash.replace("#", "") || "home";
+    navigateTo(hash);
   });
 
   const initialHash = location.hash.replace("#", "") || "home";
-  if (PAGES.includes(initialHash)) {
-    showPage(initialHash);
-  } else {
-    showPage("home");
-    setTimeout(() => {
-      document.getElementById(initialHash)?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }
+  navigateTo(initialHash);
 }
 
 // ===================== MOBILE NAVIGATION (src_ref) =====================
