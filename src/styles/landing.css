@@ -15,6 +15,12 @@
 
 /* ===================== TYPOGRAPHY & UTILITIES ===================== */
 
+#page-home {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .font-display {
   font-family: var(--font-display);
 }
