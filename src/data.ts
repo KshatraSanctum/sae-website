@@ -27,6 +27,15 @@ export interface BearerItem {
   names: string[];
 }
 
+export interface CoreTeamMember {
+  name: string;
+  post: string;
+  discipline: string;
+  image: string;
+  linkedin?: string;
+  instagram?: string;
+}
+
 export interface TeamSection {
   name: string;
   blurb: string;
@@ -95,6 +104,57 @@ export const BEARERS: BearerItem[] = [
   { role: "Suspension & Steering Head", names: ["Md. Sagir Ansari"] },
   { role: "Powertrain Head", names: ["Arshdul Quadri"] },
   { role: "Add Role Title", names: ["Anupriya Kumari"] }
+];
+
+export const CORE_TEAM_MEMBERS: CoreTeamMember[] = [
+  {
+    name: "Aarav Mehta",
+    post: "Chairperson",
+    discipline: "Club Leadership",
+    image: "https://images.unsplash.com/photo-1664845780736-88dc71de5be5?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
+    linkedin: "https://www.linkedin.com/",
+    instagram: "https://www.instagram.com/",
+  },
+  {
+    name: "Ananya Singh",
+    post: "Vice Chairperson",
+    discipline: "Operations",
+    image: "https://images.unsplash.com/photo-1621274790572-7c32596bc67f?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
+    linkedin: "https://www.linkedin.com/",
+    instagram: "https://www.instagram.com/",
+  },
+  {
+    name: "Rohan Verma",
+    post: "Technical Head",
+    discipline: "Vehicle Systems",
+    image: "https://images.unsplash.com/photo-1780368741599-d3e91631687c?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
+    linkedin: "https://www.linkedin.com/",
+    instagram: "https://www.instagram.com/",
+  },
+  {
+    name: "Ishita Sharma",
+    post: "General Secretary",
+    discipline: "Administration",
+    image: "https://images.unsplash.com/photo-1725473823311-122c1c86966b?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
+    linkedin: "https://www.linkedin.com/",
+    instagram: "https://www.instagram.com/",
+  },
+  {
+    name: "Aditya Raj",
+    post: "Design Lead",
+    discipline: "CAD & Simulation",
+    image: "https://images.unsplash.com/photo-1639312091690-8b26d223c5a4?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
+    linkedin: "https://www.linkedin.com/",
+    instagram: "https://www.instagram.com/",
+  },
+  {
+    name: "Nisha Kumari",
+    post: "Media Lead",
+    discipline: "Brand & Outreach",
+    image: "https://images.unsplash.com/photo-1556560984-36a7ec2ba544?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
+    linkedin: "https://www.linkedin.com/",
+    instagram: "https://www.instagram.com/",
+  },
 ];
 
 export const TEAM_SECTIONS: TeamSection[] = [

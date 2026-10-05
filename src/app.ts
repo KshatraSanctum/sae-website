@@ -1,5 +1,6 @@
 import {
   NEWS, EVENTS, COMPETITIONS, BEARERS,
+  CORE_TEAM_MEMBERS,
   TEAM_SECTIONS, DEPARTMENTS, SPONSORS,
   FILTER_DEFS, SPONSOR_FILTER_DEFS,
   TAG_CLASSES, PAGES,
@@ -90,6 +91,67 @@ function renderBearers(): void {
       <a href="#" aria-label="Email"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>
     </div>
   </div>`).join("");
+}
+
+function renderCoreTeam(): void {
+  const el = document.getElementById("coreTeamGrid");
+  if (!el) return;
+  el.innerHTML = CORE_TEAM_MEMBERS.map((member, index) => `
+    <article
+      data-reveal
+      class="team-card reveal-up group"
+    >
+      <div class="team-card-media">
+        <img
+          src="${member.image}"
+          alt="${member.name}, ${member.post}"
+          class="team-card-img"
+          loading="lazy"
+        />
+        <div class="team-card-overlay"></div>
+        <div class="team-card-badge-wrap">
+          <span class="team-card-badge">0${index + 1}</span>
+        </div>
+      </div>
+      <div class="team-card-info">
+        <p class="team-card-discipline">${member.discipline}</p>
+        <h3 class="team-card-name">${member.name}</h3>
+        <div class="team-card-footer">
+          <div>
+            <p class="team-card-post-label">Club post</p>
+            <p class="team-card-post">${member.post}</p>
+          </div>
+          <div class="team-card-socials">
+            <a
+              href="${member.linkedin || 'https://www.linkedin.com/'}"
+              target="_blank"
+              rel="noreferrer"
+              class="team-social-btn"
+              aria-label="${member.name} on LinkedIn"
+            >
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M8 10v7M8 7v.01M12 17v-4a3 3 0 0 1 6 0v4M12 10v7" />
+              </svg>
+            </a>
+            <a
+              href="${member.instagram || 'https://www.instagram.com/'}"
+              target="_blank"
+              rel="noreferrer"
+              class="team-social-btn"
+              aria-label="${member.name} on Instagram"
+            >
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r=".75" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+  `).join("");
 }
 
 function renderTeamSections(): void {
@@ -239,6 +301,7 @@ export function renderAll(): void {
   renderEventFilters();
   renderCompetitions();
   renderBearers();
+  renderCoreTeam();
   renderTeamSections();
   renderDepartments();
   renderSponsorFilters();
@@ -308,7 +371,15 @@ export function initRouter(): void {
     if (!PAGES.includes(id)) id = "home";
     PAGES.forEach(p => {
       const pageEl = document.getElementById("page-" + p);
-      if (pageEl) pageEl.classList.toggle("active", p === id);
+      if (pageEl) {
+        const isActive = p === id;
+        pageEl.classList.toggle("active", isActive);
+        if (isActive && id !== "home") {
+          pageEl.querySelectorAll<HTMLElement>("[data-reveal]").forEach(el => {
+            el.classList.add("is-visible");
+          });
+        }
+      }
     });
     document.querySelectorAll<HTMLElement>(".ref-nav-link").forEach(a => {
       a.classList.toggle("active", a.dataset.page === id);
