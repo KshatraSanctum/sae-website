@@ -6,6 +6,7 @@ import {
   TAG_CLASSES, PAGES,
   type EventItem, type SponsorItem
 } from './data';
+import { generateGardenHtml, initDeveloperEasterEgg } from './easterEgg';
 
 // ===================== RENDER FUNCTIONS =====================
 
@@ -96,62 +97,68 @@ function renderBearers(): void {
 function renderCoreTeam(): void {
   const el = document.getElementById("coreTeamGrid");
   if (!el) return;
-  el.innerHTML = CORE_TEAM_MEMBERS.map((member, index) => `
+  el.innerHTML = CORE_TEAM_MEMBERS.map((member, index) => {
+    const isDev = member.name.toLowerCase().includes("rahul kumar mahto");
+    return `
     <article
       data-reveal
-      class="team-card reveal-up group"
+      class="team-card ${isDev ? 'team-card-dev' : ''} reveal-up group"
+      ${isDev ? 'data-easter-egg="developer"' : ''}
     >
+      ${isDev ? generateGardenHtml() : ''}
       <div class="team-card-media">
         <img
           src="${member.image}"
-          alt="${member.name}, ${member.post}"
+          alt="${member.name}, ${member.post}${member.subPost ? ' - ' + member.subPost : ''}"
           class="team-card-img"
+          style="${member.objectPosition ? `object-position: ${member.objectPosition};` : ''}"
           loading="lazy"
         />
         <div class="team-card-overlay"></div>
         <div class="team-card-badge-wrap">
-          <span class="team-card-badge">0${index + 1}</span>
+          <span class="team-card-badge">${String(index + 1).padStart(2, '0')}</span>
+        </div>
+        <div class="team-card-socials">
+          ${member.linkedin ? `
+          <a
+            href="${member.linkedin}"
+            target="_blank"
+            rel="noreferrer"
+            class="team-social-btn"
+            aria-label="${member.name} on LinkedIn"
+            title="LinkedIn"
+          >
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M8 10v7M8 7v.01M12 17v-4a3 3 0 0 1 6 0v4M12 10v7" />
+            </svg>
+          </a>` : ''}
+          ${member.email ? `
+          <a
+            href="mailto:${member.email}"
+            class="team-social-btn"
+            aria-label="Email ${member.name}"
+            title="${member.email}"
+          >
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+          </a>` : ''}
         </div>
       </div>
       <div class="team-card-info">
-        <p class="team-card-discipline">${member.discipline}</p>
         <h3 class="team-card-name">${member.name}</h3>
         <div class="team-card-footer">
-          <div>
-            <p class="team-card-post-label">Club post</p>
+          <div class="team-card-roles">
             <p class="team-card-post">${member.post}</p>
-          </div>
-          <div class="team-card-socials">
-            <a
-              href="${member.linkedin || 'https://www.linkedin.com/'}"
-              target="_blank"
-              rel="noreferrer"
-              class="team-social-btn"
-              aria-label="${member.name} on LinkedIn"
-            >
-              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M8 10v7M8 7v.01M12 17v-4a3 3 0 0 1 6 0v4M12 10v7" />
-              </svg>
-            </a>
-            <a
-              href="${member.instagram || 'https://www.instagram.com/'}"
-              target="_blank"
-              rel="noreferrer"
-              class="team-social-btn"
-              aria-label="${member.name} on Instagram"
-            >
-              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="17.5" cy="6.5" r=".75" fill="currentColor" stroke="none" />
-              </svg>
-            </a>
+            ${member.subPost ? `<p class="team-card-subpost">${member.subPost}</p>` : ''}
           </div>
         </div>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderTeamSections(): void {
@@ -302,6 +309,7 @@ export function renderAll(): void {
   renderCompetitions();
   renderBearers();
   renderCoreTeam();
+  initDeveloperEasterEgg();
   renderTeamSections();
   renderDepartments();
   renderSponsorFilters();
