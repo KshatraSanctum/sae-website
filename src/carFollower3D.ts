@@ -48,6 +48,19 @@ export class CarFollower3D {
   private headlightLeft!: THREE.SpotLight;
   private headlightRight!: THREE.SpotLight;
 
+  // Dual Exhausts & Micro Nitro Flames
+  private leftFlameMesh!: THREE.Mesh;
+  private rightFlameMesh!: THREE.Mesh;
+  private flameIntensity = 0;
+
+  // Mobile Scroll Progress Track State
+  private isMobile = false;
+  private mobileProgress = 0;
+  private lastScrollY = 0;
+  private scrollDeltaY = 0;
+  private mTrackFill: HTMLElement | null = null;
+  private mTrackPct: HTMLElement | null = null;
+
   // Parking State (Option 2: Navbar Pit Bay - Method B: Instant Park Button)
   private parkingState: 'ACTIVE' | 'AUTODOCKING' | 'PARKED' = 'ACTIVE';
   private parkingWorldPos = new THREE.Vector3();
@@ -102,11 +115,6 @@ export class CarFollower3D {
   private animFrameId: number | null = null;
 
   constructor() {
-    // Only initialize on desktop / fine-pointer devices
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      return;
-    }
-
     this.init();
   }
 
@@ -174,38 +182,51 @@ export class CarFollower3D {
     }
     window.addEventListener('keydown', this.onKeyDown);
 
+    // Mobile Elements & Device Mode
+    this.bindMobileElements();
+    this.updateDeviceMode();
+
     // Listeners
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('mouseleave', this.onMouseLeave);
     window.addEventListener('mouseenter', this.onMouseEnter);
     window.addEventListener('resize', this.onWindowResize);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
 
-    // Check saved parked state preference
-    const isSavedParked = localStorage.getItem('sae_car_parked') === 'true';
-    if (isSavedParked) {
-      this.parkingState = 'PARKED';
-      const slotPos = this.getSlotWorldPos();
-      if (slotPos) {
-        this.parkingWorldPos.copy(slotPos);
-        this.carPos.copy(this.parkingWorldPos);
-        this.carRoot.visible = true;
-      } else {
-        this.carRoot.visible = false;
-      }
-      this.headingAngle = 0;
-      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
-      this.carRoot.rotation.y = 0;
-      if (this.headlightLeft && this.headlightRight) {
-        this.headlightLeft.intensity = 0.15;
-        this.headlightRight.intensity = 0.15;
-      }
-      this.updateUI('PARKED');
-    } else {
+    if (this.isMobile) {
       this.parkingState = 'ACTIVE';
       this.carRoot.visible = true;
-      this.updateTargetFromScreen(width / 2, height / 2);
-      this.carPos.copy(this.targetWorld);
-      this.updateUI('ACTIVE');
+      this.opacity = 1.0;
+      this.canvas.style.opacity = '1';
+      this.updateMobileScrollProgress();
+    } else {
+      // Check saved parked state preference for desktop
+      const isSavedParked = localStorage.getItem('sae_car_parked') === 'true';
+      if (isSavedParked) {
+        this.parkingState = 'PARKED';
+        const slotPos = this.getSlotWorldPos();
+        if (slotPos) {
+          this.parkingWorldPos.copy(slotPos);
+          this.carPos.copy(this.parkingWorldPos);
+          this.carRoot.visible = true;
+        } else {
+          this.carRoot.visible = false;
+        }
+        this.headingAngle = 0;
+        this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+        this.carRoot.rotation.y = 0;
+        if (this.headlightLeft && this.headlightRight) {
+          this.headlightLeft.intensity = 0.15;
+          this.headlightRight.intensity = 0.15;
+        }
+        this.updateUI('PARKED');
+      } else {
+        this.parkingState = 'ACTIVE';
+        this.carRoot.visible = true;
+        this.updateTargetFromScreen(width / 2, height / 2);
+        this.carPos.copy(this.targetWorld);
+        this.updateUI('ACTIVE');
+      }
     }
 
     // Start loop
@@ -462,6 +483,43 @@ export class CarFollower3D {
     this.rearRightWheelMesh.position.set(-11, 0.4, 11.5);
     this.carRoot.add(this.rearRightWheelMesh);
 
+    // 10. Dual Titanium Exhaust Tips & Animated Nitro Flame Cones
+    const exhaustGeo = new THREE.CylinderGeometry(0.75, 0.75, 2.8, 6);
+    exhaustGeo.rotateZ(Math.PI / 2);
+    const exhaustMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      metalness: 0.9,
+      roughness: 0.2,
+    });
+
+    const leftExhaust = new THREE.Mesh(exhaustGeo, exhaustMat);
+    leftExhaust.position.set(-14.8, 2.7, -2.4);
+    this.carRoot.add(leftExhaust);
+
+    const rightExhaust = new THREE.Mesh(exhaustGeo, exhaustMat);
+    rightExhaust.position.set(-14.8, 2.7, 2.4);
+    this.carRoot.add(rightExhaust);
+
+    // Nitro Flame Cones (pointing backwards in -X direction)
+    const flameGeo = new THREE.ConeGeometry(1.2, 5.5, 6);
+    flameGeo.rotateZ(Math.PI / 2); // points -X
+    const flameMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+    });
+
+    this.leftFlameMesh = new THREE.Mesh(flameGeo, flameMat);
+    this.leftFlameMesh.position.set(-18.5, 2.7, -2.4);
+    this.leftFlameMesh.scale.set(0, 0, 0);
+    this.carRoot.add(this.leftFlameMesh);
+
+    this.rightFlameMesh = new THREE.Mesh(flameGeo, flameMat.clone());
+    this.rightFlameMesh.position.set(-18.5, 2.7, 2.4);
+    this.rightFlameMesh.scale.set(0, 0, 0);
+    this.carRoot.add(this.rightFlameMesh);
+
     this.scene.add(this.carRoot);
   }
 
@@ -604,6 +662,121 @@ export class CarFollower3D {
     }
   }
 
+  // ===================== DUAL NITRO FLAMES =====================
+
+  private updateNitroFlames(intensity: number): void {
+    if (!this.leftFlameMesh || !this.rightFlameMesh) return;
+    if (intensity <= 0.05) {
+      this.leftFlameMesh.scale.set(0, 0, 0);
+      this.rightFlameMesh.scale.set(0, 0, 0);
+      return;
+    }
+
+    const jitter = 0.8 + Math.random() * 0.4;
+    const lMat = this.leftFlameMesh.material as THREE.MeshBasicMaterial;
+    const rMat = this.rightFlameMesh.material as THREE.MeshBasicMaterial;
+
+    if (Math.random() < 0.25) {
+      lMat.color.setHex(0xff6b00);
+      rMat.color.setHex(0xff6b00);
+    } else {
+      lMat.color.setHex(0x00f0ff);
+      rMat.color.setHex(0x00f0ff);
+    }
+
+    this.leftFlameMesh.scale.set(intensity * (1.2 + Math.random() * 0.5), intensity * jitter, intensity * jitter);
+    this.rightFlameMesh.scale.set(intensity * (1.2 + Math.random() * 0.5), intensity * jitter, intensity * jitter);
+  }
+
+  // ===================== MOBILE SCROLL PROGRESS TRACK RUNNER =====================
+
+  private updateDeviceMode(): void {
+    this.isMobile = window.innerWidth < 1024 || window.matchMedia('(pointer: coarse)').matches;
+    if (this.isMobile) {
+      // Significantly smaller micro car (~35px, 0.36x scale)
+      this.carRoot.scale.set(0.36, 0.36, 0.36);
+    } else {
+      this.carRoot.scale.set(0.72, 0.72, 0.72);
+    }
+  }
+
+  private bindMobileElements(): void {
+    this.mTrackFill = document.getElementById('mTrackFill');
+    this.mTrackPct = document.getElementById('mTrackPct');
+  }
+
+  private onScroll = (): void => {
+    const currentY = window.scrollY;
+    this.scrollDeltaY = currentY - this.lastScrollY;
+    this.lastScrollY = currentY;
+  };
+
+  private updateMobileScrollProgress(): void {
+    const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    const scrollY = window.scrollY;
+    const rawProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+    this.mobileProgress += (rawProgress - this.mobileProgress) * 0.22;
+
+    if (this.mTrackFill) {
+      this.mTrackFill.style.width = (this.mobileProgress * 100).toFixed(1) + '%';
+    }
+    if (this.mTrackPct) {
+      this.mTrackPct.textContent = Math.round(this.mobileProgress * 100) + '%';
+    }
+  }
+
+  private updateMobilePhysics(_dt: number): void {
+    // Friction decay on scroll delta
+    this.scrollDeltaY *= 0.86;
+
+    this.updateMobileScrollProgress();
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const startX = 26;
+    const endX = w - 26;
+    const currentScreenX = startX + this.mobileProgress * (endX - startX);
+    const currentScreenY = h - 14;
+
+    const targetWorld = this.screenToWorld(currentScreenX, currentScreenY);
+    if (targetWorld) {
+      this.carPos.copy(targetWorld);
+      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+    }
+
+    this.headingAngle = 0;
+    this.carRoot.rotation.y = 0;
+
+    // Roll wheels with scroll delta
+    const wheelRoll = this.scrollDeltaY * 0.045;
+    this.frontLeftWheelMesh.rotation.z -= wheelRoll;
+    this.frontRightWheelMesh.rotation.z -= wheelRoll;
+    this.rearLeftWheelMesh.rotation.z -= wheelRoll;
+    this.rearRightWheelMesh.rotation.z -= wheelRoll;
+
+    // Suspension pitch forward/backward
+    const targetPitch = THREE.MathUtils.clamp(this.scrollDeltaY * 0.002, -0.05, 0.05);
+    this.pitchAngle = THREE.MathUtils.lerp(this.pitchAngle, targetPitch, 0.2);
+    this.suspensionGroup.rotation.z = -this.pitchAngle;
+
+    // Micro idle engine vibration
+    const idleVibe = Math.sin(performance.now() * 0.009) * 0.008;
+    this.suspensionGroup.rotation.x = idleVibe;
+
+    // Micro nitro flames & underglow when flicking / scrolling quickly
+    const isFastScroll = Math.abs(this.scrollDeltaY) > 6;
+    if (isFastScroll) {
+      this.flameIntensity = THREE.MathUtils.lerp(this.flameIntensity, 0.65, 0.3);
+      this.underglowLight.intensity = 1.2;
+      this.underglowLight.color.setHex(0x00f0ff);
+    } else {
+      this.flameIntensity = THREE.MathUtils.lerp(this.flameIntensity, 0, 0.2);
+      this.underglowLight.intensity = 0.55;
+      this.underglowLight.color.setHex(0xf6b719);
+    }
+    this.updateNitroFlames(this.flameIntensity);
+  }
+
   // ===================== MOUSE EVENT HANDLERS =====================
 
   private onMouseMove = (e: MouseEvent): void => {
@@ -634,8 +807,11 @@ export class CarFollower3D {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
+    this.updateDeviceMode();
 
-    if (this.parkingState === 'PARKED') {
+    if (this.isMobile) {
+      this.updateMobileScrollProgress();
+    } else if (this.parkingState === 'PARKED') {
       const slotPos = this.getSlotWorldPos();
       if (slotPos) {
         this.parkingWorldPos.copy(slotPos);
@@ -826,6 +1002,13 @@ export class CarFollower3D {
   }
 
   private updatePhysics(dt: number): void {
+    if (!this.carRoot) return;
+
+    if (this.isMobile) {
+      this.updateMobilePhysics(dt);
+      return;
+    }
+
     // 1. PARKED STATE: Fixed stationary inside the navbar slot
     if (this.parkingState === 'PARKED') {
       const slotPos = this.getSlotWorldPos();
@@ -1172,6 +1355,7 @@ export class CarFollower3D {
     window.removeEventListener('mouseleave', this.onMouseLeave);
     window.removeEventListener('mouseenter', this.onMouseEnter);
     window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener('scroll', this.onScroll);
     if (this.canvas && this.canvas.parentElement) {
       this.canvas.parentElement.removeChild(this.canvas);
     }
