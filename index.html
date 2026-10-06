@@ -57,25 +57,35 @@
           <span class="ref-brand-sub">Collegiate Club</span>
         </span>
       </a>
-      <nav class="ref-nav" aria-label="Primary navigation">
+      <!-- Center navigation links -->
+      <nav class="ref-nav ref-nav-center" aria-label="Primary navigation">
         <a href="#about" class="ref-nav-link" data-scroll="about">About</a>
         <a href="#what-we-do" class="ref-nav-link" data-scroll="what-we-do">What we do</a>
         <a href="#competitions" class="ref-nav-link" data-page="competitions">Competitions</a>
         <a href="#events" class="ref-nav-link" data-page="events">Events</a>
         <a href="#team" class="ref-nav-link" data-page="team">Team</a>
         <a href="#sponsors" class="ref-nav-link" data-page="sponsors">Sponsors</a>
-        <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-scroll="join">Join the club</a>
       </nav>
-      <button class="ref-mobile-btn" id="refMobileToggle" aria-expanded="false" aria-label="Open menu">
-        <svg id="menuIconBars" aria-hidden="true" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
-        <svg id="menuIconClose" style="display:none;" aria-hidden="true" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18M6 6l12 12" />
-        </svg>
-      </button>
+
+      <!-- Right corner actions: Pit Stop & Join CTA -->
+      <div class="ref-header-actions">
+        <!-- Compact Pit Stop Button (Clean & Integrated) -->
+        <button type="button" class="nav-pit-btn" id="navPitBtn" aria-label="Park 3D Formula car in Pit Stop">
+          <span class="nav-pit-dot" id="navPitDot"></span>
+          <span class="nav-pit-text" id="navPitLabel">PARK CAR</span>
+          <span class="nav-pit-dock" id="navPitSlot" aria-hidden="true"></span>
+        </button>
+        <a href="#join" class="ref-btn ref-btn-primary effect-shine nav-desktop-only" data-page="join">Join the club</a>
+        <button class="ref-mobile-btn" id="refMobileToggle" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="ref-burger-icon" aria-hidden="true">
+            <span class="ref-burger-line line-1"></span>
+            <span class="ref-burger-line line-2"></span>
+            <span class="ref-burger-line line-3"></span>
+          </span>
+        </button>
+      </div>
     </div>
-    <div id="refMobileMenu" class="ref-mobile-menu" style="display: none;">
+    <div id="refMobileMenu" class="ref-mobile-menu" aria-hidden="true">
       <nav class="ref-mobile-nav-list" aria-label="Mobile navigation">
         <a href="#about" data-scroll="about">About</a>
         <a href="#what-we-do" data-scroll="what-we-do">What we do</a>
@@ -83,8 +93,13 @@
         <a href="#events" data-page="events">Events</a>
         <a href="#team" data-page="team">Team</a>
         <a href="#sponsors" data-page="sponsors">Sponsors</a>
-        <div style="padding-top: 1.25rem;">
-          <a href="#join" class="ref-btn ref-btn-primary effect-shine" style="display: flex;" data-scroll="join">Join the club</a>
+        <div class="ref-mobile-nav-cta">
+          <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
+            <span>Join the club</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
         </div>
       </nav>
     </div>
@@ -159,7 +174,7 @@
             </p>
 
             <div class="hero-enter hero-delay-4 hero-cta-row">
-              <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-scroll="join">
+              <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
                 Become a member
                 <svg aria-hidden="true" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14" />
@@ -429,7 +444,7 @@
       </section>
 
       <!-- JOIN CTA SECTION -->
-      <section id="join" class="ref-join-cta-section">
+      <section id="home-join-cta" class="ref-join-cta-section">
         <div class="tech-grid" style="position: absolute; inset: 0; opacity: 0.1;"></div>
         <div data-reveal class="reveal-up ref-container ref-join-cta-inner">
           <div>

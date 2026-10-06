@@ -48,6 +48,14 @@ export class CarFollower3D {
   private headlightLeft!: THREE.SpotLight;
   private headlightRight!: THREE.SpotLight;
 
+  // Parking State (Option 2: Navbar Pit Bay - Method B: Instant Park Button)
+  private parkingState: 'ACTIVE' | 'AUTODOCKING' | 'PARKED' = 'ACTIVE';
+  private parkingWorldPos = new THREE.Vector3();
+  private navPitBtn: HTMLButtonElement | null = null;
+  private navPitLabel: HTMLElement | null = null;
+  private navPitSlot: HTMLElement | null = null;
+  private dockingStartTime = 0;
+
   // Physics state
   private carPos = new THREE.Vector3(0, 0, 0);
   private carVel = new THREE.Vector3(0, 0, 0);
@@ -156,15 +164,49 @@ export class CarFollower3D {
     this.initSkidmarks();
     this.initSmokeSystem();
 
+    // Bind DOM Pit Bay elements
+    this.navPitBtn = document.getElementById('navPitBtn') as HTMLButtonElement | null;
+    this.navPitLabel = document.getElementById('navPitLabel');
+    this.navPitSlot = document.getElementById('navPitSlot');
+
+    if (this.navPitBtn) {
+      this.navPitBtn.addEventListener('click', this.onPitBtnClick);
+    }
+    window.addEventListener('keydown', this.onKeyDown);
+
     // Listeners
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('mouseleave', this.onMouseLeave);
     window.addEventListener('mouseenter', this.onMouseEnter);
     window.addEventListener('resize', this.onWindowResize);
 
-    // Initialize position at screen center
-    this.updateTargetFromScreen(width / 2, height / 2);
-    this.carPos.copy(this.targetWorld);
+    // Check saved parked state preference
+    const isSavedParked = localStorage.getItem('sae_car_parked') === 'true';
+    if (isSavedParked) {
+      this.parkingState = 'PARKED';
+      const slotPos = this.getSlotWorldPos();
+      if (slotPos) {
+        this.parkingWorldPos.copy(slotPos);
+        this.carPos.copy(this.parkingWorldPos);
+        this.carRoot.visible = true;
+      } else {
+        this.carRoot.visible = false;
+      }
+      this.headingAngle = 0;
+      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+      this.carRoot.rotation.y = 0;
+      if (this.headlightLeft && this.headlightRight) {
+        this.headlightLeft.intensity = 0.15;
+        this.headlightRight.intensity = 0.15;
+      }
+      this.updateUI('PARKED');
+    } else {
+      this.parkingState = 'ACTIVE';
+      this.carRoot.visible = true;
+      this.updateTargetFromScreen(width / 2, height / 2);
+      this.carPos.copy(this.targetWorld);
+      this.updateUI('ACTIVE');
+    }
 
     // Start loop
     this.tick();
@@ -592,17 +634,169 @@ export class CarFollower3D {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
+
+    if (this.parkingState === 'PARKED') {
+      const slotPos = this.getSlotWorldPos();
+      if (slotPos) {
+        this.parkingWorldPos.copy(slotPos);
+        this.carPos.copy(this.parkingWorldPos);
+        this.carRoot.visible = true;
+      } else {
+        this.carRoot.visible = false;
+      }
+    }
   };
 
   private updateTargetFromScreen(clientX: number, clientY: number): void {
+    const hit = this.screenToWorld(clientX, clientY);
+    if (hit) {
+      this.targetWorld.copy(hit);
+    }
+  }
+
+  // ===================== PIT BAY DOCKING & WORLD PROJECTION =====================
+
+  public screenToWorld(clientX: number, clientY: number): THREE.Vector3 | null {
     const ndcX = (clientX / window.innerWidth) * 2 - 1;
     const ndcY = -(clientY / window.innerHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
     if (this.raycaster.ray.intersectPlane(this.groundPlane, this.groundHit)) {
-      this.targetWorld.copy(this.groundHit);
+      return this.groundHit.clone();
+    }
+    return null;
+  }
+
+  public getSlotWorldPos(): THREE.Vector3 | null {
+    const slot = this.navPitSlot || document.getElementById('navPitSlot') || this.navPitBtn;
+    if (slot) {
+      const rect = slot.getBoundingClientRect();
+      // Ensure the slot is currently visible within the screen viewport (not scrolled away!)
+      if (rect.bottom > 4 && rect.top < window.innerHeight && rect.width > 0 && rect.height > 0) {
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        return this.screenToWorld(cx, cy);
+      }
+    }
+    return null;
+  }
+
+  public togglePark(): void {
+    if (this.parkingState === 'ACTIVE') {
+      this.startAutoDocking();
+    } else {
+      this.releaseCar();
     }
   }
+
+  public startAutoDocking(): void {
+    this.parkingState = 'AUTODOCKING';
+    this.dockingStartTime = performance.now();
+    const slotPos = this.getSlotWorldPos();
+    if (slotPos) {
+      this.parkingWorldPos.copy(slotPos);
+    }
+    this.updateUI('AUTODOCKING');
+  }
+
+  public completeParking(): void {
+    this.parkingState = 'PARKED';
+    const slotPos = this.getSlotWorldPos();
+    if (slotPos) {
+      this.parkingWorldPos.copy(slotPos);
+      this.carPos.copy(this.parkingWorldPos);
+      this.carRoot.visible = true;
+    } else {
+      this.carRoot.visible = false;
+    }
+    this.carVel.set(0, 0, 0);
+    this.headingAngle = 0; // Aligned horizontally to the right
+    this.speed = 0;
+    this.steerAngle = 0;
+    this.rollAngle = 0;
+    this.pitchAngle = 0;
+    this.frontLeftWheelGroup.rotation.y = 0;
+    this.frontRightWheelGroup.rotation.y = 0;
+    this.suspensionGroup.rotation.set(0, 0, 0);
+    this.hasLastTirePos = false;
+    localStorage.setItem('sae_car_parked', 'true');
+    this.updateUI('PARKED');
+  }
+
+  public releaseCar(): void {
+    this.parkingState = 'ACTIVE';
+    this.carRoot.visible = true;
+    this.canvas.style.opacity = '1';
+    localStorage.setItem('sae_car_parked', 'false');
+    this.updateUI('ACTIVE');
+
+    // Turn headlights back up
+    if (this.headlightLeft && this.headlightRight) {
+      this.headlightLeft.intensity = 2.4;
+      this.headlightRight.intensity = 2.4;
+    }
+    if (this.underglowLight) {
+      this.underglowLight.intensity = 1.0;
+    }
+
+    // Exhaust rev & tire smoke puffs from rear wheels
+    const leftTirePos = new THREE.Vector3();
+    const rightTirePos = new THREE.Vector3();
+    this.rearLeftWheelMesh.getWorldPosition(leftTirePos);
+    this.rearRightWheelMesh.getWorldPosition(rightTirePos);
+    for (let i = 0; i < 4; i++) {
+      this.spawnSmokePuff(leftTirePos);
+      this.spawnSmokePuff(rightTirePos);
+    }
+
+    // Launch burst velocity towards cursor
+    const launchDir = new THREE.Vector3().subVectors(this.targetWorld, this.carPos);
+    if (launchDir.length() > 5) {
+      launchDir.normalize();
+      this.carVel.copy(launchDir).multiplyScalar(7.0);
+      this.headingAngle = Math.atan2(launchDir.z, launchDir.x);
+    } else {
+      this.carVel.set(0, 0, 5.0);
+      this.headingAngle = Math.PI / 2;
+    }
+  }
+
+  private updateUI(state: 'ACTIVE' | 'AUTODOCKING' | 'PARKED'): void {
+    const btn = this.navPitBtn || document.getElementById('navPitBtn') as HTMLButtonElement | null;
+    const label = this.navPitLabel || document.getElementById('navPitLabel');
+
+    if (btn) {
+      btn.classList.remove('is-docking', 'is-parked');
+    }
+
+    if (state === 'ACTIVE') {
+      if (label) label.textContent = 'PARK CAR';
+      if (btn) btn.setAttribute('aria-label', 'Park car in Pit Stop');
+    } else if (state === 'AUTODOCKING') {
+      if (btn) btn.classList.add('is-docking');
+      if (label) label.textContent = 'DOCKING';
+    } else if (state === 'PARKED') {
+      if (btn) btn.classList.add('is-parked');
+      if (label) label.textContent = 'RELEASE';
+      if (btn) btn.setAttribute('aria-label', 'Release car from Pit Stop');
+    }
+  }
+
+  private onPitBtnClick = (e: MouseEvent): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.togglePark();
+  };
+
+  private onKeyDown = (e: KeyboardEvent): void => {
+    if (e.key === 'p' || e.key === 'P') {
+      const activeTag = (document.activeElement as HTMLElement)?.tagName?.toLowerCase();
+      if (activeTag === 'input' || activeTag === 'textarea' || (document.activeElement as HTMLElement)?.isContentEditable) {
+        return;
+      }
+      this.togglePark();
+    }
+  };
 
   // ===================== CURVATURE & DRIFT PHYSICS =====================
 
@@ -632,6 +826,119 @@ export class CarFollower3D {
   }
 
   private updatePhysics(dt: number): void {
+    // 1. PARKED STATE: Fixed stationary inside the navbar slot
+    if (this.parkingState === 'PARKED') {
+      const slotPos = this.getSlotWorldPos();
+
+      // If the slot has scrolled off the screen or is not visible, hide the parked car completely!
+      if (!slotPos) {
+        this.carRoot.visible = false;
+        this.canvas.style.opacity = '0';
+        return;
+      }
+
+      this.carRoot.visible = true;
+      this.opacity = 1.0;
+      this.canvas.style.opacity = '1';
+
+      this.parkingWorldPos.copy(slotPos);
+      this.carPos.copy(this.parkingWorldPos);
+      this.carVel.set(0, 0, 0);
+      this.speed = 0;
+      this.headingAngle = 0;
+      this.steerAngle = 0;
+      this.rollAngle = 0;
+      this.pitchAngle = 0;
+      this.frontLeftWheelGroup.rotation.y = 0;
+      this.frontRightWheelGroup.rotation.y = 0;
+      this.suspensionGroup.rotation.set(0, 0, 0);
+
+      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+      this.carRoot.rotation.y = -this.headingAngle;
+
+      if (this.headlightLeft && this.headlightRight) {
+        this.headlightLeft.intensity = 0.15;
+        this.headlightRight.intensity = 0.15;
+      }
+      if (this.underglowLight) {
+        this.underglowLight.intensity = 0.22 + 0.1 * Math.sin(performance.now() * 0.003);
+      }
+      return;
+    }
+
+    // 2. AUTODOCKING STATE: Drive into navbar slot and brake smoothly
+    if (this.parkingState === 'AUTODOCKING') {
+      this.carRoot.visible = true;
+      this.opacity = 1.0;
+      this.canvas.style.opacity = '1';
+
+      const slotPos = this.getSlotWorldPos();
+      if (slotPos) {
+        this.parkingWorldPos.copy(slotPos);
+      }
+      const toSlot = new THREE.Vector3().subVectors(this.parkingWorldPos, this.carPos);
+      const distToSlot = toSlot.length();
+      const elapsedSec = (performance.now() - this.dockingStartTime) / 1000;
+
+      // Completion check: Close to slot OR low speed near slot OR safeguard timeout (>1.8s)
+      if (distToSlot < 2.5 || (distToSlot < 8.0 && this.speed < 1.0) || elapsedSec > 1.8) {
+        this.completeParking();
+        return;
+      }
+
+      const desiredHeading = Math.atan2(toSlot.z, toSlot.x);
+      let headingDiff = desiredHeading - this.headingAngle;
+      while (headingDiff > Math.PI) headingDiff -= Math.PI * 2;
+      while (headingDiff < -Math.PI) headingDiff += Math.PI * 2;
+
+      this.angularVelocity = headingDiff * 10.0;
+      this.headingAngle += this.angularVelocity * dt;
+
+      const targetSteer = THREE.MathUtils.clamp(headingDiff * 1.3, -0.48, 0.48);
+      this.steerAngle += (targetSteer - this.steerAngle) * 0.25;
+      this.frontLeftWheelGroup.rotation.y = -this.steerAngle;
+      this.frontRightWheelGroup.rotation.y = -this.steerAngle;
+
+      if (distToSlot > 18) {
+        // Cruise towards bay
+        const accel = Math.min(distToSlot * 0.16, 22.0);
+        const forwardVec = new THREE.Vector3(Math.cos(this.headingAngle), 0, Math.sin(this.headingAngle));
+        this.carVel.addScaledVector(forwardVec, accel * dt);
+        this.carVel.multiplyScalar(0.92);
+      } else {
+        // Continuous smooth deceleration right into the bay (never stalls!)
+        const targetGlideSpeed = Math.max(distToSlot * 0.55, 2.0);
+        const dir = toSlot.clone().normalize();
+        this.carVel.lerp(dir.multiplyScalar(targetGlideSpeed), 0.22);
+        this.steerAngle *= 0.6;
+
+        let alignDiff = 0 - this.headingAngle;
+        while (alignDiff > Math.PI) alignDiff -= Math.PI * 2;
+        while (alignDiff < -Math.PI) alignDiff += Math.PI * 2;
+        this.headingAngle += alignDiff * 0.22;
+
+        this.pitchAngle += (-0.03 - this.pitchAngle) * 0.2;
+        this.suspensionGroup.rotation.z = -this.pitchAngle;
+      }
+
+      this.speed = this.carVel.length();
+      this.carPos.add(this.carVel);
+      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+      this.carRoot.rotation.y = -this.headingAngle;
+
+      const wheelRot = this.speed * 0.36;
+      this.frontLeftWheelMesh.rotation.z -= wheelRot;
+      this.frontRightWheelMesh.rotation.z -= wheelRot;
+      this.rearLeftWheelMesh.rotation.z -= wheelRot;
+      this.rearRightWheelMesh.rotation.z -= wheelRot;
+
+      if (this.underglowLight) {
+        this.underglowLight.intensity = 0.6;
+      }
+      return;
+    }
+
+    // 3. ACTIVE STATE: Normal cursor follower
     const toTarget = new THREE.Vector3().subVectors(this.targetWorld, this.carPos);
     const distToTarget = toTarget.length();
 
@@ -857,6 +1164,10 @@ export class CarFollower3D {
     if (this.animFrameId !== null) {
       cancelAnimationFrame(this.animFrameId);
     }
+    if (this.navPitBtn) {
+      this.navPitBtn.removeEventListener('click', this.onPitBtnClick);
+    }
+    window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseleave', this.onMouseLeave);
     window.removeEventListener('mouseenter', this.onMouseEnter);

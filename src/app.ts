@@ -454,8 +454,6 @@ export function initRouter(): void {
 export function initMobileNav(): void {
   const toggleBtn = document.getElementById('refMobileToggle');
   const mobileMenu = document.getElementById('refMobileMenu');
-  const iconBars = document.getElementById('menuIconBars');
-  const iconClose = document.getElementById('menuIconClose');
 
   if (!toggleBtn || !mobileMenu) return;
   const btn = toggleBtn;
@@ -465,10 +463,11 @@ export function initMobileNav(): void {
 
   function setMenuState(open: boolean): void {
     isOpen = open;
-    menu.style.display = isOpen ? 'block' : 'none';
+    btn.classList.toggle('is-open', isOpen);
+    menu.classList.toggle('is-open', isOpen);
     btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    if (iconBars) iconBars.style.display = isOpen ? 'none' : 'block';
-    if (iconClose) iconClose.style.display = isOpen ? 'block' : 'none';
+    btn.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
   }
 
   btn.addEventListener('click', (e: Event) => {
@@ -487,6 +486,13 @@ export function initMobileNav(): void {
   // Close menu when clicking outside
   document.addEventListener('click', (e: Event) => {
     if (isOpen && !menu.contains(e.target as Node) && !btn.contains(e.target as Node)) {
+      setMenuState(false);
+    }
+  });
+
+  // Close menu on Escape key
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && isOpen) {
       setMenuState(false);
     }
   });
