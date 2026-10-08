@@ -27,6 +27,7 @@ interface SkidQuad {
   rightV2: THREE.Vector3;
   alpha: number;
   age: number;
+  connectToNext: boolean;
 }
 
 export class CarFollower3D {
@@ -894,6 +895,9 @@ export class CarFollower3D {
     this.frontLeftWheelGroup.rotation.y = 0;
     this.frontRightWheelGroup.rotation.y = 0;
     this.suspensionGroup.rotation.set(0, 0, 0);
+    if (this.skidQuads.length > 0) {
+      this.skidQuads[this.skidQuads.length - 1].connectToNext = false;
+    }
     this.hasLastTirePos = false;
     localStorage.setItem('sae_car_parked', 'true');
     this.updateUI('PARKED');
@@ -1200,6 +1204,9 @@ export class CarFollower3D {
       this.spawnSmokePuff(leftTirePos);
       this.spawnSmokePuff(rightTirePos);
     } else {
+      if (this.hasLastTirePos && this.skidQuads.length > 0) {
+        this.skidQuads[this.skidQuads.length - 1].connectToNext = false;
+      }
       this.hasLastTirePos = false;
     }
 
@@ -1251,6 +1258,10 @@ export class CarFollower3D {
     curRightTire.y = 0.22;
 
     if (this.hasLastTirePos) {
+      const dist = this.lastLeftTirePos.distanceTo(curLeftTire);
+      // Skip if movement is too small to avoid degenerate overlapping quads
+      if (dist < 0.25) return;
+
       const tireWidth = 1.2;
       const cosH = Math.cos(-this.headingAngle);
       const sinH = Math.sin(-this.headingAngle);
@@ -1264,6 +1275,7 @@ export class CarFollower3D {
         rightV2: new THREE.Vector3(this.lastRightTirePos.x + perpX, 0.22, this.lastRightTirePos.z + perpZ),
         alpha: Math.min(this.driftIntensity * 0.72, 0.72),
         age: 0,
+        connectToNext: true,
       });
 
       if (this.skidQuads.length > this.maxSkidQuads) {
@@ -1277,53 +1289,81 @@ export class CarFollower3D {
   }
 
   private updateSkidmarks(): void {
+    // 1. Decay alpha for EVERY quad (including the last quad)
+    for (let i = 0; i < this.skidQuads.length; i++) {
+      const q = this.skidQuads[i];
+      q.age += 1;
+      q.alpha *= 0.95; // Fades out smoothly within ~1.5s
+    }
+
+    // 2. Prune completely faded quads from the front of the list
+    while (this.skidQuads.length > 0 && this.skidQuads[0].alpha < 0.015) {
+      this.skidQuads.shift();
+    }
+
+    // If only one lonely quad remains, clear it so it doesn't leave stray vertices
+    if (this.skidQuads.length === 1 && this.skidQuads[0].alpha < 0.03) {
+      this.skidQuads.length = 0;
+    }
+
     let vIdx = 0;
     const pos = this.skidPositions;
     const col = this.skidAlphas;
 
-    for (let i = 0; i < this.skidQuads.length - 1; i++) {
-      const q1 = this.skidQuads[i];
-      const q2 = this.skidQuads[i + 1];
+    if (this.skidQuads.length >= 2) {
+      for (let i = 0; i < this.skidQuads.length - 1; i++) {
+        const q1 = this.skidQuads[i];
+        const q2 = this.skidQuads[i + 1];
 
-      q1.age += 1;
-      q1.alpha *= 0.97;
+        // Do not connect separate drift events
+        if (!q1.connectToNext) continue;
 
-      const addQuad = (
-        v1: THREE.Vector3,
-        v2: THREE.Vector3,
-        v3: THREE.Vector3,
-        v4: THREE.Vector3,
-        a1: number,
-        a2: number
-      ) => {
-        const setVertex = (v: THREE.Vector3, alpha: number) => {
-          pos[vIdx * 3] = v.x;
-          pos[vIdx * 3 + 1] = v.y;
-          pos[vIdx * 3 + 2] = v.z;
-          col[vIdx * 4] = 0.96; // Golden/rubber tone
-          col[vIdx * 4 + 1] = 0.72;
-          col[vIdx * 4 + 2] = 0.1;
-          col[vIdx * 4 + 3] = alpha;
-          vIdx++;
+        // Skip invisible segments
+        if (q1.alpha < 0.01 && q2.alpha < 0.01) continue;
+
+        // Avoid buffer overflow
+        if (vIdx + 12 > this.maxSkidQuads * 12) break;
+
+        const addQuad = (
+          v1: THREE.Vector3,
+          v2: THREE.Vector3,
+          v3: THREE.Vector3,
+          v4: THREE.Vector3,
+          a1: number,
+          a2: number
+        ) => {
+          const setVertex = (v: THREE.Vector3, alpha: number) => {
+            pos[vIdx * 3] = v.x;
+            pos[vIdx * 3 + 1] = v.y;
+            pos[vIdx * 3 + 2] = v.z;
+            col[vIdx * 4] = 0.96; // Golden/rubber tone
+            col[vIdx * 4 + 1] = 0.72;
+            col[vIdx * 4 + 2] = 0.1;
+            col[vIdx * 4 + 3] = alpha;
+            vIdx++;
+          };
+
+          setVertex(v1, a1);
+          setVertex(v2, a1);
+          setVertex(v3, a2);
+
+          setVertex(v2, a1);
+          setVertex(v4, a2);
+          setVertex(v3, a2);
         };
 
-        setVertex(v1, a1);
-        setVertex(v2, a1);
-        setVertex(v3, a2);
-
-        setVertex(v2, a1);
-        setVertex(v4, a2);
-        setVertex(v3, a2);
-      };
-
-      addQuad(q1.leftV1, q1.leftV2, q2.leftV1, q2.leftV2, q1.alpha, q2.alpha);
-      addQuad(q1.rightV1, q1.rightV2, q2.rightV1, q2.rightV2, q1.alpha, q2.alpha);
+        addQuad(q1.leftV1, q1.leftV2, q2.leftV1, q2.leftV2, q1.alpha, q2.alpha);
+        addQuad(q1.rightV1, q1.rightV2, q2.rightV1, q2.rightV2, q1.alpha, q2.alpha);
+      }
     }
 
+    // Zero out any remaining vertices in the buffer
     for (let i = vIdx; i < this.maxSkidQuads * 12; i++) {
       col[i * 4 + 3] = 0;
     }
 
+    // Set precise draw range so Three.js renders only active quads and 0 vertices when empty
+    this.skidMesh.geometry.setDrawRange(0, vIdx);
     this.skidMesh.geometry.attributes.position.needsUpdate = true;
     this.skidMesh.geometry.attributes.color.needsUpdate = true;
   }
