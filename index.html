@@ -20,7 +20,8 @@
       padding: 0;
       background-color: #030406 !important;
       color: #f1f5f9;
-      overflow-x: hidden;
+      overflow-x: clip;
+      overflow-y: visible;
     }
 
     #introOverlay {
@@ -61,8 +62,7 @@
       </a>
       <!-- Center navigation links -->
       <nav class="ref-nav ref-nav-center" aria-label="Primary navigation">
-        <a href="#about" class="ref-nav-link" data-scroll="about">About</a>
-        <a href="#what-we-do" class="ref-nav-link" data-scroll="what-we-do">What we do</a>
+        <a href="#about" class="ref-nav-link" data-page="about">About</a>
         <a href="#competitions" class="ref-nav-link" data-page="competitions">Competitions</a>
         <a href="#events" class="ref-nav-link" data-page="events">Events</a>
         <a href="#team" class="ref-nav-link" data-page="team">Team</a>
@@ -89,8 +89,7 @@
     </div>
     <div id="refMobileMenu" class="ref-mobile-menu" aria-hidden="true">
       <nav class="ref-mobile-nav-list" aria-label="Mobile navigation">
-        <a href="#about" data-scroll="about">About</a>
-        <a href="#what-we-do" data-scroll="what-we-do">What we do</a>
+        <a href="#about" data-page="about">About</a>
         <a href="#competitions" data-page="competitions">Competitions</a>
         <a href="#events" data-page="events">Events</a>
         <a href="#team" data-page="team">Team</a>
@@ -165,8 +164,7 @@
                   <path d="m13 6 6 6-6 6" />
                 </svg>
               </a>
-              <a href="#what-we-do" class="ref-btn ref-btn-light effect-shine" data-scroll="what-we-do">Explore our
-                work</a>
+              <a href="#about" class="ref-btn ref-btn-light effect-shine" data-page="about">Explore our club</a>
             </div>
           </div>
         </div>
@@ -177,8 +175,158 @@
         </div>
       </section>
 
-      <!-- ABOUT SECTION -->
-      <section id="about" class="ref-about-section">
+      <!-- ===================== DESIGN · BUILD · COMPETE (SCROLL SHOWCASE) ===================== -->
+      <section class="dbc-scroll-section" id="dbcShowcase">
+        <div class="dbc-sticky-viewport">
+          <div class="tech-grid dbc-bg-grid"></div>
+          <div class="ref-container dbc-container">
+            <!-- Header with Step Indicator Pills -->
+            <div class="dbc-header">
+              <div class="dbc-header-left">
+                <div class="team-eyebrow-row">
+                  <span class="team-eyebrow-line"></span>
+                  <p class="ref-eyebrow text-signal">// THE VELOCITY CYCLE</p>
+                </div>
+                <h2 class="dbc-heading">From Concept <span class="text-signal">to the Track.</span></h2>
+              </div>
+              <div class="dbc-nav-pills" role="tablist" aria-label="Velocity Cycle Phases">
+                <button type="button" class="dbc-pill is-active" data-dbc-step="0" aria-label="Phase 01: Design">
+                  <span class="dbc-pill-num">01</span>
+                  <span class="dbc-pill-label">DESIGN</span>
+                  <span class="dbc-pill-bar"></span>
+                </button>
+                <button type="button" class="dbc-pill" data-dbc-step="1" aria-label="Phase 02: Build">
+                  <span class="dbc-pill-num">02</span>
+                  <span class="dbc-pill-label">BUILD</span>
+                  <span class="dbc-pill-bar"></span>
+                </button>
+                <button type="button" class="dbc-pill" data-dbc-step="2" aria-label="Phase 03: Compete">
+                  <span class="dbc-pill-num">03</span>
+                  <span class="dbc-pill-label">COMPETE</span>
+                  <span class="dbc-pill-bar"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- The Horizontal Stage (Tracks from Right to Left on Scroll) -->
+            <div class="dbc-stage" id="dbcStage">
+              <div class="dbc-cards-track" id="dbcCardsTrack">
+                <!-- 01 · DESIGN -->
+                <article class="dbc-card is-active" data-index="0">
+                  <div class="dbc-card-top-bar">
+                    <span class="badge mono">// 01 · SIMULATION &amp; CAD</span>
+                    <span class="dbc-card-num-watermark">01</span>
+                  </div>
+                  <h3 class="dbc-card-title">Design<span class="text-signal">.</span></h3>
+                  <p class="dbc-card-subtitle">Virtual Kinematics &amp; High-Downforce Aerodynamics</p>
+                  <p class="dbc-card-desc">
+                    Every championship machine begins in the digital wind tunnel. Our student engineering cohort uses SolidWorks, CATIA, and ANSYS to run structural FEA, calculate suspension kinematics, optimize spaceframe torsional rigidity, and simulate multi-element aerodynamic downforce before a single tube is cut.
+                  </p>
+                  <div class="dbc-card-tags">
+                    <span class="ref-skill-pill">SolidWorks CAD</span>
+                    <span class="ref-skill-pill">ANSYS Structural FEA</span>
+                    <span class="ref-skill-pill">CFD Aerodynamics</span>
+                    <span class="ref-skill-pill">Suspension Geometry</span>
+                    <span class="ref-skill-pill">Weight Optimization</span>
+                  </div>
+                  <div class="dbc-card-footer">
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-signal">100%</span>
+                      <span class="dbc-metric-label">Digital Validation</span>
+                    </div>
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-white">&lt;0.05mm</span>
+                      <span class="dbc-metric-label">CAD Tolerancing</span>
+                    </div>
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-signal">3.2x</span>
+                      <span class="dbc-metric-label">Torsional Rigidity</span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- 02 · BUILD -->
+                <article class="dbc-card" data-index="1">
+                  <div class="dbc-card-top-bar">
+                    <span class="badge mono">// 02 · FABRICATION &amp; POWER</span>
+                    <span class="dbc-card-num-watermark">02</span>
+                  </div>
+                  <h3 class="dbc-card-title">Build<span class="text-signal">.</span></h3>
+                  <p class="dbc-card-subtitle">Precision Machining, 4130 TIG Welding &amp; EV Integration</p>
+                  <p class="dbc-card-desc">
+                    On the workshop floor of BIT Sindri, blueprints become roaring machines. Our student engineers execute in-house CNC lathe turning, precision 4130 chromoly spaceframe TIG welding, custom carbon fiber composite molding, custom wiring harnesses, and high-voltage lithium battery pack integration.
+                  </p>
+                  <div class="dbc-card-tags">
+                    <span class="ref-skill-pill">Chromoly TIG Welding</span>
+                    <span class="ref-skill-pill">In-House CNC Machining</span>
+                    <span class="ref-skill-pill">Carbon Fiber Layup</span>
+                    <span class="ref-skill-pill">HV Battery Packaging</span>
+                    <span class="ref-skill-pill">CAN Bus Telemetry</span>
+                  </div>
+                  <div class="dbc-card-footer">
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-signal">4130</span>
+                      <span class="dbc-metric-label">Aircraft Chromoly</span>
+                    </div>
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-white">In-House</span>
+                      <span class="dbc-metric-label">Precision Machined</span>
+                    </div>
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-signal">Smart BMS</span>
+                      <span class="dbc-metric-label">EV Battery Safety</span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- 03 · COMPETE -->
+                <article class="dbc-card" data-index="2">
+                  <div class="dbc-card-top-bar">
+                    <span class="badge mono">// 03 · THE PROVING GROUND</span>
+                    <span class="dbc-card-num-watermark">03</span>
+                  </div>
+                  <h3 class="dbc-card-title">Compete<span class="text-signal">.</span></h3>
+                  <p class="dbc-card-subtitle">National Championships, Acceleration &amp; 4-Hour Endurance</p>
+                  <p class="dbc-card-desc">
+                    The ultimate proving ground where machines and student grit are tested under maximum pressure. We campaign our student-engineered vehicles against 100+ universities across India at BAJA SAEINDIA, Formula Bharat, and Mega ATV Championship—surviving high-G cornering and grueling 4-hour endurance battles.
+                  </p>
+                  <div class="dbc-card-tags">
+                    <span class="ref-skill-pill">BAJA SAEINDIA</span>
+                    <span class="ref-skill-pill">Formula Bharat</span>
+                    <span class="ref-skill-pill">Mega ATV Series</span>
+                    <span class="ref-skill-pill">4-Hour Endurance</span>
+                    <span class="ref-skill-pill">Track Telemetry</span>
+                  </div>
+                  <div class="dbc-card-footer">
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-signal">Podium</span>
+                      <span class="dbc-metric-label">National Contender</span>
+                    </div>
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-white">100+</span>
+                      <span class="dbc-metric-label">University Grid</span>
+                    </div>
+                    <div class="dbc-metric">
+                      <span class="dbc-metric-val mono text-signal">Live CAN</span>
+                      <span class="dbc-metric-label">Pit Diagnostics</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <!-- Dots Indicator for Mobile -->
+            <div class="dbc-dots-row">
+              <button type="button" class="dbc-dot is-active" data-dbc-step="0" aria-label="Go to Design"></button>
+              <button type="button" class="dbc-dot" data-dbc-step="1" aria-label="Go to Build"></button>
+              <button type="button" class="dbc-dot" data-dbc-step="2" aria-label="Go to Compete"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT TEASER SECTION -->
+      <section id="home-about" class="ref-about-section">
         <div class="ref-container" style="padding: 0; max-width: 80rem; margin: 0 auto;">
           <div class="ref-about-grid">
             <div data-reveal class="reveal-up ref-about-left">
@@ -192,8 +340,11 @@
                 Velocity SAE brings ambitious students together to solve real engineering problems. From first sketch to
                 final test run, every project is a chance to apply theory, challenge assumptions, and grow as a team.
               </p>
-              <a href="#what-we-do" class="ref-about-link" data-scroll="what-we-do">
-                Discover our mission
+              <p class="ref-about-copy" style="margin-top: 1rem; opacity: 0.85;">
+                As the official collegiate mobility chapter of BIT Sindri, our student engineers design national competition racecars, build electric powertrains, and conduct hands-on technical masterclasses.
+              </p>
+              <a href="#about" class="ref-btn ref-btn-outline effect-shine" data-page="about" style="margin-top: 2rem;">
+                Learn More About Us
                 <svg aria-hidden="true" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14" />
@@ -220,89 +371,6 @@
                 <span class="ref-stat-label">Years of making</span>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- WHAT WE DO SECTION -->
-      <section id="what-we-do" class="ref-what-section">
-        <div class="ref-container">
-          <div data-reveal class="reveal-up ref-what-header">
-            <div>
-              <p class="ref-eyebrow">What we do</p>
-              <h2 class="ref-what-heading">
-                Ideas into <span class="text-signal">impact.</span>
-              </h2>
-            </div>
-            <p class="ref-what-subtext">
-              Real projects. Real deadlines. Real growth. Find the track that pushes you forward.
-            </p>
-          </div>
-
-          <div class="discipline-grid">
-            <article data-reveal class="reveal-up discipline-card">
-              <div class="discipline-card-top">
-                <svg class="discipline-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 6h7l3 4v7h-3l-2 3H8l-2-3H3v-7h3l2-4h2Z" />
-                  <path d="M14 6V3h-4M3 12H1M21 12h2" />
-                </svg>
-                <span class="discipline-number">01</span>
-              </div>
-              <div class="discipline-card-bottom">
-                <h3 class="discipline-title">Design &amp; Build</h3>
-                <p class="discipline-desc">Turn engineering fundamentals into working machines through CAD, fabrication,
-                  testing, and iteration.</p>
-                <svg class="discipline-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14" />
-                  <path d="m13 6 6 6-6 6" />
-                </svg>
-              </div>
-            </article>
-
-            <article data-reveal class="reveal-up discipline-card">
-              <div class="discipline-card-top">
-                <svg class="discipline-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m12 3-1.8 5.2L5 10l5.2 1.8L12 17l1.8-5.2L19 10l-5.2-1.8L12 3Z" />
-                  <path d="m5 16-.8 2.2L2 19l2.2.8L5 22l.8-2.2L8 19l-2.2-.8L5 16Z" />
-                </svg>
-                <span class="discipline-number">02</span>
-              </div>
-              <div class="discipline-card-bottom">
-                <h3 class="discipline-title">Learn &amp; Innovate</h3>
-                <p class="discipline-desc">Explore mobility, EV systems, manufacturing, and emerging technologies with
-                  hands-on workshops.</p>
-                <svg class="discipline-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14" />
-                  <path d="m13 6 6 6-6 6" />
-                </svg>
-              </div>
-            </article>
-
-            <article data-reveal class="reveal-up discipline-card">
-              <div class="discipline-card-top">
-                <svg class="discipline-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                <span class="discipline-number">03</span>
-              </div>
-              <div class="discipline-card-bottom">
-                <h3 class="discipline-title">Lead Together</h3>
-                <p class="discipline-desc">Build real-world leadership, teamwork, project management, and communication
-                  skills.</p>
-                <svg class="discipline-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14" />
-                  <path d="m13 6 6 6-6 6" />
-                </svg>
-              </div>
-            </article>
           </div>
         </div>
       </section>
@@ -436,7 +504,7 @@
               </div>
               <div style="margin-top: 2rem;">
                 <a href="#team" class="ref-btn ref-btn-light effect-shine" data-page="team">
-                  Meet Our Core Committee &amp; Team
+                  Meet Our Office Bearers &amp; Team
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
@@ -467,6 +535,232 @@
               <path d="m13 6 6 6-6 6" />
             </svg>
           </a>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===================== ABOUT (DEDICATED PAGE) ===================== -->
+    <section class="page ref-about-page" id="page-about">
+      <div class="tech-grid about-bg-grid"></div>
+
+      <!-- Page Hero / Banner -->
+      <div class="about-hero-wrap">
+        <div class="ref-container" style="position: relative;">
+          <div data-reveal class="reveal-up about-header-row">
+            <div>
+              <div class="team-eyebrow-row">
+                <span class="team-eyebrow-line"></span>
+                <p class="ref-eyebrow text-signal">// CHAPTER STORY &amp; MISSION · EST. BIT SINDRI</p>
+              </div>
+              <h1 class="ref-about-page-heading">
+                Engineering the
+                <span class="text-signal" style="display: block;">future of mobility.</span>
+              </h1>
+            </div>
+            <p class="about-lead-copy">
+              Founded to bridge academic classroom theory and competitive automotive performance, SAE India BIT Sindri is the premier collegiate mobility chapter turning student ambition into track-ready reality.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story & Narrative Grid -->
+      <section class="about-story-section">
+        <div class="ref-container">
+          <div class="about-story-grid">
+            <div data-reveal class="reveal-up about-story-text">
+              <span class="badge mono">// OUR ROOTS &amp; MISSION</span>
+              <h2>Born in the Workshop. Proven on the Track.</h2>
+              <p>
+                SAE India BIT Sindri represents the pinnacle of multidisciplinary engineering at Birsa Institute of Technology, Sindri. What began as a passionate cohort of gearheads has evolved into an advanced collegiate engineering division building national competition buggies, Formula-class racecars, electric propulsion systems, and unmanned aerial platforms.
+              </p>
+              <p>
+                Here, students don’t just read about finite element analysis, suspension kinematics, or battery thermal management—they calculate, simulate, weld, machine, wire, and test them until competition day.
+              </p>
+              <div class="about-principles-grid">
+                <div class="about-principle-item">
+                  <div class="about-principle-num">01</div>
+                  <h4>Engineering Rigor</h4>
+                  <p>Every tube, weld, and sensor is validated with CAD, FEA, and telemetry data before taking to the track.</p>
+                </div>
+                <div class="about-principle-item">
+                  <div class="about-principle-num">02</div>
+                  <h4>Cross-Discipline Synergy</h4>
+                  <p>Mechanical, Electrical, Electronics, CS, and Mining students collaborating as one synchronized crew.</p>
+                </div>
+                <div class="about-principle-item">
+                  <div class="about-principle-num">03</div>
+                  <h4>Next-Gen Clean Tech</h4>
+                  <p>Pioneering electric vehicles, hybrid powertrains, and smart telemetry to lead sustainable mobility.</p>
+                </div>
+                <div class="about-principle-item">
+                  <div class="about-principle-num">04</div>
+                  <h4>Student Leadership</h4>
+                  <p>Full project ownership: budgeting, corporate sponsor management, logistics, and technical documentation.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Feature / Stat highlight -->
+            <div data-reveal class="reveal-up reveal-delay about-story-visual">
+              <div class="about-visual-card">
+                <div class="about-card-badge mono">// BY THE NUMBERS</div>
+                <div class="about-numbers-stack">
+                  <div class="about-num-row">
+                    <span class="about-big-num">120<span class="text-signal">+</span></span>
+                    <span class="about-num-desc">Active Student Members across engineering disciplines</span>
+                  </div>
+                  <div class="about-num-row">
+                    <span class="about-big-num">08</span>
+                    <span class="about-num-desc">Specialized Technical Sub-Teams (Chassis, Powertrain, EV, Aero, etc.)</span>
+                  </div>
+                  <div class="about-num-row">
+                    <span class="about-big-num">16<span class="text-signal">+</span></span>
+                    <span class="about-num-desc">Competition Vehicles &amp; Hardware Projects Built</span>
+                  </div>
+                  <div class="about-num-row">
+                    <span class="about-big-num">06<span class="text-signal">+</span></span>
+                    <span class="about-num-desc">Years of Continuous Collegiate Racing &amp; Innovation</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHAT WE DO (THE CORE PILLARS) -->
+      <section class="about-pillars-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up ref-what-header">
+            <div>
+              <p class="ref-eyebrow text-signal">// WHAT WE DO</p>
+              <h2 class="ref-what-heading">
+                Ideas into <span class="text-signal">engineered reality.</span>
+              </h2>
+            </div>
+            <p class="ref-what-subtext">
+              Real projects. Real race deadlines. Real industrial skills. Explore the core disciplines that define our chapter work.
+            </p>
+          </div>
+
+          <div class="about-pillars-grid">
+            <article data-reveal class="reveal-up pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">01</span>
+                <span class="pillar-badge mono">DESIGN &amp; FABRICATION</span>
+              </div>
+              <h3 class="pillar-title">CAD, Simulation &amp; Manufacturing</h3>
+              <p class="pillar-desc">
+                From generative CAD modeling and structural FEA to CNC turning, TIG/MIG welding, and carbon-fiber composite layup. Our members engineer race-grade spaceframe chassis, custom uprights, steering racks, and aerodynamic elements from scratch.
+              </p>
+              <ul class="pillar-features">
+                <li>SolidWorks, CATIA &amp; ANSYS structural analysis</li>
+                <li>Custom suspension geometry &amp; roll center optimization</li>
+                <li>In-house chassis fabrication, welding &amp; precision assembly</li>
+              </ul>
+            </article>
+
+            <article data-reveal class="reveal-up reveal-delay pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">02</span>
+                <span class="pillar-badge mono">CLEAN MOBILITY</span>
+              </div>
+              <h3 class="pillar-title">EV Systems &amp; Advanced Powertrain</h3>
+              <p class="pillar-desc">
+                Spearheading the electric transition in collegiate motorsport. We engineer custom high-voltage lithium-ion battery packs, intelligent Battery Management Systems (BMS), motor controller parameter tuning, and real-time CAN bus telemetry.
+              </p>
+              <ul class="pillar-features">
+                <li>High-voltage battery thermal management &amp; cell balancing</li>
+                <li>Custom motor tuning &amp; regenerative braking logic</li>
+                <li>Wireless telemetry dashboards &amp; trackside diagnostics</li>
+              </ul>
+            </article>
+
+            <article data-reveal class="reveal-up pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">03</span>
+                <span class="pillar-badge mono">EDUCATION &amp; WORKSHOPS</span>
+              </div>
+              <h3 class="pillar-title">Workshops &amp; Engineering Bootcamps</h3>
+              <p class="pillar-desc">
+                Fostering technical literacy beyond the workshop. We host hands-on workshops for hundreds of campus students covering vehicle dynamics, automotive electronics, microcontroller coding, industrial CAD, and motorsport safety protocols.
+              </p>
+              <ul class="pillar-features">
+                <li>Annual campus-wide CAD &amp; EV design masterclasses</li>
+                <li>Hands-on welding, telemetry, and wiring bootcamps</li>
+                <li>Senior-to-junior engineering mentorship programs</li>
+              </ul>
+            </article>
+
+            <article data-reveal class="reveal-up reveal-delay pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">04</span>
+                <span class="pillar-badge mono">MANAGEMENT &amp; MEDIA</span>
+              </div>
+              <h3 class="pillar-title">Operations, Sponsorship &amp; Media</h3>
+              <p class="pillar-desc">
+                Running a championship team demands commercial excellence. Our operations division drives corporate sponsorship proposals, financial auditing, inventory procurement, event logistics, documentary cinematography, and digital outreach.
+              </p>
+              <ul class="pillar-features">
+                <li>Corporate sponsor pitches &amp; CSR partnership development</li>
+                <li>Budget management, supply chain &amp; part procurement</li>
+                <li>Digital brand identity, media coverage &amp; public relations</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- AFFILIATION & INSTITUTIONAL BACKING -->
+      <section class="about-affiliation-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up about-affiliation-card">
+            <div class="about-affil-content">
+              <div class="about-affil-badges">
+                <span class="badge mono">NATIONAL AFFILIATION</span>
+                <span class="badge mono" style="border-color: rgba(246, 183, 25, 0.4); color: var(--color-signal);">SAEINDIA CHAPTER #3281</span>
+              </div>
+              <h2 class="about-affil-title">Backed by SAEINDIA &amp; BIT Sindri</h2>
+              <p class="about-affil-text">
+                SAE India BIT Sindri is an officially recognized Collegiate Chapter under the Eastern Section of SAEINDIA, affiliated with SAE International. Hosted at <strong>Birsa Institute of Technology (BIT) Sindri</strong>—a premier state government engineering institution established in 1949—the club operates with faculty mentorship from the Department of Mechanical Engineering and institutional backing from institute leadership.
+              </p>
+              <div class="about-affil-meta-row">
+                <div class="affil-meta-item">
+                  <span class="affil-meta-label">Parent Body</span>
+                  <span class="affil-meta-val">SAEINDIA · SAE International</span>
+                </div>
+                <div class="affil-meta-item">
+                  <span class="affil-meta-label">Collegiate Host</span>
+                  <span class="affil-meta-val">BIT Sindri, Dhanbad (Est. 1949)</span>
+                </div>
+                <div class="affil-meta-item">
+                  <span class="affil-meta-label">Host Department</span>
+                  <span class="affil-meta-val">Dept. of Mechanical Engineering</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CALL TO ACTION BANNER -->
+      <section class="about-cta-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up team-join-banner">
+            <div>
+              <p class="ref-eyebrow text-signal">// BE PART OF THE STORY</p>
+              <h3 class="team-join-heading">Ready to step onto the build floor?</h3>
+            </div>
+            <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
+              Join Velocity SAE
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+            </a>
+          </div>
         </div>
       </section>
     </section>
@@ -510,7 +804,7 @@
           <div>
             <div class="team-eyebrow-row">
               <span class="team-eyebrow-line"></span>
-              <p class="ref-eyebrow text-signal">Core committee · 2025</p>
+              <p class="ref-eyebrow text-signal">Office bearers</p>
             </div>
             <h1 class="ref-team-heading">
               The people behind

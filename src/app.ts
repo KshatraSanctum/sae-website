@@ -310,6 +310,7 @@ export function renderAll(): void {
   renderSponsorFilters();
   renderYear();
   initJoinForm();
+  initDbcScrollShowcase();
 }
 
 // ===================== HERO SCENES (src_ref) =====================
@@ -388,6 +389,9 @@ export function initRouter(): void {
       a.classList.toggle("active", a.dataset.page === id);
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (id === "home") {
+      setTimeout(() => updateDbcCardsFn?.(), 60);
+    }
   }
 
   function navigateTo(id: string): void {
@@ -499,4 +503,116 @@ export function initMobileNav(): void {
       setMenuState(false);
     }
   });
+}
+
+// ===================== DESIGN · BUILD · COMPETE SCROLL SHOWCASE =====================
+
+let updateDbcCardsFn: (() => void) | null = null;
+
+export function initDbcScrollShowcase(): void {
+  const section = document.getElementById('dbcShowcase');
+  const stage = document.getElementById('dbcStage');
+  const track = document.getElementById('dbcCardsTrack');
+  if (!section || !stage || !track) return;
+
+  const cards = Array.from(track.querySelectorAll<HTMLElement>('.dbc-card'));
+  const pills = Array.from(document.querySelectorAll<HTMLElement>('.dbc-pill'));
+  const dots = Array.from(document.querySelectorAll<HTMLElement>('.dbc-dot'));
+
+  if (!cards.length) return;
+
+  let currentActiveIndex = -1;
+  let ticking = false;
+
+  function setActiveStep(activeIndex: number): void {
+    if (activeIndex === currentActiveIndex) return;
+    currentActiveIndex = activeIndex;
+    cards.forEach((card, idx) => {
+      card.classList.toggle('is-active', idx === activeIndex);
+    });
+    pills.forEach((pill, idx) => {
+      pill.classList.toggle('is-active', idx === activeIndex);
+    });
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle('is-active', idx === activeIndex);
+    });
+  }
+
+  function update(): void {
+    ticking = false;
+    const rect = section!.getBoundingClientRect();
+    const windowH = window.innerHeight;
+
+    // Check if section is far out of view to skip calculations
+    if (rect.bottom < -windowH || rect.top > windowH * 2) return;
+
+    const totalScrollRange = rect.height - windowH;
+    if (totalScrollRange <= 0) return;
+
+    // Progress: 0 when top is at or above viewport top, 1 when section bottom hits viewport bottom
+    const scrolled = Math.min(Math.max(-rect.top, 0), totalScrollRange);
+    const progress = scrolled / totalScrollRange;
+
+    // Calculate horizontal offsets
+    const stageW = stage!.clientWidth;
+    const firstCard = cards[0];
+    const cardW = firstCard.offsetWidth || firstCard.clientWidth;
+    const cardGap = parseFloat(window.getComputedStyle(track!).gap) || 32;
+
+    // Center offset for first card:
+    const baseOffset = Math.max(0, (stageW - cardW) / 2);
+    // Total distance to travel so last card is centered:
+    const totalTravel = (cards.length - 1) * (cardW + cardGap);
+    const targetX = baseOffset - progress * totalTravel;
+
+    track!.style.transform = `translate3d(${targetX}px, 0, 0)`;
+
+    // Active card index: 0, 1, or 2
+    const stepRatio = 1 / (cards.length - 1);
+    let activeIndex = Math.round(progress / stepRatio);
+    activeIndex = Math.min(Math.max(activeIndex, 0), cards.length - 1);
+
+    setActiveStep(activeIndex);
+  }
+
+  updateDbcCardsFn = update;
+
+  function onScrollOrResize(): void {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  function scrollToStep(stepIndex: number): void {
+    const rect = section!.getBoundingClientRect();
+    const currentY = window.scrollY;
+    const sectionTop = currentY + rect.top;
+    const totalScrollRange = rect.height - window.innerHeight;
+    const stepRatio = stepIndex / (cards.length - 1);
+    const targetY = sectionTop + stepRatio * totalScrollRange;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+  }
+
+  pills.forEach((pill, idx) => {
+    pill.addEventListener('click', () => scrollToStep(idx));
+  });
+
+  dots.forEach((dot, idx) => {
+    dot.addEventListener('click', () => scrollToStep(idx));
+  });
+
+  cards.forEach((card, idx) => {
+    card.addEventListener('click', () => {
+      if (idx !== currentActiveIndex) {
+        scrollToStep(idx);
+      }
+    });
+  });
+
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+  // Initial update
+  requestAnimationFrame(update);
 }

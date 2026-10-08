@@ -396,5 +396,5 @@ export const SPONSOR_FILTER_DEFS: [string, string][] = [
 ];
 
 export const PAGES: string[] = [
-  "home", "events", "competitions", "bearers", "team", "sponsors", "departments", "join"
+  "home", "about", "events", "competitions", "bearers", "team", "sponsors", "departments", "join"
 ];
