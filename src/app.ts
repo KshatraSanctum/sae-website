@@ -6,7 +6,6 @@ import {
   TAG_CLASSES, PAGES,
   type EventItem, type SponsorItem
 } from './data';
-import { generateGardenHtml, initDeveloperEasterEgg } from './easterEgg';
 
 // ===================== RENDER FUNCTIONS =====================
 
@@ -98,14 +97,11 @@ function renderCoreTeam(): void {
   const el = document.getElementById("coreTeamGrid");
   if (!el) return;
   el.innerHTML = CORE_TEAM_MEMBERS.map((member, index) => {
-    const isDev = member.name.toLowerCase().includes("rahul kumar mahto");
     return `
     <article
       data-reveal
-      class="team-card ${isDev ? 'team-card-dev' : ''} reveal-up group"
-      ${isDev ? 'data-easter-egg="developer"' : ''}
+      class="team-card reveal-up group"
     >
-      ${isDev ? generateGardenHtml() : ''}
       <div class="team-card-media">
         <img
           src="${member.image}"
@@ -309,7 +305,6 @@ export function renderAll(): void {
   renderCompetitions();
   renderBearers();
   renderCoreTeam();
-  initDeveloperEasterEgg();
   renderTeamSections();
   renderDepartments();
   renderSponsorFilters();
