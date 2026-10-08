@@ -69,7 +69,17 @@ export function initEventsUI() {
         });
     }, observerOptions);
 
-    timelineItems.forEach(item => observer.observe(item));
+    timelineItems.forEach((item, idx) => {
+        item.addEventListener('click', () => {
+            timelineItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            if (currentIndex !== idx) {
+                currentIndex = idx;
+                updateDetails(eventData[idx]);
+            }
+        });
+        observer.observe(item);
+    });
 
     function updateDetails(data: any) {
         displayWrapper?.classList.add('fade-out');
