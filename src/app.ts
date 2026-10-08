@@ -38,7 +38,7 @@ function renderEvents(filter: string): void {
     </div>`).join("");
 }
 
-function renderEventFilters(): void {
+export function renderEventFilters(): void {
   const filtersEl = document.getElementById("eventFilters");
   if (!filtersEl) return;
 
