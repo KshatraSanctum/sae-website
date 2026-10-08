@@ -1437,6 +1437,238 @@
   white-space: nowrap;
 }
 
+/* ==========================================================================
+   GLIMPSES SHOWCASE SECTION (FULL-WIDTH DUAL-TRACK TICKER)
+   ========================================================================== */
+
+.ref-glimpses-section {
+  position: relative;
+  background-color: #05070a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5.5rem 0 6rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ref-glimpses-header-wrap {
+  text-align: center;
+  max-width: 50rem;
+  margin: 0 auto 3.5rem;
+  padding: 0 1.5rem;
+}
+
+.ref-glimpses-heading {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .ref-glimpses-heading {
+    font-size: 3.5rem;
+  }
+}
+
+.ref-glimpses-copy {
+  margin-top: 1.25rem;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+/* Edge gradient overlays for seamless full-width fading */
+.ref-glimpses-section::before,
+.ref-glimpses-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 140px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.ref-glimpses-section::before {
+  left: 0;
+  background: linear-gradient(to right, #05070a 15%, transparent);
+}
+
+.ref-glimpses-section::after {
+  right: 0;
+  background: linear-gradient(to left, #05070a 15%, transparent);
+}
+
+@media (max-width: 768px) {
+  .ref-glimpses-section::before,
+  .ref-glimpses-section::after {
+    width: 60px;
+  }
+}
+
+.glimpses-marquee-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.glimpses-marquee-row {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  display: flex;
+  user-select: none;
+  padding: 0.65rem 0; /* Headroom so hover scale & shadows never clip */
+}
+
+.glimpses-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.glimpses-marquee-track.track-dir-left {
+  animation: floatGlimpsesLeft 34s linear infinite;
+}
+
+.glimpses-marquee-track.track-dir-right {
+  animation: floatGlimpsesRight 38s linear infinite;
+}
+
+.glimpses-marquee-row:hover .glimpses-marquee-track {
+  animation-play-state: paused;
+}
+
+.glimpses-marquee-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@keyframes floatGlimpsesLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes floatGlimpsesRight {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Glimpse Card */
+.glimpse-card {
+  position: relative;
+  width: 340px;
+  height: 225px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0d121c;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.3s ease,
+              box-shadow 0.35s ease;
+}
+
+.glimpse-card:hover {
+  transform: translateY(-6px) scale(1.025);
+  border-color: rgba(246, 183, 25, 0.55);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(246, 183, 25, 0.22);
+  z-index: 3;
+}
+
+.glimpse-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.glimpse-card:hover .glimpse-img {
+  transform: scale(1.08);
+}
+
+.glimpse-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(3, 4, 6, 0.05) 0%,
+    rgba(3, 4, 6, 0.3) 45%,
+    rgba(3, 4, 6, 0.92) 100%
+  );
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.glimpse-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.15rem 1.25rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  pointer-events: none;
+}
+
+.glimpse-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-signal);
+  background: rgba(246, 183, 25, 0.12);
+  border: 1px solid rgba(246, 183, 25, 0.3);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.glimpse-title {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+@media (max-width: 640px) {
+  .glimpse-card {
+    width: 275px;
+    height: 185px;
+  }
+  .glimpse-title {
+    font-size: 0.92rem;
+  }
+  .ref-glimpses-section {
+    padding: 4rem 0 4.5rem;
+  }
+}
+
 /* ===================== TEAM SECTION ===================== */
 
 .ref-team-section {
