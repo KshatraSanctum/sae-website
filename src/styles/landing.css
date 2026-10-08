@@ -2637,49 +2637,179 @@
 }
 
 @media (max-width: 640px) {
-  .dbc-card {
-    flex: 0 0 94%;
-    padding: 1.5rem 1.25rem;
-    min-height: auto;
+  .dbc-scroll-section {
+    height: 220vh;
   }
-  .dbc-card-num-watermark {
-    font-size: 2.5rem;
-    top: 1rem;
-    right: 1.25rem;
+
+  .dbc-sticky-viewport {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    padding-top: 4.25rem;
+    padding-bottom: 2rem;
+    justify-content: center;
   }
-  .dbc-card-title {
-    font-size: 2.25rem;
+
+  .dbc-container {
+    padding: 0.25rem 0.85rem;
   }
-  .dbc-card-subtitle {
-    font-size: 0.85rem;
-    line-height: 1.35;
-  }
-  .dbc-card-desc {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-  }
-  .dbc-card-tags {
-    margin-bottom: 1rem;
-    gap: 0.35rem;
-  }
-  .dbc-card-footer {
-    gap: 1.25rem;
-    padding-top: 0.85rem;
-  }
-  .dbc-metric-val {
-    font-size: 1.05rem;
-  }
+
   .dbc-header {
-    margin-bottom: 1.25rem;
+    flex-direction: column;
+    margin-bottom: 0.65rem;
+    gap: 0.45rem;
   }
+
+  .dbc-header-left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .dbc-heading {
+    display: none;
+  }
+
+  .team-eyebrow-row {
+    margin-bottom: 0;
+  }
+
+  .ref-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
   .dbc-nav-pills {
     width: 100%;
+    display: flex;
     justify-content: space-between;
+    padding: 0.2rem 0.3rem;
   }
+
   .dbc-pill {
-    padding: 0.45rem 0.65rem;
-    font-size: 0.68rem;
+    flex: 1;
+    justify-content: center;
+    padding: 0.38rem 0.45rem;
+    font-size: 0.64rem;
+    gap: 0.3rem;
+  }
+
+  .dbc-pill-num {
+    font-size: 0.6rem;
+  }
+
+  .dbc-stage {
+    min-height: 0;
+  }
+
+  .dbc-card {
+    flex: 0 0 92%;
+    padding: 1.15rem 1rem;
+    min-height: 0;
+    border-radius: 6px;
+  }
+
+  .dbc-card-num-watermark {
+    font-size: 2.2rem;
+    top: 0.65rem;
+    right: 0.85rem;
+    opacity: 0.35;
+  }
+
+  .dbc-card-top-bar {
+    margin-bottom: 0.25rem;
+  }
+
+  .dbc-card-top-bar .badge {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.45rem;
+  }
+
+  .dbc-card-title {
+    font-size: 1.85rem;
+    line-height: 0.95;
+    margin: 0.2rem 0 0.2rem;
+  }
+
+  .dbc-card-subtitle {
+    font-size: 0.74rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .dbc-card-desc {
+    font-size: 0.78rem;
+    line-height: 1.42;
+    margin-bottom: 0.65rem;
+    color: rgba(255, 255, 255, 0.65);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .dbc-card-tags {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.3rem;
+    margin-bottom: 0.65rem;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .dbc-card-tags::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dbc-card-tags .ref-skill-pill {
+    white-space: nowrap;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .dbc-card-footer {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 0.45rem;
+    padding-top: 0.65rem;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .dbc-metric {
+    flex: 1;
+    gap: 0.1rem;
+  }
+
+  .dbc-metric-val {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .dbc-metric-label {
+    font-size: 0.54rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .dbc-dots-row {
+    margin-top: 0.65rem;
+    gap: 0.45rem;
+  }
+
+  .dbc-dot {
+    width: 20px;
+    height: 3px;
+  }
+
+  .dbc-dot.is-active {
+    width: 32px;
   }
 }
 

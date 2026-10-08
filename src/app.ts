@@ -610,6 +610,31 @@ export function initDbcScrollShowcase(): void {
     });
   });
 
+  // Mobile touch swipe gestures
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  stage.addEventListener('touchstart', (e: TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  stage.addEventListener('touchend', (e: TouchEvent) => {
+    if (e.changedTouches.length === 1) {
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const deltaY = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+        if (deltaX < 0 && currentActiveIndex < cards.length - 1) {
+          scrollToStep(currentActiveIndex + 1);
+        } else if (deltaX > 0 && currentActiveIndex > 0) {
+          scrollToStep(currentActiveIndex - 1);
+        }
+      }
+    }
+  }, { passive: true });
+
   window.addEventListener('scroll', onScrollOrResize, { passive: true });
   window.addEventListener('resize', onScrollOrResize, { passive: true });
 
