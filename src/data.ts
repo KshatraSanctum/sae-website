@@ -30,10 +30,13 @@ export interface BearerItem {
 export interface CoreTeamMember {
   name: string;
   post: string;
-  discipline: string;
+  subPost?: string;
+  discipline?: string;
   image: string;
   linkedin?: string;
+  email?: string;
   instagram?: string;
+  objectPosition?: string;
 }
 
 export interface TeamSection {
@@ -108,52 +111,126 @@ export const BEARERS: BearerItem[] = [
 
 export const CORE_TEAM_MEMBERS: CoreTeamMember[] = [
   {
-    name: "Aarav Mehta",
+    name: "Raj Aryan",
     post: "Chairperson",
-    discipline: "Club Leadership",
-    image: "https://images.unsplash.com/photo-1664845780736-88dc71de5be5?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
-    linkedin: "https://www.linkedin.com/",
-    instagram: "https://www.instagram.com/",
+    image: "/team/raj_aryan.jpg",
+    linkedin: "https://www.linkedin.com/in/raj-aryan-32ba59287/",
+    email: "raj1248aryan@gmail.com",
+    objectPosition: "center 20%",
   },
   {
-    name: "Ananya Singh",
+    name: "Ritu Raman",
+    post: "Secretary",
+    image: "/team/ritu_raman.jpg",
+    linkedin: "https://www.linkedin.com/in/rituraman16",
+    email: "rituraman9x2015@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Md Sagir Ansari",
     post: "Vice Chairperson",
-    discipline: "Operations",
-    image: "https://images.unsplash.com/photo-1621274790572-7c32596bc67f?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
-    linkedin: "https://www.linkedin.com/",
-    instagram: "https://www.instagram.com/",
+    subPost: "Steering & Suspension Head",
+    image: "/team/sagir.jpg",
+    linkedin: "https://www.linkedin.com/in/md-sagir-ansari-ab1885292",
+    email: "mdsagiransari90.2@gmail.com",
+    objectPosition: "center 20%",
   },
   {
-    name: "Rohan Verma",
+    name: "Roshan Kumar",
+    post: "Joint Secretary",
+    subPost: "Design & CAE Head",
+    image: "/team/roshan_kumar.jpg",
+    linkedin: "https://www.linkedin.com/in/roshan-kumar-586522294",
+    email: "roshan.meug.23@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Bhumika Kumari",
+    post: "Joint Secretary",
+    subPost: "Braking Head",
+    image: "/team/bhumika.jpg",
+    linkedin: "https://www.linkedin.com/in/bhumika-kumari-7856a627b",
+    email: "bhumika.kumari035@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Sumit Pandey",
+    post: "Treasurer",
+    subPost: "Aviation Head",
+    image: "/team/sumit_pandey.jpg",
+    linkedin: "https://www.linkedin.com/in/sumitpandey2004",
+    email: "sumit200pandey@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Rahul Kumar Mahto",
     post: "Technical Head",
-    discipline: "Vehicle Systems",
-    image: "https://images.unsplash.com/photo-1780368741599-d3e91631687c?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
-    linkedin: "https://www.linkedin.com/",
-    instagram: "https://www.instagram.com/",
+    subPost: "Team Manager",
+    image: "/team/rahul_kumar_mahto.jpg",
+    linkedin: "https://www.linkedin.com/in/isihin",
+    email: "rahulkumarmahto334@gmail.com",
+    objectPosition: "center 20%",
   },
   {
-    name: "Ishita Sharma",
-    post: "General Secretary",
-    discipline: "Administration",
-    image: "https://images.unsplash.com/photo-1725473823311-122c1c86966b?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
-    linkedin: "https://www.linkedin.com/",
-    instagram: "https://www.instagram.com/",
+    name: "Vivek Mahto",
+    post: "Alumni In-Charge",
+    subPost: "Electronics Head",
+    image: "/team/vivek_mahto.jpg",
+    linkedin: "https://www.linkedin.com/in/vivek-mahto-944055287",
+    email: "01.vivekmahto@gmail.com",
+    objectPosition: "center 20%",
   },
   {
-    name: "Aditya Raj",
-    post: "Design Lead",
-    discipline: "CAD & Simulation",
-    image: "https://images.unsplash.com/photo-1639312091690-8b26d223c5a4?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
-    linkedin: "https://www.linkedin.com/",
-    instagram: "https://www.instagram.com/",
+    name: "Sonam Kumari",
+    post: "Alumni In-Charge",
+    image: "/team/sonam_kumari.jpg",
+    linkedin: "https://www.linkedin.com/in/sonam-kumari-840b41290",
+    email: "sonamkri1211@gmail.com",
+    objectPosition: "center 20%",
   },
   {
-    name: "Nisha Kumari",
-    post: "Media Lead",
-    discipline: "Brand & Outreach",
-    image: "https://images.unsplash.com/photo-1556560984-36a7ec2ba544?crop=faces&fit=crop&fm=jpg&q=85&w=800&h=1000",
-    linkedin: "https://www.linkedin.com/",
-    instagram: "https://www.instagram.com/",
+    name: "Adarsh Kumar",
+    post: "Logistics & Procurement Head",
+    image: "/team/adarash_kumar.jpeg",
+    linkedin: "https://www.linkedin.com/in/adarsh-kumar-31681a294",
+    email: "kumaradarsh0657@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Arshdul Quadri",
+    post: "Media & Graphics Head",
+    subPost: "Powertrain Head",
+    image: "/team/arshadul.jpg",
+    linkedin: "https://www.linkedin.com/in/arshdul-quadri-9687ab282",
+    email: "arshad30410@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Amarjeet Kumar Prajapati",
+    post: "Joint Treasurer",
+    subPost: "Powertrain Head",
+    image: "/team/amarjeet.png",
+    linkedin: "https://www.linkedin.com/in/amarjeet-kumar-prajapati-7b9296304",
+    email: "amarjeetbtps@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Anupriya Kumari",
+    post: "Public Relations Officer (PRO)",
+    subPost: "CFD Head",
+    image: "/team/anupriya_kumari.jpg",
+    linkedin: "https://www.linkedin.com/in/anupriya-kumari-251b29290",
+    email: "anupriyayadav705@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Ayush Kumar Saw",
+    post: "Team Manager",
+    subPost: "Aviation Head",
+    image: "/team/ayush_kumar_saw.jpg",
+    linkedin: "https://www.linkedin.com/in/ayush-kumar-saw-ba162a291",
+    email: "sawayushkumar1@gmail.com",
+    objectPosition: "center 20%",
   },
 ];
 
@@ -319,5 +396,5 @@ export const SPONSOR_FILTER_DEFS: [string, string][] = [
 ];
 
 export const PAGES: string[] = [
-  "home", "events", "competitions", "bearers", "team", "sponsors", "departments", "join"
+  "home", "about", "events", "competitions", "bearers", "team", "sponsors", "departments", "join"
 ];

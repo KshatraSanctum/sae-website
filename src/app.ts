@@ -96,7 +96,8 @@ function renderBearers(): void {
 function renderCoreTeam(): void {
   const el = document.getElementById("coreTeamGrid");
   if (!el) return;
-  el.innerHTML = CORE_TEAM_MEMBERS.map((member, index) => `
+  el.innerHTML = CORE_TEAM_MEMBERS.map((member, index) => {
+    return `
     <article
       data-reveal
       class="team-card reveal-up group"
@@ -104,54 +105,56 @@ function renderCoreTeam(): void {
       <div class="team-card-media">
         <img
           src="${member.image}"
-          alt="${member.name}, ${member.post}"
+          alt="${member.name}, ${member.post}${member.subPost ? ' - ' + member.subPost : ''}"
           class="team-card-img"
+          style="${member.objectPosition ? `object-position: ${member.objectPosition};` : ''}"
           loading="lazy"
         />
         <div class="team-card-overlay"></div>
         <div class="team-card-badge-wrap">
-          <span class="team-card-badge">0${index + 1}</span>
+          <span class="team-card-badge">${String(index + 1).padStart(2, '0')}</span>
+        </div>
+        <div class="team-card-socials">
+          ${member.linkedin ? `
+          <a
+            href="${member.linkedin}"
+            target="_blank"
+            rel="noreferrer"
+            class="team-social-btn"
+            aria-label="${member.name} on LinkedIn"
+            title="LinkedIn"
+          >
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M8 10v7M8 7v.01M12 17v-4a3 3 0 0 1 6 0v4M12 10v7" />
+            </svg>
+          </a>` : ''}
+          ${member.email ? `
+          <a
+            href="mailto:${member.email}"
+            class="team-social-btn"
+            aria-label="Email ${member.name}"
+            title="${member.email}"
+          >
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+          </a>` : ''}
         </div>
       </div>
       <div class="team-card-info">
-        <p class="team-card-discipline">${member.discipline}</p>
         <h3 class="team-card-name">${member.name}</h3>
         <div class="team-card-footer">
-          <div>
-            <p class="team-card-post-label">Club post</p>
+          <div class="team-card-roles">
             <p class="team-card-post">${member.post}</p>
-          </div>
-          <div class="team-card-socials">
-            <a
-              href="${member.linkedin || 'https://www.linkedin.com/'}"
-              target="_blank"
-              rel="noreferrer"
-              class="team-social-btn"
-              aria-label="${member.name} on LinkedIn"
-            >
-              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M8 10v7M8 7v.01M12 17v-4a3 3 0 0 1 6 0v4M12 10v7" />
-              </svg>
-            </a>
-            <a
-              href="${member.instagram || 'https://www.instagram.com/'}"
-              target="_blank"
-              rel="noreferrer"
-              class="team-social-btn"
-              aria-label="${member.name} on Instagram"
-            >
-              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="17.5" cy="6.5" r=".75" fill="currentColor" stroke="none" />
-              </svg>
-            </a>
+            ${member.subPost ? `<p class="team-card-subpost">${member.subPost}</p>` : ''}
           </div>
         </div>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderTeamSections(): void {
@@ -307,6 +310,7 @@ export function renderAll(): void {
   renderSponsorFilters();
   renderYear();
   initJoinForm();
+  initDbcScrollShowcase();
 }
 
 // ===================== HERO SCENES (src_ref) =====================
@@ -385,6 +389,9 @@ export function initRouter(): void {
       a.classList.toggle("active", a.dataset.page === id);
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (id === "home") {
+      setTimeout(() => updateDbcCardsFn?.(), 60);
+    }
   }
 
   function navigateTo(id: string): void {
@@ -496,4 +503,141 @@ export function initMobileNav(): void {
       setMenuState(false);
     }
   });
+}
+
+// ===================== DESIGN · BUILD · COMPETE SCROLL SHOWCASE =====================
+
+let updateDbcCardsFn: (() => void) | null = null;
+
+export function initDbcScrollShowcase(): void {
+  const section = document.getElementById('dbcShowcase');
+  const stage = document.getElementById('dbcStage');
+  const track = document.getElementById('dbcCardsTrack');
+  if (!section || !stage || !track) return;
+
+  const cards = Array.from(track.querySelectorAll<HTMLElement>('.dbc-card'));
+  const pills = Array.from(document.querySelectorAll<HTMLElement>('.dbc-pill'));
+  const dots = Array.from(document.querySelectorAll<HTMLElement>('.dbc-dot'));
+
+  if (!cards.length) return;
+
+  let currentActiveIndex = -1;
+  let ticking = false;
+
+  function setActiveStep(activeIndex: number): void {
+    if (activeIndex === currentActiveIndex) return;
+    currentActiveIndex = activeIndex;
+    cards.forEach((card, idx) => {
+      card.classList.toggle('is-active', idx === activeIndex);
+    });
+    pills.forEach((pill, idx) => {
+      pill.classList.toggle('is-active', idx === activeIndex);
+    });
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle('is-active', idx === activeIndex);
+    });
+  }
+
+  function update(): void {
+    ticking = false;
+    const rect = section!.getBoundingClientRect();
+    const windowH = window.innerHeight;
+
+    // Check if section is far out of view to skip calculations
+    if (rect.bottom < -windowH || rect.top > windowH * 2) return;
+
+    const totalScrollRange = rect.height - windowH;
+    if (totalScrollRange <= 0) return;
+
+    // Progress: 0 when top is at or above viewport top, 1 when section bottom hits viewport bottom
+    const scrolled = Math.min(Math.max(-rect.top, 0), totalScrollRange);
+    const progress = scrolled / totalScrollRange;
+
+    // Calculate horizontal offsets
+    const stageW = stage!.clientWidth;
+    const firstCard = cards[0];
+    const cardW = firstCard.offsetWidth || firstCard.clientWidth;
+    const cardGap = parseFloat(window.getComputedStyle(track!).gap) || 32;
+
+    // Center offset for first card:
+    const baseOffset = Math.max(0, (stageW - cardW) / 2);
+    // Total distance to travel so last card is centered:
+    const totalTravel = (cards.length - 1) * (cardW + cardGap);
+    const targetX = baseOffset - progress * totalTravel;
+
+    track!.style.transform = `translate3d(${targetX}px, 0, 0)`;
+
+    // Active card index: 0, 1, or 2
+    const stepRatio = 1 / (cards.length - 1);
+    let activeIndex = Math.round(progress / stepRatio);
+    activeIndex = Math.min(Math.max(activeIndex, 0), cards.length - 1);
+
+    setActiveStep(activeIndex);
+  }
+
+  updateDbcCardsFn = update;
+
+  function onScrollOrResize(): void {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  function scrollToStep(stepIndex: number): void {
+    const rect = section!.getBoundingClientRect();
+    const currentY = window.scrollY;
+    const sectionTop = currentY + rect.top;
+    const totalScrollRange = rect.height - window.innerHeight;
+    const stepRatio = stepIndex / (cards.length - 1);
+    const targetY = sectionTop + stepRatio * totalScrollRange;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+  }
+
+  pills.forEach((pill, idx) => {
+    pill.addEventListener('click', () => scrollToStep(idx));
+  });
+
+  dots.forEach((dot, idx) => {
+    dot.addEventListener('click', () => scrollToStep(idx));
+  });
+
+  cards.forEach((card, idx) => {
+    card.addEventListener('click', () => {
+      if (idx !== currentActiveIndex) {
+        scrollToStep(idx);
+      }
+    });
+  });
+
+  // Mobile touch swipe gestures
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  stage.addEventListener('touchstart', (e: TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  stage.addEventListener('touchend', (e: TouchEvent) => {
+    if (e.changedTouches.length === 1) {
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const deltaY = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+        if (deltaX < 0 && currentActiveIndex < cards.length - 1) {
+          scrollToStep(currentActiveIndex + 1);
+        } else if (deltaX > 0 && currentActiveIndex > 0) {
+          scrollToStep(currentActiveIndex - 1);
+        }
+      }
+    }
+  }, { passive: true });
+
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+  // Initial update
+  requestAnimationFrame(update);
 }
