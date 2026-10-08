@@ -298,7 +298,7 @@ function initJoinForm(): void {
 
 export function renderAll(): void {
   renderNews();
-  renderEventFilters();
+  // renderEventFilters(); <-- Disabled original layout rendering
   renderCompetitions();
   renderBearers();
   renderCoreTeam();

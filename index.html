@@ -473,15 +473,180 @@
 
     <!-- ===================== EVENTS ===================== -->
     <section class="page" id="page-events">
-      <div class="page-head">
-        <span class="eyebrow">// chapter calendar</span>
-        <h1>Events</h1>
-        <p class="sub">Workshops, technical drives, industrial visits and the flagship moments that build a team — fill
-          in exact dates as
-          your term calendar is locked.</p>
+      <!-- PRIYA'S CUSTOM UI START -->
+      <div class="custom-events-wrapper">
+        <header class="custom-events-header">
+          <h1>Events & Competitions</h1>
+          <p>
+            Explore the national competitions we participate in and the technical
+            workshops we host
+          </p>
+        </header>
+
+        <!-- Horizontal Cards Section Before the Timeline -->
+        <section class="top-cards-section">
+          <div class="cards-wrapper">
+            <!-- Card 1: Tvaran -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-flagship">FLAGSHIP</span>
+              </div>
+              <span class="card-meta">Tech Mahotsav • Date TBA</span>
+              <h3>Tvaran</h3>
+              <p>
+                The chapter's flagship event — design challenges, EV hackathon and
+                hands-on builds open to the whole campus.
+              </p>
+              <div class="card-location">📍 BIT Sindri Campus</div>
+            </div>
+
+            <!-- Card 2: Recruitment -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-recruitment">RECRUITMENT</span>
+              </div>
+              <span class="card-meta">Odd Semester • Date TBA</span>
+              <h3>Freshers Induction & Orientation</h3>
+              <p>
+                Walkthrough of the four crews, how to join, and what a build season
+                looks like for new members.
+              </p>
+              <div class="card-location">📍 Mechanical Engineering Block</div>
+            </div>
+
+            <!-- Card 3: Workshop Chassis -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-workshop">WORKSHOP</span>
+              </div>
+              <span class="card-meta">Odd Semester • Date TBA</span>
+              <h3>Chassis & Roll-Cage Design</h3>
+              <p>
+                Hands-on session on frame fabrication, materials and the SAE
+                rulebook constraints that shape every build.
+              </p>
+              <div class="card-location">📍 SAE Workshop Bay</div>
+            </div>
+
+            <!-- Card 4: Industrial Visit -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-industrial">INDUSTRIAL VISIT</span>
+              </div>
+              <span class="card-meta">Even Semester • Date TBA</span>
+              <h3>Manufacturing Plant Visit</h3>
+              <p>
+                A look at production-line engineering and quality processes at an
+                automotive manufacturing facility.
+              </p>
+              <div class="card-location">📍 Off-Campus</div>
+            </div>
+
+            <!-- Card 5: Workshop EV Powertrain -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-workshop">WORKSHOP</span>
+              </div>
+              <span class="card-meta">Even Semester • Date TBA</span>
+              <h3>EV Powertrain Tech Talk</h3>
+              <p>
+                Covering motor selection, battery management and controller tuning
+                for electric builds.
+              </p>
+              <div class="card-location">📍 Seminar Hall</div>
+            </div>
+
+            <!-- Card 6: Flagship Test & Tune -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-flagship">FLAGSHIP</span>
+              </div>
+              <span class="card-meta">Pre-Competition • Date TBA</span>
+              <h3>Test & Tune Camp</h3>
+              <p>
+                Final shakedown runs and reliability checks before the team travels
+                for competition.
+              </p>
+              <div class="card-location">📍 Test Track</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Timeline Flow -->
+        <main class="events-container">
+          <!-- Left Side: Timeline Flow -->
+          <div class="timeline-section">
+            <div class="timeline-line"></div>
+
+            <!-- Timeline Item 1 -->
+            <div class="timeline-item left" data-index="0">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>BAJA SAE India</h3>
+                <span class="date">Annual National Competition</span>
+              </div>
+            </div>
+
+            <!-- Timeline Item 2 -->
+            <div class="timeline-item right" data-index="1">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>CAD Design Workshop</h3>
+                <span class="date">Hosted by SAE BIT Sindri</span>
+              </div>
+            </div>
+
+            <!-- Timeline Item 3 -->
+            <div class="timeline-item left" data-index="2">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>SUPRA SAE India</h3>
+                <span class="date">Annual National Competition</span>
+              </div>
+            </div>
+
+            <!-- Timeline Item 4 -->
+            <div class="timeline-item right" data-index="3">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>Engine Teardown Session</h3>
+                <span class="date">Hosted by SAE BIT Sindri</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Side: Sticky Event Details -->
+          <div class="details-section">
+            <div class="sticky-wrapper" id="details-display">
+              <div class="image-box">
+                <img
+                  id="display-img"
+                  src="https://via.placeholder.com/600x350/1e293b/eab308?text=BAJA+SAE+India"
+                  alt="Event Image"
+                />
+              </div>
+              <div class="info-container">
+                <h2 id="display-title">BAJA SAE India</h2>
+                <p id="display-date" class="highlight-date">
+                  Annual National Competition
+                </p>
+                <p id="display-desc">
+                  Our flagship participation event. We design, fabricate, and race a
+                  rugged single-seater all-terrain vehicle. The team goes through
+                  intense design evaluations, dynamic testing, and a grueling
+                  endurance race.
+                </p>
+
+                <!-- Upcoming Date Badge -->
+                <div id="display-upcoming" class="upcoming-badge">
+                  Next Event: February 2027
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
-      <div class="filters" id="eventFilters"></div>
-      <div class="timeline" id="eventTimeline"></div>
+      <!-- PRIYA'S CUSTOM UI END -->
     </section>
 
     <!-- ===================== COMPETITIONS ===================== -->
