@@ -170,152 +170,191 @@
         </div>
       </section>
 
-      <!-- ===================== DESIGN · BUILD · COMPETE (SCROLL SHOWCASE) ===================== -->
-      <section class="dbc-scroll-section" id="dbcShowcase">
-        <div class="dbc-sticky-viewport">
-          <div class="tech-grid dbc-bg-grid"></div>
-          <div class="ref-container dbc-container">
-            <!-- Header with Step Indicator Pills -->
-            <div class="dbc-header">
-              <div class="dbc-header-left">
+      <!-- ===================== DESIGN · BUILD · COMPETE (VERTICAL PIPELINE) ===================== -->
+      <section class="dbc-pipeline-section" id="dbcShowcase">
+        <div class="tech-grid dbc-bg-grid"></div>
+        <div class="ref-container dbc-pipeline-container">
+          <!-- Split Layout: Left Sticky Header / Narrative & Right Vertical Pipeline -->
+          <div class="dbc-pipeline-layout">
+            
+            <!-- Left Side: Sticky Engineering Overview (Desktop) -->
+            <div class="dbc-sticky-sidebar">
+              <div class="dbc-sidebar-inner">
                 <div class="team-eyebrow-row">
                   <span class="team-eyebrow-line"></span>
                   <p class="ref-eyebrow text-signal">// THE VELOCITY CYCLE</p>
                 </div>
                 <h2 class="dbc-heading">From Concept <span class="text-signal">to the Track.</span></h2>
-              </div>
-              <div class="dbc-nav-pills" role="tablist" aria-label="Velocity Cycle Phases">
-                <button type="button" class="dbc-pill is-active" data-dbc-step="0" aria-label="Phase 01: Design">
-                  <span class="dbc-pill-num">01</span>
-                  <span class="dbc-pill-label">DESIGN</span>
-                  <span class="dbc-pill-bar"></span>
-                </button>
-                <button type="button" class="dbc-pill" data-dbc-step="1" aria-label="Phase 02: Build">
-                  <span class="dbc-pill-num">02</span>
-                  <span class="dbc-pill-label">BUILD</span>
-                  <span class="dbc-pill-bar"></span>
-                </button>
-                <button type="button" class="dbc-pill" data-dbc-step="2" aria-label="Phase 03: Compete">
-                  <span class="dbc-pill-num">03</span>
-                  <span class="dbc-pill-label">COMPETE</span>
-                  <span class="dbc-pill-bar"></span>
-                </button>
-              </div>
-            </div>
+                <p class="dbc-sidebar-desc">
+                  Every racecar is an engineering masterclass. From computational simulation to precision workshop fabrication and national track warfare, here is our full lifecycle.
+                </p>
 
-            <!-- The Horizontal Stage (Tracks from Right to Left on Scroll) -->
-            <div class="dbc-stage" id="dbcStage">
-              <div class="dbc-cards-track" id="dbcCardsTrack">
-                <!-- 01 · DESIGN -->
-                <article class="dbc-card is-active" data-index="0">
-                  <div class="dbc-card-top-bar">
-                    <span class="badge mono">// 01 · SIMULATION &amp; CAD</span>
-                    <span class="dbc-card-num-watermark">01</span>
-                  </div>
-                  <h3 class="dbc-card-title">Design<span class="text-signal">.</span></h3>
-                  <p class="dbc-card-subtitle">Virtual Kinematics &amp; High-Downforce Aerodynamics</p>
-                  <p class="dbc-card-desc">
-                    Every championship machine begins in the digital wind tunnel. Our student engineering cohort uses SolidWorks, CATIA, and ANSYS to run structural FEA, calculate suspension kinematics, optimize spaceframe torsional rigidity, and simulate multi-element aerodynamic downforce before a single tube is cut.
-                  </p>
-                  <div class="dbc-card-tags">
-                    <span class="ref-skill-pill">SolidWorks CAD</span>
-                    <span class="ref-skill-pill">ANSYS Structural FEA</span>
-                    <span class="ref-skill-pill">CFD Aerodynamics</span>
-                    <span class="ref-skill-pill">Suspension Geometry</span>
-                    <span class="ref-skill-pill">Weight Optimization</span>
-                  </div>
-                  <div class="dbc-card-footer">
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-signal">100%</span>
-                      <span class="dbc-metric-label">Digital Validation</span>
-                    </div>
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-white">&lt;0.05mm</span>
-                      <span class="dbc-metric-label">CAD Tolerancing</span>
-                    </div>
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-signal">3.2x</span>
-                      <span class="dbc-metric-label">Torsional Rigidity</span>
-                    </div>
-                  </div>
-                </article>
+                <!-- Navigation Phase Pills (Click to smooth scroll to phase) -->
+                <div class="dbc-nav-pills" role="tablist" aria-label="Velocity Cycle Phases">
+                  <button type="button" class="dbc-pill is-active" data-dbc-step="0" aria-label="Phase 01: Design">
+                    <span class="dbc-pill-num">01</span>
+                    <span class="dbc-pill-label">DESIGN</span>
+                    <span class="dbc-pill-bar"></span>
+                  </button>
+                  <button type="button" class="dbc-pill" data-dbc-step="1" aria-label="Phase 02: Build">
+                    <span class="dbc-pill-num">02</span>
+                    <span class="dbc-pill-label">BUILD</span>
+                    <span class="dbc-pill-bar"></span>
+                  </button>
+                  <button type="button" class="dbc-pill" data-dbc-step="2" aria-label="Phase 03: Compete">
+                    <span class="dbc-pill-num">03</span>
+                    <span class="dbc-pill-label">COMPETE</span>
+                    <span class="dbc-pill-bar"></span>
+                  </button>
+                </div>
 
-                <!-- 02 · BUILD -->
-                <article class="dbc-card" data-index="1">
-                  <div class="dbc-card-top-bar">
-                    <span class="badge mono">// 02 · FABRICATION &amp; POWER</span>
-                    <span class="dbc-card-num-watermark">02</span>
+                <!-- Quick Telemetry Stats Widget -->
+                <div class="dbc-sidebar-metrics">
+                  <div class="dbc-sidebar-metric-item">
+                    <span class="mono text-signal">100%</span>
+                    <span class="dbc-metric-caption">CAD Validation</span>
                   </div>
-                  <h3 class="dbc-card-title">Build<span class="text-signal">.</span></h3>
-                  <p class="dbc-card-subtitle">Precision Machining, 4130 TIG Welding &amp; EV Integration</p>
-                  <p class="dbc-card-desc">
-                    On the workshop floor of BIT Sindri, blueprints become roaring machines. Our student engineers execute in-house CNC lathe turning, precision 4130 chromoly spaceframe TIG welding, custom carbon fiber composite molding, custom wiring harnesses, and high-voltage lithium battery pack integration.
-                  </p>
-                  <div class="dbc-card-tags">
-                    <span class="ref-skill-pill">Chromoly TIG Welding</span>
-                    <span class="ref-skill-pill">In-House CNC Machining</span>
-                    <span class="ref-skill-pill">Carbon Fiber Layup</span>
-                    <span class="ref-skill-pill">HV Battery Packaging</span>
-                    <span class="ref-skill-pill">CAN Bus Telemetry</span>
+                  <div class="dbc-sidebar-metric-item">
+                    <span class="mono text-white">4130</span>
+                    <span class="dbc-metric-caption">Chassis Grade</span>
                   </div>
-                  <div class="dbc-card-footer">
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-signal">4130</span>
-                      <span class="dbc-metric-label">Aircraft Chromoly</span>
-                    </div>
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-white">In-House</span>
-                      <span class="dbc-metric-label">Precision Machined</span>
-                    </div>
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-signal">Smart BMS</span>
-                      <span class="dbc-metric-label">EV Battery Safety</span>
-                    </div>
+                  <div class="dbc-sidebar-metric-item">
+                    <span class="mono text-signal">Podium</span>
+                    <span class="dbc-metric-caption">National Track</span>
                   </div>
-                </article>
-
-                <!-- 03 · COMPETE -->
-                <article class="dbc-card" data-index="2">
-                  <div class="dbc-card-top-bar">
-                    <span class="badge mono">// 03 · THE PROVING GROUND</span>
-                    <span class="dbc-card-num-watermark">03</span>
-                  </div>
-                  <h3 class="dbc-card-title">Compete<span class="text-signal">.</span></h3>
-                  <p class="dbc-card-subtitle">National Championships, Acceleration &amp; 4-Hour Endurance</p>
-                  <p class="dbc-card-desc">
-                    The ultimate proving ground where machines and student grit are tested under maximum pressure. We campaign our student-engineered vehicles against 100+ universities across India at BAJA SAEINDIA, Formula Bharat, and Mega ATV Championship—surviving high-G cornering and grueling 4-hour endurance battles.
-                  </p>
-                  <div class="dbc-card-tags">
-                    <span class="ref-skill-pill">BAJA SAEINDIA</span>
-                    <span class="ref-skill-pill">Formula Bharat</span>
-                    <span class="ref-skill-pill">Mega ATV Series</span>
-                    <span class="ref-skill-pill">4-Hour Endurance</span>
-                    <span class="ref-skill-pill">Track Telemetry</span>
-                  </div>
-                  <div class="dbc-card-footer">
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-signal">Podium</span>
-                      <span class="dbc-metric-label">National Contender</span>
-                    </div>
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-white">100+</span>
-                      <span class="dbc-metric-label">University Grid</span>
-                    </div>
-                    <div class="dbc-metric">
-                      <span class="dbc-metric-val mono text-signal">Live CAN</span>
-                      <span class="dbc-metric-label">Pit Diagnostics</span>
-                    </div>
-                  </div>
-                </article>
+                </div>
               </div>
             </div>
 
-            <!-- Dots Indicator for Mobile -->
-            <div class="dbc-dots-row">
-              <button type="button" class="dbc-dot is-active" data-dbc-step="0" aria-label="Go to Design"></button>
-              <button type="button" class="dbc-dot" data-dbc-step="1" aria-label="Go to Build"></button>
-              <button type="button" class="dbc-dot" data-dbc-step="2" aria-label="Go to Compete"></button>
+            <!-- Right Side: The Vertical Pipeline Flow -->
+            <div class="dbc-pipeline-feed">
+              <div class="dbc-pipeline-track">
+                <!-- Glowing circuit spine -->
+                <div class="dbc-pipeline-spine" aria-hidden="true"></div>
+
+                <!-- Phase 01: Design -->
+                <div class="dbc-pipeline-step is-active" data-index="0">
+                  <div class="dbc-pipeline-node" aria-hidden="true">
+                    <span class="dbc-node-pulse"></span>
+                    <span class="dbc-node-num mono">01</span>
+                  </div>
+                  <article class="dbc-card is-active" data-index="0">
+                    <div class="dbc-card-top-bar">
+                      <span class="badge mono">// 01 · SIMULATION &amp; CAD</span>
+                      <span class="dbc-card-num-watermark">01</span>
+                    </div>
+                    <h3 class="dbc-card-title">Design<span class="text-signal">.</span></h3>
+                    <p class="dbc-card-subtitle">Virtual Kinematics &amp; High-Downforce Aerodynamics</p>
+                    <p class="dbc-card-desc">
+                      Every championship machine begins in the digital wind tunnel. Our student engineering cohort uses SolidWorks, CATIA, and ANSYS to run structural FEA, calculate suspension kinematics, optimize spaceframe torsional rigidity, and simulate multi-element aerodynamic downforce before a single tube is cut.
+                    </p>
+                    <div class="dbc-card-tags">
+                      <span class="ref-skill-pill">SolidWorks CAD</span>
+                      <span class="ref-skill-pill">ANSYS Structural FEA</span>
+                      <span class="ref-skill-pill">CFD Aerodynamics</span>
+                      <span class="ref-skill-pill">Suspension Geometry</span>
+                      <span class="ref-skill-pill">Weight Optimization</span>
+                    </div>
+                    <div class="dbc-card-footer">
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">100%</span>
+                        <span class="dbc-metric-label">Digital Validation</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-white">&lt;0.05mm</span>
+                        <span class="dbc-metric-label">CAD Tolerancing</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">3.2x</span>
+                        <span class="dbc-metric-label">Torsional Rigidity</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <!-- Phase 02: Build -->
+                <div class="dbc-pipeline-step" data-index="1">
+                  <div class="dbc-pipeline-node" aria-hidden="true">
+                    <span class="dbc-node-pulse"></span>
+                    <span class="dbc-node-num mono">02</span>
+                  </div>
+                  <article class="dbc-card" data-index="1">
+                    <div class="dbc-card-top-bar">
+                      <span class="badge mono">// 02 · FABRICATION &amp; POWER</span>
+                      <span class="dbc-card-num-watermark">02</span>
+                    </div>
+                    <h3 class="dbc-card-title">Build<span class="text-signal">.</span></h3>
+                    <p class="dbc-card-subtitle">Precision Machining, 4130 TIG Welding &amp; EV Integration</p>
+                    <p class="dbc-card-desc">
+                      On the workshop floor of BIT Sindri, blueprints become roaring machines. Our student engineers execute in-house CNC lathe turning, precision 4130 chromoly spaceframe TIG welding, custom carbon fiber composite molding, custom wiring harnesses, and high-voltage lithium battery pack integration.
+                    </p>
+                    <div class="dbc-card-tags">
+                      <span class="ref-skill-pill">Chromoly TIG Welding</span>
+                      <span class="ref-skill-pill">In-House CNC Machining</span>
+                      <span class="ref-skill-pill">Carbon Fiber Layup</span>
+                      <span class="ref-skill-pill">HV Battery Packaging</span>
+                      <span class="ref-skill-pill">CAN Bus Telemetry</span>
+                    </div>
+                    <div class="dbc-card-footer">
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">4130</span>
+                        <span class="dbc-metric-label">Aircraft Chromoly</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-white">In-House</span>
+                        <span class="dbc-metric-label">Precision Machined</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">Smart BMS</span>
+                        <span class="dbc-metric-label">EV Battery Safety</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <!-- Phase 03: Compete -->
+                <div class="dbc-pipeline-step" data-index="2">
+                  <div class="dbc-pipeline-node" aria-hidden="true">
+                    <span class="dbc-node-pulse"></span>
+                    <span class="dbc-node-num mono">03</span>
+                  </div>
+                  <article class="dbc-card" data-index="2">
+                    <div class="dbc-card-top-bar">
+                      <span class="badge mono">// 03 · THE PROVING GROUND</span>
+                      <span class="dbc-card-num-watermark">03</span>
+                    </div>
+                    <h3 class="dbc-card-title">Compete<span class="text-signal">.</span></h3>
+                    <p class="dbc-card-subtitle">National Championships, Acceleration &amp; 4-Hour Endurance</p>
+                    <p class="dbc-card-desc">
+                      The ultimate proving ground where machines and student grit are tested under maximum pressure. We campaign our student-engineered vehicles against 100+ universities across India at BAJA SAEINDIA, Formula Bharat, and Mega ATV Championship—surviving high-G cornering and grueling 4-hour endurance battles.
+                    </p>
+                    <div class="dbc-card-tags">
+                      <span class="ref-skill-pill">BAJA SAEINDIA</span>
+                      <span class="ref-skill-pill">Formula Bharat</span>
+                      <span class="ref-skill-pill">Mega ATV Series</span>
+                      <span class="ref-skill-pill">4-Hour Endurance</span>
+                      <span class="ref-skill-pill">Track Telemetry</span>
+                    </div>
+                    <div class="dbc-card-footer">
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">Podium</span>
+                        <span class="dbc-metric-label">National Contender</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-white">100+</span>
+                        <span class="dbc-metric-label">University Grid</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">Live CAN</span>
+                        <span class="dbc-metric-label">Pit Diagnostics</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+              </div>
             </div>
+
           </div>
         </div>
       </section>

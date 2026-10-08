@@ -511,133 +511,73 @@ let updateDbcCardsFn: (() => void) | null = null;
 
 export function initDbcScrollShowcase(): void {
   const section = document.getElementById('dbcShowcase');
-  const stage = document.getElementById('dbcStage');
-  const track = document.getElementById('dbcCardsTrack');
-  if (!section || !stage || !track) return;
+  if (!section) return;
 
-  const cards = Array.from(track.querySelectorAll<HTMLElement>('.dbc-card'));
-  const pills = Array.from(document.querySelectorAll<HTMLElement>('.dbc-pill'));
-  const dots = Array.from(document.querySelectorAll<HTMLElement>('.dbc-dot'));
+  const steps = Array.from(section.querySelectorAll<HTMLElement>('.dbc-pipeline-step'));
+  const pills = Array.from(section.querySelectorAll<HTMLElement>('.dbc-pill'));
+  if (!steps.length) return;
 
-  if (!cards.length) return;
-
-  let currentActiveIndex = -1;
-  let ticking = false;
+  let currentActiveIndex = 0;
 
   function setActiveStep(activeIndex: number): void {
     if (activeIndex === currentActiveIndex) return;
     currentActiveIndex = activeIndex;
-    cards.forEach((card, idx) => {
-      card.classList.toggle('is-active', idx === activeIndex);
+
+    steps.forEach((step, idx) => {
+      const isActive = idx === activeIndex;
+      step.classList.toggle('is-active', isActive);
+      const card = step.querySelector<HTMLElement>('.dbc-card');
+      if (card) card.classList.toggle('is-active', isActive);
     });
+
     pills.forEach((pill, idx) => {
       pill.classList.toggle('is-active', idx === activeIndex);
     });
-    dots.forEach((dot, idx) => {
-      dot.classList.toggle('is-active', idx === activeIndex);
-    });
-  }
-
-  function update(): void {
-    ticking = false;
-    const rect = section!.getBoundingClientRect();
-    const windowH = window.innerHeight;
-
-    // Check if section is far out of view to skip calculations
-    if (rect.bottom < -windowH || rect.top > windowH * 2) return;
-
-    const totalScrollRange = rect.height - windowH;
-    if (totalScrollRange <= 0) return;
-
-    // Progress: 0 when top is at or above viewport top, 1 when section bottom hits viewport bottom
-    const scrolled = Math.min(Math.max(-rect.top, 0), totalScrollRange);
-    const progress = scrolled / totalScrollRange;
-
-    // Calculate horizontal offsets
-    const stageW = stage!.clientWidth;
-    const firstCard = cards[0];
-    const cardW = firstCard.offsetWidth || firstCard.clientWidth;
-    const cardGap = parseFloat(window.getComputedStyle(track!).gap) || 32;
-
-    // Center offset for first card:
-    const baseOffset = Math.max(0, (stageW - cardW) / 2);
-    // Total distance to travel so last card is centered:
-    const totalTravel = (cards.length - 1) * (cardW + cardGap);
-    const targetX = baseOffset - progress * totalTravel;
-
-    track!.style.transform = `translate3d(${targetX}px, 0, 0)`;
-
-    // Active card index: 0, 1, or 2
-    const stepRatio = 1 / (cards.length - 1);
-    let activeIndex = Math.round(progress / stepRatio);
-    activeIndex = Math.min(Math.max(activeIndex, 0), cards.length - 1);
-
-    setActiveStep(activeIndex);
-  }
-
-  updateDbcCardsFn = update;
-
-  function onScrollOrResize(): void {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(update);
-    }
   }
 
   function scrollToStep(stepIndex: number): void {
-    const rect = section!.getBoundingClientRect();
-    const currentY = window.scrollY;
-    const sectionTop = currentY + rect.top;
-    const totalScrollRange = rect.height - window.innerHeight;
-    const stepRatio = stepIndex / (cards.length - 1);
-    const targetY = sectionTop + stepRatio * totalScrollRange;
-    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    const targetStep = steps[stepIndex];
+    if (targetStep) {
+      targetStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setActiveStep(stepIndex);
+    }
   }
 
   pills.forEach((pill, idx) => {
-    pill.addEventListener('click', () => scrollToStep(idx));
-  });
-
-  dots.forEach((dot, idx) => {
-    dot.addEventListener('click', () => scrollToStep(idx));
-  });
-
-  cards.forEach((card, idx) => {
-    card.addEventListener('click', () => {
-      if (idx !== currentActiveIndex) {
-        scrollToStep(idx);
-      }
+    pill.addEventListener('click', (e: Event) => {
+      e.preventDefault();
+      scrollToStep(idx);
     });
   });
 
-  // Mobile touch swipe gestures
-  let touchStartX = 0;
-  let touchStartY = 0;
+  steps.forEach((step, idx) => {
+    step.addEventListener('click', () => {
+      setActiveStep(idx);
+    });
+  });
 
-  stage.addEventListener('touchstart', (e: TouchEvent) => {
-    if (e.touches.length === 1) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  stage.addEventListener('touchend', (e: TouchEvent) => {
-    if (e.changedTouches.length === 1) {
-      const deltaX = e.changedTouches[0].clientX - touchStartX;
-      const deltaY = e.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(deltaX) > 35 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-        if (deltaX < 0 && currentActiveIndex < cards.length - 1) {
-          scrollToStep(currentActiveIndex + 1);
-        } else if (deltaX > 0 && currentActiveIndex > 0) {
-          scrollToStep(currentActiveIndex - 1);
+  // Track active step on scroll using IntersectionObserver
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const indexAttr = entry.target.getAttribute('data-index');
+          if (indexAttr !== null) {
+            setActiveStep(parseInt(indexAttr, 10));
+          }
         }
-      }
+      });
+    },
+    {
+      root: null,
+      rootMargin: '-25% 0px -40% 0px',
+      threshold: 0.1,
     }
-  }, { passive: true });
+  );
 
-  window.addEventListener('scroll', onScrollOrResize, { passive: true });
-  window.addEventListener('resize', onScrollOrResize, { passive: true });
+  steps.forEach((step) => observer.observe(step));
 
-  // Initial update
-  requestAnimationFrame(update);
+  updateDbcCardsFn = () => {
+    // Keep function reference for router callback
+  };
 }
