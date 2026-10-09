@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAE India · BIT Sindri</title>
+  <link rel="icon" type="image/svg+xml" href="/sae%20logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/landing.css">
+  <link rel="stylesheet" href="/src/styles/intro.css">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #030406 !important;
+      color: #f1f5f9;
+      overflow-x: clip;
+      overflow-y: visible;
+    }
+
+    #introOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background-color: #030406;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module" src="/src/main.ts"></script>
+  <!-- ===================== INTRO ANIMATION (ASCII TO REAL LOGO) ===================== -->
+  <div id="introOverlay">
+    <canvas id="asciiCanvas"></canvas>
+    <div id="introLogoContainer" class="intro-logo-container">
+      <img id="introRealLogo" class="intro-real-logo" src="/bit-sindri-sae-logo.png" alt="SAE India BIT Sindri Logo" />
+    </div>
+    <div id="introSubtitle" class="intro-sub">
+      <div class="intro-title">SAE INDIA · BIT SINDRI</div>
+      <div class="intro-tag">COLLEGIATE CHAPTER</div>
+    </div>
+    <button id="introSkipBtn" class="intro-skip-btn" type="button">SKIP [ESC] ❯</button>
+  </div>
+
+  <header class="ref-header" id="top">
+    <div class="ref-container ref-header-inner">
+      <a class="ref-brand" href="#home" data-page="home" aria-label="SAE BIT Sindri home">
+        <span class="ref-brand-logo-ring nav-logo-hidden" id="navBrandLogoRing">
+          <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Club Logo" />
+        </span>
+        <span class="ref-brand-text">
+          <span class="ref-brand-title">SAE BIT Sindri</span>
+          <span class="ref-brand-sub">Collegiate Club</span>
+        </span>
+      </a>
+      <!-- Center navigation links -->
+      <nav class="ref-nav ref-nav-center" aria-label="Primary navigation">
+        <a href="#about" class="ref-nav-link" data-page="about">About</a>
+        <a href="#competitions" class="ref-nav-link" data-page="competitions">Competitions</a>
+        <a href="#events" class="ref-nav-link" data-page="events">Events</a>
+        <a href="#team" class="ref-nav-link" data-page="team">Team</a>
+        <a href="#sponsors" class="ref-nav-link" data-page="sponsors">Sponsors</a>
+      </nav>
+
+      <!-- Right corner actions: Pit Stop & Join CTA -->
+      <div class="ref-header-actions">
+        <!-- Compact Pit Stop Button (Clean & Integrated) -->
+        <button type="button" class="nav-pit-btn" id="navPitBtn" aria-label="Park 3D Formula car in Pit Stop">
+          <span class="nav-pit-dot" id="navPitDot"></span>
+          <span class="nav-pit-text" id="navPitLabel">PARK CAR</span>
+          <span class="nav-pit-dock" id="navPitSlot" aria-hidden="true"></span>
+        </button>
+        <a href="#join" class="ref-btn ref-btn-primary effect-shine nav-desktop-only" data-page="join">Join the club</a>
+        <button class="ref-mobile-btn" id="refMobileToggle" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="ref-burger-icon" aria-hidden="true">
+            <span class="ref-burger-line line-1"></span>
+            <span class="ref-burger-line line-2"></span>
+            <span class="ref-burger-line line-3"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+    <div id="refMobileMenu" class="ref-mobile-menu" aria-hidden="true">
+      <nav class="ref-mobile-nav-list" aria-label="Mobile navigation">
+        <a href="#about" data-page="about">About</a>
+        <a href="#competitions" data-page="competitions">Competitions</a>
+        <a href="#events" data-page="events">Events</a>
+        <a href="#team" data-page="team">Team</a>
+        <a href="#sponsors" data-page="sponsors">Sponsors</a>
+        <div class="ref-mobile-nav-cta">
+          <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
+            <span>Join the club</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== HOME (LANDING PAGE - src_ref) ===================== -->
+    <section class="page" id="page-home">
+      <!-- HERO SCENE -->
+      <section class="ref-hero">
+        <img
+          src="https://images.unsplash.com/photo-1595008382755-48b0d68865f6?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+          alt="Automotive design displayed on an engineering workstation" class="hero-scene" data-scene="design" />
+        <img
+          src="https://images.unsplash.com/photo-1700770956485-87150c75ad65?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+          alt="Student engineers working together around a car in a garage" class="hero-scene is-active"
+          data-scene="build" />
+        <img
+          src="https://images.unsplash.com/photo-1690984651796-6bbb102fbf30?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+          alt="Race car moving at speed during a track competition" class="hero-scene" data-scene="compete" />
+        <div class="hero-gradient-overlay"></div>
+        <div class="tech-grid" style="position: absolute; inset: 0; opacity: 0.2;"></div>
+        <div class="ambient-glow"
+          style="position: absolute; -right: 10rem; top: 5rem; width: 34rem; height: 34rem; border-radius: 9999px; background-color: rgba(246, 183, 25, 0.2); filter: blur(48px);">
+        </div>
+
+        <div class="ref-container hero-content-wrap">
+          <div class="hero-copy-box">
+            <div class="hero-enter hero-delay-1 hero-tag-row">
+              <span class="hero-tag-line"></span>
+              <p class="hero-tag-text">Engineering the future of mobility</p>
+            </div>
+
+            <h1 class="slogan hero-enter hero-delay-2" id="heroSlogan">
+              <button type="button" class="slogan-word" data-scene="design" aria-label="Show Design background"
+                aria-pressed="false">
+                Design<span class="text-signal">.</span>
+              </button>
+              <button type="button" class="slogan-word is-active" data-scene="build" aria-label="Show Build background"
+                aria-pressed="true">
+                Build<span class="text-signal">.</span>
+              </button>
+              <button type="button" class="slogan-word" data-scene="compete" aria-label="Show Compete background"
+                aria-pressed="false">
+                Compete<span class="text-signal">.</span>
+              </button>
+            </h1>
+
+            <p class="hero-enter hero-delay-3 hero-subtext">
+              From the first line on screen to the final lap on track, we are a student-led community turning
+              engineering ideas into machines that perform.
+            </p>
+
+            <div class="hero-enter hero-delay-4 hero-cta-row">
+              <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
+                Become a member
+                <svg aria-hidden="true" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </a>
+              <a href="#about" class="ref-btn ref-btn-light effect-shine" data-page="about">Explore our club</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== DESIGN · BUILD · COMPETE (VERTICAL PIPELINE) ===================== -->
+      <section class="dbc-pipeline-section" id="dbcShowcase">
+        <div class="tech-grid dbc-bg-grid"></div>
+        <div class="ref-container dbc-pipeline-container">
+          <!-- Split Layout: Left Sticky Header / Narrative & Right Vertical Pipeline -->
+          <div class="dbc-pipeline-layout">
+            
+            <!-- Left Side: Sticky Engineering Overview (Desktop) -->
+            <div class="dbc-sticky-sidebar">
+              <div class="dbc-sidebar-inner">
+                <div class="team-eyebrow-row">
+                  <span class="team-eyebrow-line"></span>
+                  <p class="ref-eyebrow text-signal">// THE VELOCITY CYCLE</p>
+                </div>
+                <h2 class="dbc-heading">From Concept <span class="text-signal">to the Track.</span></h2>
+                <p class="dbc-sidebar-desc">
+                  Every racecar is an engineering masterclass. From computational simulation to precision workshop fabrication and national track warfare, here is our full lifecycle.
+                </p>
+
+                <!-- Navigation Phase Pills (Click to smooth scroll to phase) -->
+                <div class="dbc-nav-pills" role="tablist" aria-label="Velocity Cycle Phases">
+                  <button type="button" class="dbc-pill is-active" data-dbc-step="0" aria-label="Phase 01: Design">
+                    <span class="dbc-pill-num">01</span>
+                    <span class="dbc-pill-label">DESIGN</span>
+                    <span class="dbc-pill-bar"></span>
+                  </button>
+                  <button type="button" class="dbc-pill" data-dbc-step="1" aria-label="Phase 02: Build">
+                    <span class="dbc-pill-num">02</span>
+                    <span class="dbc-pill-label">BUILD</span>
+                    <span class="dbc-pill-bar"></span>
+                  </button>
+                  <button type="button" class="dbc-pill" data-dbc-step="2" aria-label="Phase 03: Compete">
+                    <span class="dbc-pill-num">03</span>
+                    <span class="dbc-pill-label">COMPETE</span>
+                    <span class="dbc-pill-bar"></span>
+                  </button>
+                </div>
+
+                <!-- Quick Telemetry Stats Widget -->
+                <div class="dbc-sidebar-metrics">
+                  <div class="dbc-sidebar-metric-item">
+                    <span class="mono text-signal">100%</span>
+                    <span class="dbc-metric-caption">CAD Validation</span>
+                  </div>
+                  <div class="dbc-sidebar-metric-item">
+                    <span class="mono text-white">4130</span>
+                    <span class="dbc-metric-caption">Chassis Grade</span>
+                  </div>
+                  <div class="dbc-sidebar-metric-item">
+                    <span class="mono text-signal">Podium</span>
+                    <span class="dbc-metric-caption">National Track</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: The Vertical Pipeline Flow -->
+            <div class="dbc-pipeline-feed">
+              <div class="dbc-pipeline-track">
+                <!-- Glowing circuit spine -->
+                <div class="dbc-pipeline-spine" aria-hidden="true"></div>
+
+                <!-- Phase 01: Design -->
+                <div class="dbc-pipeline-step is-active" data-index="0">
+                  <div class="dbc-pipeline-node" aria-hidden="true">
+                    <span class="dbc-node-pulse"></span>
+                    <span class="dbc-node-num mono">01</span>
+                  </div>
+                  <article class="dbc-card is-active" data-index="0">
+                    <div class="dbc-card-top-bar">
+                      <span class="badge mono">// 01 · SIMULATION &amp; CAD</span>
+                      <span class="dbc-card-num-watermark">01</span>
+                    </div>
+                    <h3 class="dbc-card-title">Design<span class="text-signal">.</span></h3>
+                    <p class="dbc-card-subtitle">Virtual Kinematics &amp; High-Downforce Aerodynamics</p>
+                    <p class="dbc-card-desc">
+                      Every championship machine begins in the digital wind tunnel. Our student engineering cohort uses SolidWorks, CATIA, and ANSYS to run structural FEA, calculate suspension kinematics, optimize spaceframe torsional rigidity, and simulate multi-element aerodynamic downforce before a single tube is cut.
+                    </p>
+                    <div class="dbc-card-tags">
+                      <span class="ref-skill-pill">SolidWorks CAD</span>
+                      <span class="ref-skill-pill">ANSYS Structural FEA</span>
+                      <span class="ref-skill-pill">CFD Aerodynamics</span>
+                      <span class="ref-skill-pill">Suspension Geometry</span>
+                      <span class="ref-skill-pill">Weight Optimization</span>
+                    </div>
+                    <div class="dbc-card-footer">
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">100%</span>
+                        <span class="dbc-metric-label">Digital Validation</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-white">&lt;0.05mm</span>
+                        <span class="dbc-metric-label">CAD Tolerancing</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">3.2x</span>
+                        <span class="dbc-metric-label">Torsional Rigidity</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <!-- Phase 02: Build -->
+                <div class="dbc-pipeline-step" data-index="1">
+                  <div class="dbc-pipeline-node" aria-hidden="true">
+                    <span class="dbc-node-pulse"></span>
+                    <span class="dbc-node-num mono">02</span>
+                  </div>
+                  <article class="dbc-card" data-index="1">
+                    <div class="dbc-card-top-bar">
+                      <span class="badge mono">// 02 · FABRICATION &amp; POWER</span>
+                      <span class="dbc-card-num-watermark">02</span>
+                    </div>
+                    <h3 class="dbc-card-title">Build<span class="text-signal">.</span></h3>
+                    <p class="dbc-card-subtitle">Precision Machining, 4130 TIG Welding &amp; EV Integration</p>
+                    <p class="dbc-card-desc">
+                      On the workshop floor of BIT Sindri, blueprints become roaring machines. Our student engineers execute in-house CNC lathe turning, precision 4130 chromoly spaceframe TIG welding, custom carbon fiber composite molding, custom wiring harnesses, and high-voltage lithium battery pack integration.
+                    </p>
+                    <div class="dbc-card-tags">
+                      <span class="ref-skill-pill">Chromoly TIG Welding</span>
+                      <span class="ref-skill-pill">In-House CNC Machining</span>
+                      <span class="ref-skill-pill">Carbon Fiber Layup</span>
+                      <span class="ref-skill-pill">HV Battery Packaging</span>
+                      <span class="ref-skill-pill">CAN Bus Telemetry</span>
+                    </div>
+                    <div class="dbc-card-footer">
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">4130</span>
+                        <span class="dbc-metric-label">Aircraft Chromoly</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-white">In-House</span>
+                        <span class="dbc-metric-label">Precision Machined</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">Smart BMS</span>
+                        <span class="dbc-metric-label">EV Battery Safety</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <!-- Phase 03: Compete -->
+                <div class="dbc-pipeline-step" data-index="2">
+                  <div class="dbc-pipeline-node" aria-hidden="true">
+                    <span class="dbc-node-pulse"></span>
+                    <span class="dbc-node-num mono">03</span>
+                  </div>
+                  <article class="dbc-card" data-index="2">
+                    <div class="dbc-card-top-bar">
+                      <span class="badge mono">// 03 · THE PROVING GROUND</span>
+                      <span class="dbc-card-num-watermark">03</span>
+                    </div>
+                    <h3 class="dbc-card-title">Compete<span class="text-signal">.</span></h3>
+                    <p class="dbc-card-subtitle">National Championships, Acceleration &amp; 4-Hour Endurance</p>
+                    <p class="dbc-card-desc">
+                      The ultimate proving ground where machines and student grit are tested under maximum pressure. We campaign our student-engineered vehicles against 100+ universities across India at BAJA SAEINDIA, Formula Bharat, and Mega ATV Championship—surviving high-G cornering and grueling 4-hour endurance battles.
+                    </p>
+                    <div class="dbc-card-tags">
+                      <span class="ref-skill-pill">BAJA SAEINDIA</span>
+                      <span class="ref-skill-pill">Formula Bharat</span>
+                      <span class="ref-skill-pill">Mega ATV Series</span>
+                      <span class="ref-skill-pill">4-Hour Endurance</span>
+                      <span class="ref-skill-pill">Track Telemetry</span>
+                    </div>
+                    <div class="dbc-card-footer">
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">Podium</span>
+                        <span class="dbc-metric-label">National Contender</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-white">100+</span>
+                        <span class="dbc-metric-label">University Grid</span>
+                      </div>
+                      <div class="dbc-metric">
+                        <span class="dbc-metric-val mono text-signal">Live CAN</span>
+                        <span class="dbc-metric-label">Pit Diagnostics</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT TEASER SECTION -->
+      <section id="home-about" class="ref-about-section">
+        <div class="ref-container" style="padding: 0; max-width: 80rem; margin: 0 auto;">
+          <div class="ref-about-grid">
+            <div data-reveal class="reveal-up ref-about-left">
+              <p class="ref-eyebrow">Who we are</p>
+              <h2 class="ref-about-heading">
+                More than a club.
+                <br />
+                <span class="text-signal">A proving ground.</span>
+              </h2>
+              <p class="ref-about-copy">
+                Velocity SAE brings ambitious students together to solve real engineering problems. From first sketch to
+                final test run, every project is a chance to apply theory, challenge assumptions, and grow as a team.
+              </p>
+              <p class="ref-about-copy" style="margin-top: 1rem; opacity: 0.85;">
+                As the official collegiate mobility chapter of BIT Sindri, our student engineers design national competition racecars, build electric powertrains, and conduct hands-on technical masterclasses.
+              </p>
+              <a href="#about" class="ref-btn ref-btn-outline effect-shine" data-page="about" style="margin-top: 2rem;">
+                Learn More About Us
+                <svg aria-hidden="true" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </a>
+            </div>
+
+            <div data-reveal class="reveal-up reveal-delay ref-stats-grid">
+              <div class="ref-stat-box">
+                <strong class="ref-stat-value">120+</strong>
+                <span class="ref-stat-label">Active members</span>
+              </div>
+              <div class="ref-stat-box">
+                <strong class="ref-stat-value">08</strong>
+                <span class="ref-stat-label">Technical teams</span>
+              </div>
+              <div class="ref-stat-box">
+                <strong class="ref-stat-value">16</strong>
+                <span class="ref-stat-label">Projects completed</span>
+              </div>
+              <div class="ref-stat-box">
+                <strong class="ref-stat-value">06</strong>
+                <span class="ref-stat-label">Years of making</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EVENTS SECTION -->
+      <section id="home-events" class="ref-events-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up ref-events-head">
+            <div>
+              <p class="ref-eyebrow text-signal">On the calendar</p>
+              <h2 class="ref-events-heading">Upcoming events</h2>
+            </div>
+            <svg class="ref-events-calendar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+          </div>
+
+          <div class="ref-events-list">
+            <article data-reveal class="reveal-side ref-event-item">
+              <div class="ref-event-date-col">
+                <span class="ref-event-date-num">18</span>
+                <span class="ref-event-date-month">AUG</span>
+              </div>
+              <div>
+                <p class="ref-event-type">Workshop</p>
+                <h3 class="ref-event-title">EV Powertrain Fundamentals</h3>
+                <p class="ref-event-meta">10:00 AM · Innovation Lab</p>
+              </div>
+              <a href="#events" class="ref-event-action-btn" data-page="events"
+                aria-label="View EV Powertrain Fundamentals">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </a>
+            </article>
+
+            <article data-reveal class="reveal-side ref-event-item">
+              <div class="ref-event-date-col">
+                <span class="ref-event-date-num">02</span>
+                <span class="ref-event-date-month">SEP</span>
+              </div>
+              <div>
+                <p class="ref-event-type">Tech Talk</p>
+                <h3 class="ref-event-title">From Campus to Motorsport</h3>
+                <p class="ref-event-meta">3:30 PM · Main Auditorium</p>
+              </div>
+              <a href="#events" class="ref-event-action-btn" data-page="events"
+                aria-label="View From Campus to Motorsport">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </a>
+            </article>
+
+            <article data-reveal class="reveal-side ref-event-item">
+              <div class="ref-event-date-col">
+                <span class="ref-event-date-num">14</span>
+                <span class="ref-event-date-month">SEP</span>
+              </div>
+              <div>
+                <p class="ref-event-type">Build Day</p>
+                <h3 class="ref-event-title">Formula Student Open Garage</h3>
+                <p class="ref-event-meta">9:00 AM · SAE Workshop</p>
+              </div>
+              <a href="#events" class="ref-event-action-btn" data-page="events"
+                aria-label="View Formula Student Open Garage">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </a>
+            </article>
+          </div>
+
+          <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+            <a href="#events" class="ref-btn ref-btn-outline effect-shine" data-page="events">
+              View All Chapter Events
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPONSORS TEASER SHOWCASE SECTION -->
+      <section id="home-sponsors-teaser" class="ref-sponsors-section">
+        <div class="ref-container" style="padding: 0; max-width: 80rem; margin: 0 auto;">
+          <div class="ref-sponsors-grid">
+            <!-- Left Side: Editorial Content -->
+            <div data-reveal class="reveal-up ref-sponsors-left">
+              <p class="ref-eyebrow text-signal">// Industry &amp; Partners</p>
+              <h2 class="ref-sponsors-heading">
+                Backed by Industry.
+                <br />
+                <span class="text-signal">Built for Victory.</span>
+              </h2>
+              <p class="ref-sponsors-copy">
+                From high-precision CAD suites and structural FEA software to aerospace-grade 4130 chromoly and track-proven racing rubber, our corporate and technical partners equip our student engineers with industrial tools to build championship machines.
+              </p>
+              <div class="ref-sponsors-actions">
+                <a href="#sponsors" class="ref-btn ref-btn-outline effect-shine" data-page="sponsors">
+                  Explore All Sponsors
+                  <svg aria-hidden="true" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Right Side: Floating Sponsors Marquee -->
+            <div class="ref-sponsors-right">
+              <div class="sponsors-marquee-container">
+                <!-- Row 1: Right to Left -->
+                <div class="sponsors-marquee-row">
+                  <div class="sponsors-marquee-track track-speed-normal">
+                    <!-- Set 1 -->
+                    <div class="sponsors-marquee-group">
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/tata.svg" alt="Tata Motors" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Tata Motors</span>
+                          <span class="sponsor-mini-tier mono">Industrial Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/dassault-systemes.png" alt="Dassault Systèmes" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Dassault Systèmes</span>
+                          <span class="sponsor-mini-tier mono">Software Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/jk-tyre.png" alt="JK Tyre" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">JK Tyre</span>
+                          <span class="sponsor-mini-tier mono">Tyre Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/ansys.png" alt="Ansys" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Ansys</span>
+                          <span class="sponsor-mini-tier mono">Simulation Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/indian-oil.svg" alt="Indian Oil" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Indian Oil</span>
+                          <span class="sponsor-mini-tier mono">Energy Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/ricardo.svg" alt="Ricardo" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Ricardo</span>
+                          <span class="sponsor-mini-tier mono">Technical Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/ongc.png" alt="ONGC" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">ONGC</span>
+                          <span class="sponsor-mini-tier mono">Corporate Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/bit-sindri.png" alt="BIT Sindri" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">BIT Sindri</span>
+                          <span class="sponsor-mini-tier mono">Institutional Patron</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Duplicate Set 1 for Infinite Loop -->
+                    <div class="sponsors-marquee-group" aria-hidden="true">
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/tata.svg" alt="Tata Motors" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Tata Motors</span>
+                          <span class="sponsor-mini-tier mono">Industrial Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/dassault-systemes.png" alt="Dassault Systèmes" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Dassault Systèmes</span>
+                          <span class="sponsor-mini-tier mono">Software Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/jk-tyre.png" alt="JK Tyre" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">JK Tyre</span>
+                          <span class="sponsor-mini-tier mono">Tyre Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/ansys.png" alt="Ansys" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Ansys</span>
+                          <span class="sponsor-mini-tier mono">Simulation Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/indian-oil.svg" alt="Indian Oil" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Indian Oil</span>
+                          <span class="sponsor-mini-tier mono">Energy Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/ricardo.svg" alt="Ricardo" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Ricardo</span>
+                          <span class="sponsor-mini-tier mono">Technical Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/ongc.png" alt="ONGC" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">ONGC</span>
+                          <span class="sponsor-mini-tier mono">Corporate Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/bit-sindri.png" alt="BIT Sindri" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">BIT Sindri</span>
+                          <span class="sponsor-mini-tier mono">Institutional Patron</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Row 2: Right to Left (Slightly slower / offset) -->
+                <div class="sponsors-marquee-row">
+                  <div class="sponsors-marquee-track track-speed-alt">
+                    <!-- Set 2 -->
+                    <div class="sponsors-marquee-group">
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/altair.svg" alt="Altair Engineering" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Altair</span>
+                          <span class="sponsor-mini-tier mono">Software Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/bharat-petroleum.png" alt="Bharat Petroleum" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Bharat Petroleum</span>
+                          <span class="sponsor-mini-tier mono">Energy Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/total.svg" alt="TotalEnergies" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">TotalEnergies</span>
+                          <span class="sponsor-mini-tier mono">Lubricants Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/hindustan-motors.svg" alt="Hindustan Motors" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Hindustan Motors</span>
+                          <span class="sponsor-mini-tier mono">Industrial Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/jawa.png" alt="Jawa Motorcycles" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Jawa Motorcycles</span>
+                          <span class="sponsor-mini-tier mono">Engine Systems</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/rjs-racing.png" alt="RJS Racing" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">RJS Racing</span>
+                          <span class="sponsor-mini-tier mono">Safety Equipment</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/aiefa.png" alt="AIEFA" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">AIEFA Vision</span>
+                          <span class="sponsor-mini-tier mono">Academic Partner</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Duplicate Set 2 for Infinite Loop -->
+                    <div class="sponsors-marquee-group" aria-hidden="true">
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/altair.svg" alt="Altair Engineering" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Altair</span>
+                          <span class="sponsor-mini-tier mono">Software Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/bharat-petroleum.png" alt="Bharat Petroleum" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Bharat Petroleum</span>
+                          <span class="sponsor-mini-tier mono">Energy Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/total.svg" alt="TotalEnergies" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">TotalEnergies</span>
+                          <span class="sponsor-mini-tier mono">Lubricants Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/hindustan-motors.svg" alt="Hindustan Motors" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Hindustan Motors</span>
+                          <span class="sponsor-mini-tier mono">Industrial Partner</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/jawa.png" alt="Jawa Motorcycles" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">Jawa Motorcycles</span>
+                          <span class="sponsor-mini-tier mono">Engine Systems</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/rjs-racing.png" alt="RJS Racing" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">RJS Racing</span>
+                          <span class="sponsor-mini-tier mono">Safety Equipment</span>
+                        </div>
+                      </div>
+                      <div class="sponsor-mini-card">
+                        <div class="sponsor-mini-logo-wrap">
+                          <img src="/sponsors/aiefa.png" alt="AIEFA" loading="lazy" class="sponsor-mini-img" />
+                        </div>
+                        <div class="sponsor-mini-info">
+                          <span class="sponsor-mini-name">AIEFA Vision</span>
+                          <span class="sponsor-mini-tier mono">Academic Partner</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GLIMPSES SHOWCASE SECTION (FULL WIDTH DUAL-TRACK) -->
+      <section id="home-glimpses-section" class="ref-glimpses-section">
+        <div class="ref-glimpses-header-wrap">
+          <p class="ref-eyebrow text-signal">// Life at SAE BIT Sindri</p>
+          <h2 class="ref-glimpses-heading">
+            Moments From <span class="text-signal">The Bay.</span>
+          </h2>
+          <p class="ref-glimpses-copy">
+            From late-night chassis fabrication and engine teardowns to tech fest showcases and traditional chapter celebrations — here is the passion driving our journey.
+          </p>
+        </div>
+
+        <div class="glimpses-marquee-container">
+          <!-- Row 1: Right to Left (Tech Fests & Exhibitions) -->
+          <div class="glimpses-marquee-row">
+            <div class="glimpses-marquee-track track-dir-left">
+              <!-- Set 1 -->
+              <div class="glimpses-marquee-group">
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest.webp" alt="Tech Fest Vehicle Showcase" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">TECH MAHOTSAV</span>
+                    <h4 class="glimpse-title">Vehicle Unveiling &amp; Demos</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest1.webp" alt="Exhibition &amp; Demos" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">EXHIBITION</span>
+                    <h4 class="glimpse-title">Formula &amp; Buggy Showcase</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest2.webp" alt="Hardware Innovations" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">CAMPUS DRIVE</span>
+                    <h4 class="glimpse-title">Student Innovations on Display</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest3.webp" alt="High Downforce Aero" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">LIVE DEMO</span>
+                    <h4 class="glimpse-title">Aero Dynamics &amp; Track Testing</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest4.webp" alt="Chapter Pavilion" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">SHOWCASE</span>
+                    <h4 class="glimpse-title">Chapter Interactive Pavilion</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest5.webp" alt="Engineering Track Lineup" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">MOTORSPORT</span>
+                    <h4 class="glimpse-title">Trackside Pit &amp; Engineering</h4>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Set 2 (Duplicate for infinite seamless loop) -->
+              <div class="glimpses-marquee-group" aria-hidden="true">
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest.webp" alt="Tech Fest Vehicle Showcase" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">TECH MAHOTSAV</span>
+                    <h4 class="glimpse-title">Vehicle Unveiling &amp; Demos</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest1.webp" alt="Exhibition &amp; Demos" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">EXHIBITION</span>
+                    <h4 class="glimpse-title">Formula &amp; Buggy Showcase</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest2.webp" alt="Hardware Innovations" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">CAMPUS DRIVE</span>
+                    <h4 class="glimpse-title">Student Innovations on Display</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest3.webp" alt="High Downforce Aero" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">LIVE DEMO</span>
+                    <h4 class="glimpse-title">Aero Dynamics &amp; Track Testing</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest4.webp" alt="Chapter Pavilion" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">SHOWCASE</span>
+                    <h4 class="glimpse-title">Chapter Interactive Pavilion</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/tech_fest5.webp" alt="Engineering Track Lineup" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">MOTORSPORT</span>
+                    <h4 class="glimpse-title">Trackside Pit &amp; Engineering</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Left to Right (Workshops, Bay & Traditions) -->
+          <div class="glimpses-marquee-row">
+            <div class="glimpses-marquee-track track-dir-right">
+              <!-- Set 1 -->
+              <div class="glimpses-marquee-group">
+                <div class="glimpse-card">
+                  <img src="/glimpses/workshop.webp" alt="Hands-on Workshop" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">WORKSHOP BAY</span>
+                    <h4 class="glimpse-title">Engine Teardown &amp; Mechanics</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/workshop2.webp" alt="Chassis CAD &amp; Fabrication" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">FABRICATION</span>
+                    <h4 class="glimpse-title">Chassis CAD &amp; Metalworking</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja.webp" alt="Vishwakarma Puja Ritual" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">TRADITION</span>
+                    <h4 class="glimpse-title">Vishwakarma Puja Ceremonies</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja1.webp" alt="Workshop Bay Blessings" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">BAY BLESSING</span>
+                    <h4 class="glimpse-title">Mechanical Blessings at The Bay</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja3.webp" alt="Team Fellowship" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">COMMUNITY</span>
+                    <h4 class="glimpse-title">Annual Chapter Ceremony</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja4.webp" alt="Team Gathering" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">CREW UNITY</span>
+                    <h4 class="glimpse-title">The Collegiate Chapter Family</h4>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Set 2 (Duplicate for infinite seamless loop) -->
+              <div class="glimpses-marquee-group" aria-hidden="true">
+                <div class="glimpse-card">
+                  <img src="/glimpses/workshop.webp" alt="Hands-on Workshop" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">WORKSHOP BAY</span>
+                    <h4 class="glimpse-title">Engine Teardown &amp; Mechanics</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/workshop2.webp" alt="Chassis CAD &amp; Fabrication" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">FABRICATION</span>
+                    <h4 class="glimpse-title">Chassis CAD &amp; Metalworking</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja.webp" alt="Vishwakarma Puja Ritual" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">TRADITION</span>
+                    <h4 class="glimpse-title">Vishwakarma Puja Ceremonies</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja1.webp" alt="Workshop Bay Blessings" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">BAY BLESSING</span>
+                    <h4 class="glimpse-title">Mechanical Blessings at The Bay</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja3.webp" alt="Team Fellowship" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">COMMUNITY</span>
+                    <h4 class="glimpse-title">Annual Chapter Ceremony</h4>
+                  </div>
+                </div>
+                <div class="glimpse-card">
+                  <img src="/glimpses/puja4.webp" alt="Team Gathering" loading="lazy" decoding="async" width="340" height="225" class="glimpse-img" />
+                  <div class="glimpse-overlay"></div>
+                  <div class="glimpse-content">
+                    <span class="glimpse-badge mono">CREW UNITY</span>
+                    <h4 class="glimpse-title">The Collegiate Chapter Family</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+                    <span class="glimpse-badge mono">CREW UNITY</span>
+                    <h4 class="glimpse-title">The Collegiate Chapter Family</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAM SECTION -->
+      <section id="home-team" class="ref-team-section">
+        <div class="ref-container">
+          <div class="ref-team-grid">
+            <div data-reveal class="reveal-up image-frame group">
+              <img
+                src="https://images.unsplash.com/photo-1700770956485-87150c75ad65?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+                alt="Club members working together in the garage" />
+              <div class="image-frame-overlay"></div>
+              <div class="image-frame-caption">
+                <div>
+                  <p class="image-frame-tag">One team</p>
+                  <p class="image-frame-title">Many disciplines</p>
+                </div>
+                <svg class="image-frame-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+                  <path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4" />
+                </svg>
+              </div>
+            </div>
+
+            <div data-reveal class="reveal-up reveal-delay">
+              <p class="ref-eyebrow">Find your place</p>
+              <h2 class="ref-team-heading">
+                You don't need to know everything.
+                <span class="text-signal" style="display: block;">Just start.</span>
+              </h2>
+              <p class="ref-team-copy">
+                Whether you design, code, fabricate, manage, photograph, or simply want to learn, there is room for you
+                here. Our senior members and faculty mentors help you build confidence one challenge at a time.
+              </p>
+              <div class="ref-skills-row">
+                <span class="ref-skill-pill">Vehicle Dynamics</span>
+                <span class="ref-skill-pill">Powertrain</span>
+                <span class="ref-skill-pill">Electronics</span>
+                <span class="ref-skill-pill">Design</span>
+                <span class="ref-skill-pill">Business</span>
+                <span class="ref-skill-pill">Media</span>
+              </div>
+              <div style="margin-top: 2rem;">
+                <a href="#team" class="ref-btn ref-btn-light effect-shine" data-page="team">
+                  Meet Our Office Bearers &amp; Team
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOIN CTA SECTION -->
+      <section id="home-join-cta" class="ref-join-cta-section">
+        <div class="tech-grid" style="position: absolute; inset: 0; opacity: 0.1;"></div>
+        <div data-reveal class="reveal-up ref-container ref-join-cta-inner">
+          <div>
+            <p class="ref-join-cta-tag">Ready to get started?</p>
+            <h2 class="ref-join-cta-heading">
+              Build something that moves you.
+            </h2>
+          </div>
+          <a href="#join" class="ref-join-cta-btn" data-page="join">
+            Join Velocity SAE
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </a>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===================== ABOUT (DEDICATED PAGE) ===================== -->
+    <section class="page ref-about-page" id="page-about">
+      <div class="tech-grid about-bg-grid"></div>
+
+      <!-- Page Hero / Banner -->
+      <div class="about-hero-wrap">
+        <div class="ref-container" style="position: relative;">
+          <div data-reveal class="reveal-up about-header-row">
+            <div>
+              <div class="team-eyebrow-row">
+                <span class="team-eyebrow-line"></span>
+                <p class="ref-eyebrow text-signal">// CHAPTER STORY &amp; MISSION · EST. BIT SINDRI</p>
+              </div>
+              <h1 class="ref-about-page-heading">
+                Engineering the
+                <span class="text-signal" style="display: block;">future of mobility.</span>
+              </h1>
+            </div>
+            <p class="about-lead-copy">
+              Founded to bridge academic classroom theory and competitive automotive performance, SAE India BIT Sindri is the premier collegiate mobility chapter turning student ambition into track-ready reality.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story & Narrative Grid -->
+      <section class="about-story-section">
+        <div class="ref-container">
+          <div class="about-story-grid">
+            <div data-reveal class="reveal-up about-story-text">
+              <span class="badge mono">// OUR ROOTS &amp; MISSION</span>
+              <h2>Born in the Workshop. Proven on the Track.</h2>
+              <p>
+                SAE India BIT Sindri represents the pinnacle of multidisciplinary engineering at Birsa Institute of Technology, Sindri. What began as a passionate cohort of gearheads has evolved into an advanced collegiate engineering division building national competition buggies, Formula-class racecars, electric propulsion systems, and unmanned aerial platforms.
+              </p>
+              <p>
+                Here, students don’t just read about finite element analysis, suspension kinematics, or battery thermal management—they calculate, simulate, weld, machine, wire, and test them until competition day.
+              </p>
+              <div class="about-principles-grid">
+                <div class="about-principle-item">
+                  <div class="about-principle-num">01</div>
+                  <h4>Engineering Rigor</h4>
+                  <p>Every tube, weld, and sensor is validated with CAD, FEA, and telemetry data before taking to the track.</p>
+                </div>
+                <div class="about-principle-item">
+                  <div class="about-principle-num">02</div>
+                  <h4>Cross-Discipline Synergy</h4>
+                  <p>Mechanical, Electrical, Electronics, CS, and Mining students collaborating as one synchronized crew.</p>
+                </div>
+                <div class="about-principle-item">
+                  <div class="about-principle-num">03</div>
+                  <h4>Next-Gen Clean Tech</h4>
+                  <p>Pioneering electric vehicles, hybrid powertrains, and smart telemetry to lead sustainable mobility.</p>
+                </div>
+                <div class="about-principle-item">
+                  <div class="about-principle-num">04</div>
+                  <h4>Student Leadership</h4>
+                  <p>Full project ownership: budgeting, corporate sponsor management, logistics, and technical documentation.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Feature / Stat highlight -->
+            <div data-reveal class="reveal-up reveal-delay about-story-visual">
+              <div class="about-visual-card">
+                <div class="about-card-badge mono">// BY THE NUMBERS</div>
+                <div class="about-numbers-stack">
+                  <div class="about-num-row">
+                    <span class="about-big-num">120<span class="text-signal">+</span></span>
+                    <span class="about-num-desc">Active Student Members across engineering disciplines</span>
+                  </div>
+                  <div class="about-num-row">
+                    <span class="about-big-num">08</span>
+                    <span class="about-num-desc">Specialized Technical Sub-Teams (Chassis, Powertrain, EV, Aero, etc.)</span>
+                  </div>
+                  <div class="about-num-row">
+                    <span class="about-big-num">16<span class="text-signal">+</span></span>
+                    <span class="about-num-desc">Competition Vehicles &amp; Hardware Projects Built</span>
+                  </div>
+                  <div class="about-num-row">
+                    <span class="about-big-num">06<span class="text-signal">+</span></span>
+                    <span class="about-num-desc">Years of Continuous Collegiate Racing &amp; Innovation</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHAT WE DO (THE CORE PILLARS) -->
+      <section class="about-pillars-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up ref-what-header">
+            <div>
+              <p class="ref-eyebrow text-signal">// WHAT WE DO</p>
+              <h2 class="ref-what-heading">
+                Ideas into <span class="text-signal">engineered reality.</span>
+              </h2>
+            </div>
+            <p class="ref-what-subtext">
+              Real projects. Real race deadlines. Real industrial skills. Explore the core disciplines that define our chapter work.
+            </p>
+          </div>
+
+          <div class="about-pillars-grid">
+            <article data-reveal class="reveal-up pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">01</span>
+                <span class="pillar-badge mono">DESIGN &amp; FABRICATION</span>
+              </div>
+              <h3 class="pillar-title">CAD, Simulation &amp; Manufacturing</h3>
+              <p class="pillar-desc">
+                From generative CAD modeling and structural FEA to CNC turning, TIG/MIG welding, and carbon-fiber composite layup. Our members engineer race-grade spaceframe chassis, custom uprights, steering racks, and aerodynamic elements from scratch.
+              </p>
+              <ul class="pillar-features">
+                <li>SolidWorks, CATIA &amp; ANSYS structural analysis</li>
+                <li>Custom suspension geometry &amp; roll center optimization</li>
+                <li>In-house chassis fabrication, welding &amp; precision assembly</li>
+              </ul>
+            </article>
+
+            <article data-reveal class="reveal-up reveal-delay pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">02</span>
+                <span class="pillar-badge mono">CLEAN MOBILITY</span>
+              </div>
+              <h3 class="pillar-title">EV Systems &amp; Advanced Powertrain</h3>
+              <p class="pillar-desc">
+                Spearheading the electric transition in collegiate motorsport. We engineer custom high-voltage lithium-ion battery packs, intelligent Battery Management Systems (BMS), motor controller parameter tuning, and real-time CAN bus telemetry.
+              </p>
+              <ul class="pillar-features">
+                <li>High-voltage battery thermal management &amp; cell balancing</li>
+                <li>Custom motor tuning &amp; regenerative braking logic</li>
+                <li>Wireless telemetry dashboards &amp; trackside diagnostics</li>
+              </ul>
+            </article>
+
+            <article data-reveal class="reveal-up pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">03</span>
+                <span class="pillar-badge mono">EDUCATION &amp; WORKSHOPS</span>
+              </div>
+              <h3 class="pillar-title">Workshops &amp; Engineering Bootcamps</h3>
+              <p class="pillar-desc">
+                Fostering technical literacy beyond the workshop. We host hands-on workshops for hundreds of campus students covering vehicle dynamics, automotive electronics, microcontroller coding, industrial CAD, and motorsport safety protocols.
+              </p>
+              <ul class="pillar-features">
+                <li>Annual campus-wide CAD &amp; EV design masterclasses</li>
+                <li>Hands-on welding, telemetry, and wiring bootcamps</li>
+                <li>Senior-to-junior engineering mentorship programs</li>
+              </ul>
+            </article>
+
+            <article data-reveal class="reveal-up reveal-delay pillar-card">
+              <div class="pillar-card-top">
+                <span class="pillar-num">04</span>
+                <span class="pillar-badge mono">MANAGEMENT &amp; MEDIA</span>
+              </div>
+              <h3 class="pillar-title">Operations, Sponsorship &amp; Media</h3>
+              <p class="pillar-desc">
+                Running a championship team demands commercial excellence. Our operations division drives corporate sponsorship proposals, financial auditing, inventory procurement, event logistics, documentary cinematography, and digital outreach.
+              </p>
+              <ul class="pillar-features">
+                <li>Corporate sponsor pitches &amp; CSR partnership development</li>
+                <li>Budget management, supply chain &amp; part procurement</li>
+                <li>Digital brand identity, media coverage &amp; public relations</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- AFFILIATION & INSTITUTIONAL BACKING -->
+      <section class="about-affiliation-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up about-affiliation-card">
+            <div class="about-affil-content">
+              <div class="about-affil-badges">
+                <span class="badge mono">NATIONAL AFFILIATION</span>
+                <span class="badge mono" style="border-color: rgba(246, 183, 25, 0.4); color: var(--color-signal);">SAEINDIA CHAPTER #3281</span>
+              </div>
+              <h2 class="about-affil-title">Backed by SAEINDIA &amp; BIT Sindri</h2>
+              <p class="about-affil-text">
+                SAE India BIT Sindri is an officially recognized Collegiate Chapter under the Eastern Section of SAEINDIA, affiliated with SAE International. Hosted at <strong>Birsa Institute of Technology (BIT) Sindri</strong>—a premier state government engineering institution established in 1949—the club operates with faculty mentorship from the Department of Mechanical Engineering and institutional backing from institute leadership.
+              </p>
+              <div class="about-affil-meta-row">
+                <div class="affil-meta-item">
+                  <span class="affil-meta-label">Parent Body</span>
+                  <span class="affil-meta-val">SAEINDIA · SAE International</span>
+                </div>
+                <div class="affil-meta-item">
+                  <span class="affil-meta-label">Collegiate Host</span>
+                  <span class="affil-meta-val">BIT Sindri, Dhanbad (Est. 1949)</span>
+                </div>
+                <div class="affil-meta-item">
+                  <span class="affil-meta-label">Host Department</span>
+                  <span class="affil-meta-val">Dept. of Mechanical Engineering</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CALL TO ACTION BANNER -->
+      <section class="about-cta-section">
+        <div class="ref-container">
+          <div data-reveal class="reveal-up team-join-banner">
+            <div>
+              <p class="ref-eyebrow text-signal">// BE PART OF THE STORY</p>
+              <h3 class="team-join-heading">Ready to step onto the build floor?</h3>
+            </div>
+            <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
+              Join Velocity SAE
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===================== EVENTS ===================== -->
+    <section class="page" id="page-events">
+      <!-- PRIYA'S CUSTOM UI START -->
+      <div class="custom-events-wrapper">
+        <header class="custom-events-header">
+          <h1>Events & Competitions</h1>
+          <p>
+            Explore the national competitions we participate in and the technical
+            workshops we host
+          </p>
+        </header>
+
+        <!-- Horizontal Cards Section Before the Timeline -->
+        <section class="top-cards-section">
+          <div class="cards-wrapper">
+            <!-- Card 1: Tvaran -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-flagship">FLAGSHIP</span>
+              </div>
+              <span class="card-meta">Tech Mahotsav • Date TBA</span>
+              <h3>Tvaran</h3>
+              <p>
+                The chapter's flagship event — design challenges, EV hackathon and
+                hands-on builds open to the whole campus.
+              </p>
+              <div class="card-location">📍 BIT Sindri Campus</div>
+            </div>
+
+            <!-- Card 2: Recruitment -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-recruitment">RECRUITMENT</span>
+              </div>
+              <span class="card-meta">Odd Semester • Date TBA</span>
+              <h3>Freshers Induction & Orientation</h3>
+              <p>
+                Walkthrough of the four crews, how to join, and what a build season
+                looks like for new members.
+              </p>
+              <div class="card-location">📍 Mechanical Engineering Block</div>
+            </div>
+
+            <!-- Card 3: Workshop Chassis -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-workshop">WORKSHOP</span>
+              </div>
+              <span class="card-meta">Odd Semester • Date TBA</span>
+              <h3>Chassis & Roll-Cage Design</h3>
+              <p>
+                Hands-on session on frame fabrication, materials and the SAE
+                rulebook constraints that shape every build.
+              </p>
+              <div class="card-location">📍 SAE Workshop Bay</div>
+            </div>
+
+            <!-- Card 4: Industrial Visit -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-industrial">INDUSTRIAL VISIT</span>
+              </div>
+              <span class="card-meta">Even Semester • Date TBA</span>
+              <h3>Manufacturing Plant Visit</h3>
+              <p>
+                A look at production-line engineering and quality processes at an
+                automotive manufacturing facility.
+              </p>
+              <div class="card-location">📍 Off-Campus</div>
+            </div>
+
+            <!-- Card 5: Workshop EV Powertrain -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-workshop">WORKSHOP</span>
+              </div>
+              <span class="card-meta">Even Semester • Date TBA</span>
+              <h3>EV Powertrain Tech Talk</h3>
+              <p>
+                Covering motor selection, battery management and controller tuning
+                for electric builds.
+              </p>
+              <div class="card-location">📍 Seminar Hall</div>
+            </div>
+
+            <!-- Card 6: Flagship Test & Tune -->
+            <div class="top-event-card">
+              <div class="card-header">
+                <span class="badge badge-flagship">FLAGSHIP</span>
+              </div>
+              <span class="card-meta">Pre-Competition • Date TBA</span>
+              <h3>Test & Tune Camp</h3>
+              <p>
+                Final shakedown runs and reliability checks before the team travels
+                for competition.
+              </p>
+              <div class="card-location">📍 Test Track</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Timeline Flow -->
+        <main class="events-container">
+          <!-- Left Side: Timeline Flow -->
+          <div class="timeline-section">
+            <div class="timeline-line"></div>
+
+            <!-- Timeline Item 1 -->
+            <div class="timeline-item left" data-index="0">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>BAJA SAE India</h3>
+                <span class="date">Annual National Competition</span>
+              </div>
+            </div>
+
+            <!-- Timeline Item 2 -->
+            <div class="timeline-item right" data-index="1">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>CAD Design Workshop</h3>
+                <span class="date">Hosted by SAE BIT Sindri</span>
+              </div>
+            </div>
+
+            <!-- Timeline Item 3 -->
+            <div class="timeline-item left" data-index="2">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>SUPRA SAE India</h3>
+                <span class="date">Annual National Competition</span>
+              </div>
+            </div>
+
+            <!-- Timeline Item 4 -->
+            <div class="timeline-item right" data-index="3">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3>Engine Teardown Session</h3>
+                <span class="date">Hosted by SAE BIT Sindri</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Side: Sticky Event Details -->
+          <div class="details-section">
+            <div class="sticky-wrapper" id="details-display">
+              <div class="image-box">
+                <img
+                  id="display-img"
+                  src="https://via.placeholder.com/600x350/1e293b/eab308?text=BAJA+SAE+India"
+                  alt="Event Image"
+                />
+              </div>
+              <div class="info-container">
+                <h2 id="display-title">BAJA SAE India</h2>
+                <p id="display-date" class="highlight-date">
+                  Annual National Competition
+                </p>
+                <p id="display-desc">
+                  Our flagship participation event. We design, fabricate, and race a
+                  rugged single-seater all-terrain vehicle. The team goes through
+                  intense design evaluations, dynamic testing, and a grueling
+                  endurance race.
+                </p>
+
+                <!-- Upcoming Date Badge -->
+                <div id="display-upcoming" class="upcoming-badge">
+                  Next Event: February 2027
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+      <!-- PRIYA'S CUSTOM UI END -->
+    </section>
+
+    <!-- ===================== COMPETITIONS ===================== -->
+    <section class="page" id="page-competitions">
+      <div class="page-head">
+        <span class="eyebrow">// what we build for</span>
+        <h1>Competitions</h1>
+        <p class="sub">Where blueprints meet the track — and, with Vayu, the sky. Each crew owns its build end-to-end:
+          design, fabrication, testing and race day.</p>
+      </div>
+      <div class="comp-grid" id="compGrid"></div>
+      <div class="hof">
+        <h3 class="mono">// HALL OF FAME</h3>
+        <p>Over the chapter's history, teams have placed in inter-collegiate technical challenges beyond SAE's own
+          events — including a first-place design win for a student-built submarine at IIT Kharagpur and a podium finish
+          at a cliff-rescue challenge at IIT(ISM) Dhanbad. Add your latest results here as they come in.</p>
+      </div>
+    </section>
+
+    <!-- ===================== TEAM (CORE COMMITTEE · 2025) ===================== -->
+    <section class="page ref-team-page" id="page-team">
+      <div class="tech-grid team-bg-grid"></div>
+      <div class="ref-container" style="position: relative;">
+        <!-- Header -->
+        <div data-reveal class="reveal-up team-header-row">
+          <div>
+            <div class="team-eyebrow-row">
+              <span class="team-eyebrow-line"></span>
+              <p class="ref-eyebrow text-signal">Office bearers</p>
+            </div>
+            <h1 class="ref-team-heading">
+              The people behind
+              <span class="text-signal" style="display: block;">the machine.</span>
+            </h1>
+          </div>
+          <p class="team-subtext">
+            Meet the student leaders turning ambitious ideas into engineered outcomes, one project at a time.
+          </p>
+        </div>
+
+        <!-- Grid of Core Team Cards -->
+        <div class="team-grid" id="coreTeamGrid"></div>
+
+        <!-- Join Callout Banner -->
+        <div data-reveal class="reveal-up team-join-banner">
+          <div>
+            <p class="ref-eyebrow text-signal">Your name could be here</p>
+            <h3 class="team-join-heading">Join the team. Build the legacy.</h3>
+          </div>
+          <a href="#join" class="ref-btn ref-btn-primary effect-shine" data-page="join">
+            Find your team
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== OUR SPONSORS ===================== -->
+    <section class="page" id="page-sponsors">
+      <!-- Header -->
+      <div data-reveal class="reveal-up team-header-row">
+        <div>
+          <div class="team-eyebrow-row">
+            <span class="team-eyebrow-line"></span>
+            <p class="ref-eyebrow text-signal">Supporting our mission</p>
+          </div>
+          <h1 class="ref-team-heading">
+            Our
+            <span class="text-signal" style="display: block;">Sponsors.</span>
+          </h1>
+        </div>
+        <p class="team-subtext">
+          Our journey is made possible by the generous support of our sponsors. Meet the industry leaders,
+          technology providers, and institutions backing our collegiate club.
+        </p>
+      </div>
+
+      <!-- Sponsor Filters -->
+      <div class="filters" id="sponsorFilters"></div>
+
+      <!-- Sponsor Cards Grid -->
+      <div class="sponsor-grid" id="sponsorGrid"></div>
+
+      <!-- Become a Sponsor CTA Banner -->
+      <div class="sponsor-cta-banner">
+        <div class="sponsor-cta-content">
+          <span class="badge mono">PARTNER WITH US</span>
+          <h2>Fuel the Next Generation of Automotive Engineers</h2>
+          <p>Gain direct brand visibility across national competitions, recruiting access to top engineering talent at
+            BIT Sindri, and collaborative R&amp;D opportunities.</p>
+        </div>
+        <div class="sponsor-cta-action">
+          <a href="mailto:saeindiabitsindri@gmail.com?subject=Sponsorship%20Inquiry%20-%20SAE%20BIT%20Sindri"
+            class="btn btn-primary">Partner With Us</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== DEPARTMENTS ===================== -->
+    <section class="page" id="page-departments">
+      <div class="page-head">
+        <span class="eyebrow">// chapter domains</span>
+        <h1>Departments</h1>
+        <p class="sub">Explore the administrative, design, manufacturing, and technical departments driving our
+          innovation.</p>
+      </div>
+      <div id="departmentSections"></div>
+    </section>
+
+    <!-- ===================== JOIN US ===================== -->
+    <section class="page" id="page-join">
+      <div class="page-head">
+        <span class="eyebrow">// RECRUITMENT &amp; INDUCTIONS</span>
+        <h1>Join Our Crew</h1>
+        <p class="sub">Step onto the build floor. Whether you want to engineer race cars, fabricate off-road buggies,
+          develop hybrid powertrains, fly UAVs, or drive sponsorship and digital media — SAE India BIT Sindri is where
+          theory meets the track.</p>
+      </div>
+
+      <!-- Hero Callout Banner -->
+      <div class="join-banner">
+        <div class="join-banner-content">
+          <span class="badge mono">SEASON RECRUITMENT OPEN</span>
+          <h2>Ready to Build Something Extraordinary?</h2>
+          <p>We welcome freshers and second-year students from all engineering branches. No prior experience required —
+            bring curiosity, grit, and passion for motorsports and aerospace.</p>
+        </div>
+        <div class="join-banner-action">
+          <a href="#join-application" class="btn btn-primary" id="scrollApplyBtn">Apply Now</a>
+        </div>
+      </div>
+
+      <!-- Why Join Us Cards -->
+      <div class="join-section-head">
+        <h2>Why Join SAE BIT Sindri?</h2>
+        <span class="team-blurb">What awaits you on the build floor</span>
+      </div>
+      <div class="join-grid">
+        <div class="join-card">
+          <div class="join-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+            </svg>
+          </div>
+          <h3>Real-World Engineering</h3>
+          <p>Go beyond textbooks. Work with CAD/CAE tools (SolidWorks, ANSYS), machine components in the workshop, weld
+            chassis frames, and test vehicle dynamics.</p>
+        </div>
+        <div class="join-card">
+          <div class="join-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <h3>National Competitions</h3>
+          <p>Represent BIT Sindri at India's highest-tier collegiate motorsports challenges — BAJA SAE India, SUPRA
+            Formula Student, EFFICYCLE, and Aerothon.</p>
+        </div>
+        <div class="join-card">
+          <div class="join-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <h3>Cross-Discipline Brotherhood</h3>
+          <p>Join an active fraternity of mechanical, electrical, electronics, computer science, and core branch
+            engineers collaborating day and night.</p>
+        </div>
+        <div class="join-card">
+          <div class="join-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </div>
+          <h3>Alumni &amp; Industry Network</h3>
+          <p>Direct mentorship from chapter alumni working across top global automotive, aerospace, EV and robotics
+            firms (Tata Motors, Mahindra, Maruti, Boeing, ISRO).</p>
+        </div>
+      </div>
+
+      <!-- Four Crews & Open Domains -->
+      <div class="join-section-head" style="margin-top: 56px;">
+        <h2>Explore Our Teams &amp; Domains</h2>
+        <span class="team-blurb">Choose the discipline where you want to make an impact</span>
+      </div>
+      <div class="crews-grid">
+        <div class="crew-card">
+          <div class="crew-header">
+            <span class="crew-tag mono">OFF-ROAD &amp; HYBRID</span>
+            <h3>Team Wonders</h3>
+          </div>
+          <p class="crew-desc">Constructs rugged all-terrain vehicles for BAJA SAE India and eco-hybrid vehicles for
+            EFFICYCLE.</p>
+          <div class="crew-subdomains">
+            <span class="domain-pill">Roll Cage &amp; Chassis</span>
+            <span class="domain-pill">Suspension &amp; Steering</span>
+            <span class="domain-pill">Powertrain &amp; Brakes</span>
+            <span class="domain-pill">Hybrid Drive</span>
+          </div>
+        </div>
+        <div class="crew-card">
+          <div class="crew-header">
+            <span class="crew-tag mono">FORMULA STUDENT</span>
+            <h3>Team Spitfire</h3>
+          </div>
+          <p class="crew-desc">Engineers high-speed, Formula-style race cars built for track cornering, acceleration,
+            and aerodynamic grip.</p>
+          <div class="crew-subdomains">
+            <span class="domain-pill">Aerodynamics &amp; CFD</span>
+            <span class="domain-pill">Drivetrain &amp; Engine Tuning</span>
+            <span class="domain-pill">Telemetry &amp; DAQ</span>
+            <span class="domain-pill">Composite Materials</span>
+          </div>
+        </div>
+        <div class="crew-card">
+          <div class="crew-header">
+            <span class="crew-tag mono">AEROSPACE &amp; UAV</span>
+            <h3>Vayu Wing</h3>
+          </div>
+          <p class="crew-desc">Designs fixed-wing RC planes and autonomous multirotor UAVs for national flight and
+            payload competitions.</p>
+          <div class="crew-subdomains">
+            <span class="domain-pill">Airframe Design</span>
+            <span class="domain-pill">Avionics &amp; Flight Controllers</span>
+            <span class="domain-pill">Autonomous Navigation</span>
+            <span class="domain-pill">Payload Systems</span>
+          </div>
+        </div>
+        <div class="crew-card">
+          <div class="crew-header">
+            <span class="crew-tag mono">OPERATIONS &amp; CREATIVE</span>
+            <h3>Management &amp; Media</h3>
+          </div>
+          <p class="crew-desc">The backbone of chapter operations — securing industry sponsors, orchestrating logistics,
+            and crafting visual media.</p>
+          <div class="crew-subdomains">
+            <span class="domain-pill">Corporate Sponsorship</span>
+            <span class="domain-pill">Social Media &amp; PR</span>
+            <span class="domain-pill">Web &amp; Graphics</span>
+            <span class="domain-pill">Event Management</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Induction Process Timeline -->
+      <div class="join-section-head" style="margin-top: 56px;">
+        <h2>The Induction Process</h2>
+        <span class="team-blurb">Five simple steps to earn your spot on the team</span>
+      </div>
+      <div class="induction-steps">
+        <div class="step-card">
+          <div class="step-num mono">01</div>
+          <div class="step-info">
+            <h4>Online Registration</h4>
+            <p>Fill out the application form below with your branch, batch, and crew preferences.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num mono">02</div>
+          <div class="step-info">
+            <h4>Orientation Session</h4>
+            <p>Attend our interactive walkthrough covering vehicle architecture, rulebooks, and season roadmaps.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num mono">03</div>
+          <div class="step-info">
+            <h4>Aptitude &amp; Task</h4>
+            <p>A hands-on, domain-specific challenge testing foundational thinking, creativity, and problem-solving.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num mono">04</div>
+          <div class="step-info">
+            <h4>Personal Interview</h4>
+            <p>One-on-one conversation with chapter leads to understand your passion, availability, and drive.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num mono">05</div>
+          <div class="step-info">
+            <h4>Workshop Onboarding</h4>
+            <p>Join your assigned crew, receive safety gear training, and start building for the competition!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Application Form -->
+      <div class="join-form-wrapper" id="join-application">
+        <div class="join-form-card">
+          <div class="form-header">
+            <span class="eyebrow mono">// APPLICATION FORM</span>
+            <h2>Apply to Join SAE India BIT Sindri</h2>
+            <p>Fill out this form to register your interest for the upcoming build season. Our recruitment team will get
+              in touch with you.</p>
+          </div>
+          <form id="joinForm" class="join-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="applicantName">Full Name *</label>
+                <input type="text" id="applicantName" required placeholder="e.g. Rahul Sharma" />
+              </div>
+              <div class="form-group">
+                <label for="applicantRoll">Roll Number / Reg. No *</label>
+                <input type="text" id="applicantRoll" required placeholder="e.g. 23/ME/045" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="applicantBranch">Engineering Branch *</label>
+                <select id="applicantBranch" required>
+                  <option value="" disabled selected>Select your branch</option>
+                  <option value="Mechanical">Mechanical Engineering</option>
+                  <option value="Electrical">Electrical Engineering</option>
+                  <option value="ECE">Electronics &amp; Communication (ECE)</option>
+                  <option value="Production">Production &amp; Industrial</option>
+                  <option value="Civil">Civil Engineering</option>
+                  <option value="Computer Science">Computer Science &amp; Engineering</option>
+                  <option value="IT">Information Technology</option>
+                  <option value="Chemical">Chemical Engineering</option>
+                  <option value="Metallurgy">Metallurgical Engineering</option>
+                  <option value="Mining">Mining Engineering</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="applicantYear">Current Year *</label>
+                <select id="applicantYear" required>
+                  <option value="" disabled selected>Select your year</option>
+                  <option value="1st Year (Fresher)">1st Year (Freshers)</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="applicantEmail">Email Address *</label>
+                <input type="email" id="applicantEmail" required placeholder="name@bitsindri.ac.in" />
+              </div>
+              <div class="form-group">
+                <label for="applicantPhone">WhatsApp / Phone Number *</label>
+                <input type="tel" id="applicantPhone" required placeholder="+91 98765 43210" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="applicantCrew">Preferred Crew / Wing *</label>
+                <select id="applicantCrew" required>
+                  <option value="" disabled selected>Select primary preference</option>
+                  <option value="Team Wonders (BAJA / EFFICYCLE)">Team Wonders (BAJA / EFFICYCLE - Off-road)</option>
+                  <option value="Team Spitfire (SUPRA)">Team Spitfire (SUPRA - Formula Student)</option>
+                  <option value="Vayu (Aero &amp; UAV)">Vayu Wing (Drones &amp; RC Aircraft)</option>
+                  <option value="Robotics Wing">Robotics Wing (Autonomous &amp; Embedded)</option>
+                  <option value="Operations &amp; Sponsorship">Operations, Sponsorship &amp; PR</option>
+                  <option value="Media &amp; Web Design">Media, Graphic Design &amp; Web</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="applicantSubdomain">Primary Sub-domain of Interest</label>
+                <select id="applicantSubdomain">
+                  <option value="" selected>No preference / Open to all</option>
+                  <option value="Chassis &amp; Roll Cage">Chassis &amp; Frame Fabrication</option>
+                  <option value="Suspension &amp; Steering">Suspension &amp; Steering Dynamics</option>
+                  <option value="Powertrain &amp; Drivetrain">Powertrain &amp; Engine Tuning</option>
+                  <option value="Braking Systems">Braking Systems</option>
+                  <option value="Electronics &amp; DAQ">Electronics, Sensors &amp; DAQ</option>
+                  <option value="Aerodynamics &amp; CFD">Aerodynamics &amp; CFD</option>
+                  <option value="Avionics &amp; Drone Control">Avionics &amp; Drone Controls</option>
+                  <option value="Sponsorship &amp; Finance">Sponsorship &amp; Finance</option>
+                  <option value="Media &amp; Documentation">Media, Video &amp; Documentation</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="applicantMotivation">Why do you want to join SAE BIT Sindri? *</label>
+              <textarea id="applicantMotivation" rows="4" required
+                placeholder="Tell us about your interests, past projects or hobbies (if any), and what drives you to join our collegiate club..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary join-submit-btn">Submit Application</button>
+          </form>
+          <div id="joinSuccessMsg" class="join-success" style="display: none;">
+            <div class="success-icon">✓</div>
+            <h3>Application Received!</h3>
+            <p id="successDetailsText">Thank you for applying. Your registration has been recorded successfully. Our
+              team will contact you via email/WhatsApp regarding the orientation date and next steps.</p>
+            <button type="button" class="btn btn-ghost" id="resetJoinFormBtn">Submit Another Response</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frequently Asked Questions -->
+      <div class="join-section-head" style="margin-top: 56px;">
+        <h2>Frequently Asked Questions</h2>
+        <span class="team-blurb">Common queries from aspiring applicants</span>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-card">
+          <h4>Do I need prior technical or automotive experience to join?</h4>
+          <p>No prior experience is necessary. What matters most is your dedication, willingness to learn, and readiness
+            to invest time on the build floor. Seniors provide comprehensive training and mentorship.</p>
+        </div>
+        <div class="faq-card">
+          <h4>Are non-mechanical branches eligible to apply?</h4>
+          <p>Absolutely! Modern vehicles and drones require electrical systems, battery management, sensors,
+            microcontrollers, embedded code, telemetry, and software — plus our club needs dedicated operations,
+            sponsorship, and media leads.</p>
+        </div>
+        <div class="faq-card">
+          <h4>How much time commitment is expected?</h4>
+          <p>During regular academic weeks, members typically dedicate a few hours in the evenings or weekends. Closer
+            to national competition deadlines, work ramps up during build sessions.</p>
+        </div>
+        <div class="faq-card">
+          <h4>Where is the SAE Club workshop located?</h4>
+          <p>Our workshop and fabrication bay are situated in the Department of Mechanical Engineering, BIT Sindri
+            campus. You can visit us anytime during club working hours.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="ref-footer">
+    <div class="ref-container ref-footer-inner">
+      <div>
+        <a class="ref-brand" href="#home" data-page="home" aria-label="SAE BIT Sindri home">
+          <span class="ref-brand-logo-ring"
+            style="box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px rgba(255, 255, 255, 0.3);">
+            <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Club Logo" />
+          </span>
+          <span class="ref-brand-text">
+            <span class="ref-brand-title">SAE BIT Sindri</span>
+            <span class="ref-brand-sub">Collegiate Club</span>
+          </span>
+        </a>
+        <p class="ref-footer-desc">
+          The SAE collegiate club of BIT Sindri, built by students who believe the best way to learn engineering is to
+          engineer.
+        </p>
+      </div>
+      <div class="ref-footer-right">
+        <a href="mailto:saeclub@college.edu" class="ref-footer-email">saeclub@college.edu</a>
+        <p class="ref-footer-copy">© 2025 SAE BIT Sindri · Made to move forward</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MOBILE BOTTOM SCROLL PROGRESS TRACK -->
+  <div class="mobile-scroll-track" id="mobileScrollTrack" aria-hidden="true">
+    <div class="m-track-rail">
+      <div class="m-track-fill" id="mTrackFill"></div>
+    </div>
+    <div class="m-track-labels">
+      <span class="m-track-start">START</span>
+      <span class="m-track-pct" id="mTrackPct">0%</span>
+      <span class="m-track-finish">FINISH 🏁</span>
+    </div>
+  </div>
+
+</body>
+
+</html>
