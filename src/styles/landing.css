@@ -2065,6 +2065,14 @@
   }
 }
 
+#page-sponsors {
+  padding-top: 20px;
+}
+
+#page-sponsors .team-header-row {
+  padding-top: 0.5rem;
+}
+
 .team-eyebrow-row {
   display: flex;
   align-items: center;
