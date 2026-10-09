@@ -1581,18 +1581,21 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: #0d121c;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   flex-shrink: 0;
   cursor: pointer;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-              border-color 0.3s ease,
-              box-shadow 0.35s ease;
+  contain: paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.25s ease,
+              box-shadow 0.28s ease;
 }
 
 .glimpse-card:hover {
-  transform: translateY(-6px) scale(1.025);
+  transform: translateY(-4px);
   border-color: rgba(246, 183, 25, 0.55);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(246, 183, 25, 0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.7), 0 0 16px rgba(246, 183, 25, 0.18);
   z-index: 3;
 }
 
@@ -1601,11 +1604,13 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .glimpse-card:hover .glimpse-img {
-  transform: scale(1.08);
+  transform: scale(1.045);
 }
 
 .glimpse-overlay {
