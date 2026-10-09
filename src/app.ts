@@ -512,9 +512,10 @@ let updateDbcCardsFn: (() => void) | null = null;
 export function initDbcScrollShowcase(): void {
   const section = document.getElementById('dbcShowcase');
   if (!section) return;
+  const dbcSection: HTMLElement = section;
 
-  const steps = Array.from(section.querySelectorAll<HTMLElement>('.dbc-pipeline-step'));
-  const pills = Array.from(section.querySelectorAll<HTMLElement>('.dbc-pill'));
+  const steps = Array.from(dbcSection.querySelectorAll<HTMLElement>('.dbc-pipeline-step'));
+  const pills = Array.from(dbcSection.querySelectorAll<HTMLElement>('.dbc-pill'));
   if (!steps.length) return;
 
   let currentActiveIndex = 0;
@@ -535,49 +536,161 @@ export function initDbcScrollShowcase(): void {
     });
   }
 
-  function scrollToStep(stepIndex: number): void {
-    const targetStep = steps[stepIndex];
-    if (targetStep) {
-      targetStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setActiveStep(stepIndex);
+  function getStickyTop(): number {
+    const header = document.querySelector('.ref-header') as HTMLElement | null;
+    const headerHeight = header ? header.offsetHeight : (window.innerWidth <= 640 ? 60 : 70);
+    if (window.innerWidth <= 380) return headerHeight + 2;
+    if (window.innerWidth <= 640) return headerHeight + 8;
+    if (window.innerWidth <= 1023) return headerHeight + 12;
+    return headerHeight + 25;
+  }
+
+  function scrollToPhase(stepIndex: number): void {
+    if (window.innerWidth < 1024) {
+      const targetStep = steps[stepIndex];
+      if (targetStep) {
+        const header = document.querySelector('.ref-header') as HTMLElement | null;
+        const headerHeight = header ? header.offsetHeight : 64;
+        const pillsElem = dbcSection.querySelector('.dbc-nav-pills') as HTMLElement | null;
+        const pillsHeight = pillsElem ? pillsElem.offsetHeight : 45;
+        const offset = headerHeight + pillsHeight + 16;
+        const targetY = targetStep.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth',
+        });
+        setActiveStep(stepIndex);
+      }
+      return;
     }
+
+    const stickyTop = getStickyTop();
+    const totalScroll = dbcSection.offsetHeight - window.innerHeight;
+    const sectionDocTop = window.scrollY + dbcSection.getBoundingClientRect().top;
+
+    let targetProgress = 0.05;
+    if (stepIndex === 1) targetProgress = 0.50;
+    else if (stepIndex === 2) targetProgress = 0.88;
+
+    const targetScrollY = sectionDocTop - stickyTop + totalScroll * targetProgress;
+    window.scrollTo({
+      top: targetScrollY,
+      behavior: 'smooth',
+    });
+    setActiveStep(stepIndex);
   }
 
   pills.forEach((pill, idx) => {
     pill.addEventListener('click', (e: Event) => {
       e.preventDefault();
-      scrollToStep(idx);
+      scrollToPhase(idx);
     });
   });
 
   steps.forEach((step, idx) => {
     step.addEventListener('click', () => {
-      setActiveStep(idx);
+      scrollToPhase(idx);
     });
   });
 
-  // Track active step on scroll using IntersectionObserver
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const indexAttr = entry.target.getAttribute('data-index');
-          if (indexAttr !== null) {
-            setActiveStep(parseInt(indexAttr, 10));
-          }
-        }
-      });
-    },
-    {
-      root: null,
-      rootMargin: '-25% 0px -40% 0px',
-      threshold: 0.1,
-    }
-  );
+  let ticking = false;
+  function updateDeckOnScroll(): void {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        if (window.innerWidth < 1024) {
+          steps.forEach((step) => {
+            step.style.transform = '';
+            step.style.opacity = '';
+          });
 
-  steps.forEach((step) => observer.observe(step));
+          const viewportTrigger = window.innerHeight * 0.45;
+          let bestIdx = 0;
+          let minDistance = Infinity;
+
+          steps.forEach((step, idx) => {
+            const rect = step.getBoundingClientRect();
+            const stepCenter = rect.top + rect.height / 2;
+            const dist = Math.abs(stepCenter - viewportTrigger);
+            if (dist < minDistance) {
+              minDistance = dist;
+              bestIdx = idx;
+            }
+          });
+
+          setActiveStep(bestIdx);
+          ticking = false;
+          return;
+        }
+
+        const rect = dbcSection.getBoundingClientRect();
+        const stickyTop = getStickyTop();
+        const totalScroll = dbcSection.offsetHeight - window.innerHeight;
+
+        if (totalScroll <= 0) {
+          ticking = false;
+          return;
+        }
+
+        const scrolled = Math.max(0, Math.min(totalScroll, -rect.top + stickyTop));
+        const progress = scrolled / totalScroll; // 0.0 to 1.0
+
+        // Step 0: Always in base position
+        steps[0].style.transform = 'translateY(0%)';
+        steps[0].style.opacity = '1';
+
+        // Step 1: Slides up between 0.18 and 0.45
+        const s1Start = 0.18;
+        const s1End = 0.45;
+        if (progress < s1Start) {
+          steps[1].style.transform = 'translateY(105%)';
+          steps[1].style.opacity = '0';
+        } else if (progress <= s1End) {
+          const t = (progress - s1Start) / (s1End - s1Start);
+          steps[1].style.transform = `translateY(${(1 - t) * 105}%)`;
+          steps[1].style.opacity = '1';
+        } else {
+          steps[1].style.transform = 'translateY(0%)';
+          steps[1].style.opacity = '1';
+        }
+
+        // Step 2: Slides up between 0.55 and 0.82
+        const s2Start = 0.55;
+        const s2End = 0.82;
+        if (progress < s2Start) {
+          steps[2].style.transform = 'translateY(105%)';
+          steps[2].style.opacity = '0';
+        } else if (progress <= s2End) {
+          const t = (progress - s2Start) / (s2End - s2Start);
+          steps[2].style.transform = `translateY(${(1 - t) * 105}%)`;
+          steps[2].style.opacity = '1';
+        } else {
+          steps[2].style.transform = 'translateY(0%)';
+          steps[2].style.opacity = '1';
+        }
+
+        // Active phase pill and node highlight
+        let activeIdx = 0;
+        if (progress >= 0.68) {
+          activeIdx = 2;
+        } else if (progress >= 0.32) {
+          activeIdx = 1;
+        } else {
+          activeIdx = 0;
+        }
+
+        setActiveStep(activeIdx);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', updateDeckOnScroll, { passive: true });
+  window.addEventListener('resize', updateDeckOnScroll, { passive: true });
+
+  updateDeckOnScroll();
 
   updateDbcCardsFn = () => {
-    // Keep function reference for router callback
+    updateDeckOnScroll();
   };
 }
