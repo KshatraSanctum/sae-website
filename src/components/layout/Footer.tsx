@@ -1,23 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface FooterProps {
-  onNavigate: (page: string) => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+export const Footer: React.FC = () => {
   return (
     <footer className="ref-footer">
       <div className="ref-container ref-footer-inner">
         <div>
-          <a
+          <Link
             className="ref-brand"
-            href="#home"
-            data-page="home"
+            to="/"
             aria-label="SAE BIT Sindri home"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('home');
-            }}
           >
             <span
               className="ref-brand-logo-ring"
@@ -32,7 +24,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <span className="ref-brand-title">SAE BIT Sindri</span>
               <span className="ref-brand-sub">Collegiate Society</span>
             </span>
-          </a>
+          </Link>
           <p className="ref-footer-desc">
             The SAE collegiate society of BIT Sindri, built by students who believe the
             best way to learn engineering is to engineer.

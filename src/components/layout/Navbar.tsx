@@ -1,20 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-interface NavbarProps {
-  currentPage: string;
-  onNavigate: (page: string) => void;
+interface NavItem {
+  path: string;
+  label: string;
+  altPaths?: string[];
 }
 
-const NAV_ITEMS = [
-  { id: 'about', label: 'About' },
-  { id: 'competitions', label: 'Achievements' },
-  { id: 'events', label: 'Events' },
-  { id: 'team', label: 'Team' },
-  { id: 'sponsors', label: 'Sponsors' },
-] as const;
+const NAV_ITEMS: NavItem[] = [
+  { path: '/about', label: 'About' },
+  { path: '/achievements', label: 'Achievements', altPaths: ['/competitions'] },
+  { path: '/events', label: 'Events' },
+  { path: '/team', label: 'Team', altPaths: ['/bearers'] },
+  { path: '/sponsors', label: 'Sponsors' },
+];
 
-export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
+export const Navbar: React.FC = () => {
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -26,21 +41,27 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [mobileOpen]);
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, page: string) => {
-    e.preventDefault();
+  // Close mobile menu whenever pathname changes
+  useEffect(() => {
     setMobileOpen(false);
-    onNavigate(page);
+  }, [location.pathname]);
+
+  const isLinkActive = (item: NavItem) => {
+    if (location.pathname === item.path) return true;
+    if (item.altPaths && item.altPaths.includes(location.pathname)) return true;
+    return false;
   };
 
   return (
-    <header className="ref-header" id="top">
+    <header
+      className={`ref-header ${isHome ? 'ref-header-home' : ''} ${scrolled ? 'is-scrolled' : ''} ${mobileOpen ? 'menu-open' : ''}`}
+      id="top"
+    >
       <div className="ref-container ref-header-inner">
-        <a
+        <Link
           className="ref-brand"
-          href="#home"
-          data-page="home"
+          to="/"
           aria-label="SAE BIT Sindri home"
-          onClick={(e) => handleLinkClick(e, 'home')}
         >
           <span className="ref-brand-logo-ring nav-logo-hidden" id="navBrandLogoRing">
             <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Society Logo" />
@@ -49,20 +70,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
             <span className="ref-brand-title">SAE BIT Sindri</span>
             <span className="ref-brand-sub">Collegiate Society</span>
           </span>
-        </a>
+        </Link>
 
         {/* Center navigation links */}
         <nav className="ref-nav ref-nav-center" aria-label="Primary navigation">
           {NAV_ITEMS.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className={`ref-nav-link ${currentPage === item.id ? 'active' : ''}`}
-              data-page={item.id}
-              onClick={(e) => handleLinkClick(e, item.id)}
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`ref-nav-link ${isLinkActive(item) ? 'active' : ''}`}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -80,14 +99,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
             <span className="nav-pit-dock" id="navPitSlot" aria-hidden="true"></span>
           </button>
 
-          <a
-            href="#join"
+          <Link
+            to="/join"
             className="ref-btn ref-btn-primary effect-shine nav-desktop-only"
-            data-page="join"
-            onClick={(e) => handleLinkClick(e, 'join')}
           >
             Join the Society
-          </a>
+          </Link>
 
           <button
             className={`ref-mobile-btn ${mobileOpen ? 'is-open' : ''}`}
@@ -112,21 +129,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
       >
         <nav className="ref-mobile-nav-list" aria-label="Mobile navigation">
           {NAV_ITEMS.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              data-page={item.id}
-              onClick={(e) => handleLinkClick(e, item.id)}
+            <Link
+              key={`mobile-${item.path}`}
+              to={item.path}
+              className={isLinkActive(item) ? 'active' : ''}
+              onClick={() => setMobileOpen(false)}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
           <div className="ref-mobile-nav-cta">
-            <a
-              href="#join"
+            <Link
+              to="/join"
               className="ref-btn ref-btn-primary effect-shine"
-              data-page="join"
-              onClick={(e) => handleLinkClick(e, 'join')}
+              onClick={() => setMobileOpen(false)}
             >
               <span>Join the Society</span>
               <svg
@@ -142,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
         </nav>
       </div>

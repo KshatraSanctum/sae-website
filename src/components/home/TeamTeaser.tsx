@@ -1,10 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface TeamTeaserProps {
-  onNavigate: (page: string) => void;
-}
-
-export const TeamTeaser: React.FC<TeamTeaserProps> = ({ onNavigate }) => {
+export const TeamTeaser: React.FC = () => {
   return (
     <section id="home-team" className="ref-team-section">
       <div className="ref-container">
@@ -58,14 +55,9 @@ export const TeamTeaser: React.FC<TeamTeaserProps> = ({ onNavigate }) => {
               <span className="ref-skill-pill">Media</span>
             </div>
             <div style={{ marginTop: '2rem' }}>
-              <a
-                href="#team"
+              <Link
+                to="/team"
                 className="ref-btn ref-btn-light effect-shine"
-                data-page="team"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('team');
-                }}
               >
                 Meet Our Office Bearers &amp; Team
                 <svg
@@ -81,7 +73,7 @@ export const TeamTeaser: React.FC<TeamTeaserProps> = ({ onNavigate }) => {
                   <path d="M5 12h14" />
                   <path d="m13 6 6 6-6 6" />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

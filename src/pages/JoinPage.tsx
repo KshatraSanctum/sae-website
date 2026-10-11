@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 interface JoinPageProps {
-  isActive: boolean;
+  isActive?: boolean;
 }
 
-export const JoinPage: React.FC<JoinPageProps> = ({ isActive }) => {
+export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
   const [formData, setFormData] = useState({
     name: '',
     roll: '',

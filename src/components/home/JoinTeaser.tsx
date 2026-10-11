@@ -1,10 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface JoinTeaserProps {
-  onNavigate: (page: string) => void;
-}
-
-export const JoinTeaser: React.FC<JoinTeaserProps> = ({ onNavigate }) => {
+export const JoinTeaser: React.FC = () => {
   return (
     <section id="home-join-cta" className="ref-join-cta-section">
       <div className="tech-grid" style={{ position: 'absolute', inset: 0, opacity: 0.1 }}></div>
@@ -13,14 +10,9 @@ export const JoinTeaser: React.FC<JoinTeaserProps> = ({ onNavigate }) => {
           <p className="ref-join-cta-tag">Ready to get started?</p>
           <h2 className="ref-join-cta-heading">Build something that moves you.</h2>
         </div>
-        <a
-          href="#join"
+        <Link
+          to="/join"
           className="ref-join-cta-btn"
-          data-page="join"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigate('join');
-          }}
         >
           Join SAE BIT SINDRI
           <svg
@@ -36,7 +28,7 @@ export const JoinTeaser: React.FC<JoinTeaserProps> = ({ onNavigate }) => {
             <path d="M5 12h14" />
             <path d="m13 6 6 6-6 6" />
           </svg>
-        </a>
+        </Link>
       </div>
     </section>
   );

@@ -1,14 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { CORE_TEAM_MEMBERS } from '../data';
 
-interface TeamPageProps {
-  isActive: boolean;
-  onNavigate: (page: string) => void;
-}
-
-export const TeamPage: React.FC<TeamPageProps> = ({ isActive, onNavigate }) => {
+export const TeamPage: React.FC = () => {
   return (
-    <section className={`page ref-team-page ${isActive ? 'active' : ''}`} id="page-team">
+    <section className="page ref-team-page active" id="page-team">
       <div className="tech-grid team-bg-grid"></div>
       <div className="ref-container" style={{ position: 'relative' }}>
         {/* Header */}
@@ -121,14 +117,9 @@ export const TeamPage: React.FC<TeamPageProps> = ({ isActive, onNavigate }) => {
             <p className="ref-eyebrow text-signal">Your name could be here</p>
             <h3 className="team-join-heading">Join the team. Build the legacy.</h3>
           </div>
-          <a
-            href="#join"
+          <Link
+            to="/join"
             className="ref-btn ref-btn-primary effect-shine"
-            data-page="join"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('join');
-            }}
           >
             Find your team
             <svg
@@ -144,7 +135,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ isActive, onNavigate }) => {
               <path d="M5 12h14" />
               <path d="m13 6 6 6-6 6" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

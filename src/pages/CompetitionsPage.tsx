@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { COMPETITION_MILESTONES, type CompetitionMilestone } from '../data';
 
 interface CompetitionsPageProps {
-  isActive: boolean;
+  isActive?: boolean;
   onNavigate?: (page: string) => void;
 }
 
@@ -25,7 +26,7 @@ const categoryBadgeClassMap: Record<CompetitionMilestone['category'], string> = 
   'Innovation': 'cat-innovation',
 };
 
-export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive, onNavigate }) => {
+export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive = true }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('All');
   const [activePhotoModal, setActivePhotoModal] = useState<CompetitionMilestone | null>(null);
 
@@ -396,23 +397,16 @@ export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive, on
               <p className="comp-cta-eyebrow">// THE NEXT CHAPTER</p>
               <h2 className="comp-cta-heading">Is yours to build.</h2>
             </div>
-            <button
-              type="button"
+            <Link
+              to="/join"
               className="comp-cta-btn effect-shine"
-              onClick={() => {
-                if (onNavigate) {
-                  onNavigate('join');
-                } else {
-                  window.location.hash = '#join';
-                }
-              }}
             >
               Join SAE BIT SINDRI
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m13 6 6 6-6 6" />
               </svg>
-            </button>
+            </Link>
           </div>
         </section>
 

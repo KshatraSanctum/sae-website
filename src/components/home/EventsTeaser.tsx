@@ -1,10 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface EventsTeaserProps {
-  onNavigate: (page: string) => void;
-}
-
-export const EventsTeaser: React.FC<EventsTeaserProps> = ({ onNavigate }) => {
+export const EventsTeaser: React.FC = () => {
   return (
     <section id="home-events" className="ref-events-section">
       <div className="ref-container">
@@ -38,111 +35,91 @@ export const EventsTeaser: React.FC<EventsTeaserProps> = ({ onNavigate }) => {
               <h3 className="ref-event-title">EV Powertrain Fundamentals</h3>
               <p className="ref-event-meta">10:00 AM · Innovation Lab</p>
             </div>
-            <a
-              href="#events"
-              className="ref-event-action-btn"
-              data-page="events"
-              aria-label="View EV Powertrain Fundamentals"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('events');
-              }}
+            <Link
+              to="/events"
+              className="ref-event-arrow-btn"
+              aria-label="View event details"
             >
               <svg
-                width="20"
-                height="20"
+                width="16"
+                height="16"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <path d="m9 18 6-6-6-6" />
               </svg>
-            </a>
+            </Link>
           </article>
 
-          <article data-reveal className="reveal-side ref-event-item">
+          <article data-reveal className="reveal-side reveal-delay ref-event-item">
             <div className="ref-event-date-col">
               <span className="ref-event-date-num">02</span>
               <span className="ref-event-date-month">SEP</span>
             </div>
             <div>
-              <p className="ref-event-type">Tech Talk</p>
-              <h3 className="ref-event-title">From Campus to Motorsport</h3>
-              <p className="ref-event-meta">3:30 PM · Main Auditorium</p>
+              <p className="ref-event-type">Orientation</p>
+              <h3 className="ref-event-title">Fall Recruitment &amp; Team Welcome</h3>
+              <p className="ref-event-meta">5:30 PM · Mechanical Hall B</p>
             </div>
-            <a
-              href="#events"
-              className="ref-event-action-btn"
-              data-page="events"
-              aria-label="View From Campus to Motorsport"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('events');
-              }}
+            <Link
+              to="/events"
+              className="ref-event-arrow-btn"
+              aria-label="View event details"
             >
               <svg
-                width="20"
-                height="20"
+                width="16"
+                height="16"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <path d="m9 18 6-6-6-6" />
               </svg>
-            </a>
+            </Link>
           </article>
 
-          <article data-reveal className="reveal-side ref-event-item">
+          <article data-reveal className="reveal-side reveal-delay-2 ref-event-item">
             <div className="ref-event-date-col">
               <span className="ref-event-date-num">14</span>
-              <span className="ref-event-date-month">SEP</span>
+              <span className="ref-event-date-month">OCT</span>
             </div>
             <div>
-              <p className="ref-event-type">Build Day</p>
-              <h3 className="ref-event-title">Formula Student Open Garage</h3>
-              <p className="ref-event-meta">9:00 AM · SAE Workshop</p>
+              <p className="ref-event-type">Guest Lecture</p>
+              <h3 className="ref-event-title">Aerodynamics in Competition Design</h3>
+              <p className="ref-event-meta">3:00 PM · Online via Teams</p>
             </div>
-            <a
-              href="#events"
-              className="ref-event-action-btn"
-              data-page="events"
-              aria-label="View Formula Student Open Garage"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('events');
-              }}
+            <Link
+              to="/events"
+              className="ref-event-arrow-btn"
+              aria-label="View event details"
             >
               <svg
-                width="20"
-                height="20"
+                width="16"
+                height="16"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <path d="m9 18 6-6-6-6" />
               </svg>
-            </a>
+            </Link>
           </article>
         </div>
 
         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-          <a
-            href="#events"
+          <Link
+            to="/events"
             className="ref-btn ref-btn-outline effect-shine"
-            data-page="events"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('events');
-            }}
           >
             View All Chapter Events
             <svg
@@ -158,7 +135,7 @@ export const EventsTeaser: React.FC<EventsTeaserProps> = ({ onNavigate }) => {
               <path d="M5 12h14" />
               <path d="m13 6 6 6-6 6" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

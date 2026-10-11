@@ -1,10 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface AboutTeaserProps {
-  onNavigate: (page: string) => void;
-}
-
-export const AboutTeaser: React.FC<AboutTeaserProps> = ({ onNavigate }) => {
+export const AboutTeaser: React.FC = () => {
   return (
     <section id="home-about" className="ref-about-section">
       <div className="ref-container" style={{ padding: 0, maxWidth: '80rem', margin: '0 auto' }}>
@@ -26,15 +23,10 @@ export const AboutTeaser: React.FC<AboutTeaserProps> = ({ onNavigate }) => {
             <p className="ref-about-copy" style={{ marginTop: '1rem', opacity: 0.85 }}>
               Apart from that, we do organise various events in the college which includes - Technical Workshops, GD, Techfest(Tvaran).
             </p>
-            <a
-              href="#about"
+            <Link
+              to="/about"
               className="ref-btn ref-btn-outline effect-shine"
-              data-page="about"
               style={{ marginTop: '2rem' }}
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('about');
-              }}
             >
               Learn More About Us
               <svg
@@ -51,7 +43,7 @@ export const AboutTeaser: React.FC<AboutTeaserProps> = ({ onNavigate }) => {
                 <path d="M5 12h14" />
                 <path d="m13 6 6 6-6 6" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           <div data-reveal className="reveal-up reveal-delay ref-stats-grid">

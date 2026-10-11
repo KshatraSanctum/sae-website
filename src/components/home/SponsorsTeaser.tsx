@@ -1,8 +1,5 @@
 import React from 'react';
-
-interface SponsorsTeaserProps {
-  onNavigate: (page: string) => void;
-}
+import { Link } from 'react-router-dom';
 
 const ROW_1_SPONSORS = [
   { name: 'Tata Motors', tier: 'Industrial Partner', logo: '/sponsors/tata.svg' },
@@ -25,7 +22,7 @@ const ROW_2_SPONSORS = [
   { name: 'AIEFA Vision', tier: 'Academic Partner', logo: '/sponsors/aiefa.png' },
 ];
 
-export const SponsorsTeaser: React.FC<SponsorsTeaserProps> = ({ onNavigate }) => {
+export const SponsorsTeaser: React.FC = () => {
   return (
     <section id="home-sponsors-teaser" className="ref-sponsors-section">
       <div className="ref-container" style={{ padding: 0, maxWidth: '80rem', margin: '0 auto' }}>
@@ -42,14 +39,9 @@ export const SponsorsTeaser: React.FC<SponsorsTeaserProps> = ({ onNavigate }) =>
               From high-precision CAD suites and structural FEA software to high-grade steel and track-proven racing rubber, our corporate and technical partners equip our student engineers with industrial tools to build championship machines.
             </p>
             <div className="ref-sponsors-actions">
-              <a
-                href="#sponsors"
+              <Link
+                to="/sponsors"
                 className="ref-btn ref-btn-outline effect-shine"
-                data-page="sponsors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('sponsors');
-                }}
               >
                 Explore All Sponsors
                 <svg
@@ -66,7 +58,7 @@ export const SponsorsTeaser: React.FC<SponsorsTeaserProps> = ({ onNavigate }) =>
                   <path d="M5 12h14" />
                   <path d="m13 6 6 6-6 6" />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
 

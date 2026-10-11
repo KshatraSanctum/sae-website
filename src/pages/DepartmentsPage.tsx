@@ -2,10 +2,10 @@ import React from 'react';
 import { DEPARTMENTS } from '../data';
 
 interface DepartmentsPageProps {
-  isActive: boolean;
+  isActive?: boolean;
 }
 
-export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({ isActive }) => {
+export const DepartmentsPage: React.FC<DepartmentsPageProps> = ({ isActive = true }) => {
   return (
     <section className={`page ${isActive ? 'active' : ''}`} id="page-departments">
       <div className="page-head">

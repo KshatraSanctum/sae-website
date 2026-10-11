@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-interface HeroSectionProps {
-  onNavigate: (page: string) => void;
-}
-
-export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
+export const HeroSection: React.FC = () => {
   const [activeScene, setActiveScene] = useState<'design' | 'build' | 'compete'>('build');
 
   return (
@@ -59,53 +56,40 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               type="button"
               className={`slogan-word ${activeScene === 'design' ? 'is-active' : ''}`}
               data-scene="design"
-              aria-label="Show Design background"
-              aria-pressed={activeScene === 'design'}
               onMouseEnter={() => setActiveScene('design')}
               onFocus={() => setActiveScene('design')}
-              onClick={() => setActiveScene('design')}
             >
-              Design<span className="text-signal">.</span>
+              Design.
             </button>
             <button
               type="button"
               className={`slogan-word ${activeScene === 'build' ? 'is-active' : ''}`}
               data-scene="build"
-              aria-label="Show Build background"
-              aria-pressed={activeScene === 'build'}
               onMouseEnter={() => setActiveScene('build')}
               onFocus={() => setActiveScene('build')}
-              onClick={() => setActiveScene('build')}
             >
-              Build<span className="text-signal">.</span>
+              Build.
             </button>
             <button
               type="button"
               className={`slogan-word ${activeScene === 'compete' ? 'is-active' : ''}`}
               data-scene="compete"
-              aria-label="Show Compete background"
-              aria-pressed={activeScene === 'compete'}
               onMouseEnter={() => setActiveScene('compete')}
               onFocus={() => setActiveScene('compete')}
-              onClick={() => setActiveScene('compete')}
             >
-              Compete<span className="text-signal">.</span>
+              Compete.
             </button>
           </h1>
 
-          <p className="hero-enter hero-delay-3 hero-subtext">
-            From initial concepts to the final lap on the track or the ascent into the skies, we’re turning engineering ideas into high-performance machines, be it on wheels or wings.
+          <p className="hero-enter hero-delay-3 hero-sub hero-subtext">
+            The official collegiate mobility chapter of BIT Sindri. Designing and engineering national-tier
+            championship racecars, aerodynamic drones, electric powertrains, and the engineering leaders of tomorrow.
           </p>
 
           <div className="hero-enter hero-delay-4 hero-cta-row">
-            <a
-              href="#join"
+            <Link
+              to="/join"
               className="ref-btn ref-btn-primary effect-shine"
-              data-page="join"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('join');
-              }}
             >
               Become a member
               <svg
@@ -122,18 +106,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
                 <path d="M5 12h14" />
                 <path d="m13 6 6 6-6 6" />
               </svg>
-            </a>
-            <a
-              href="#about"
+            </Link>
+            <Link
+              to="/about"
               className="ref-btn ref-btn-light effect-shine"
-              data-page="about"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('about');
-              }}
             >
               Explore our Society
-            </a>
+            </Link>
           </div>
         </div>
       </div>

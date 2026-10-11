@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { SPONSORS, SPONSOR_FILTER_DEFS, type SponsorItem } from '../data';
 
 interface SponsorsPageProps {
-  isActive: boolean;
+  isActive?: boolean;
 }
 
-export const SponsorsPage: React.FC<SponsorsPageProps> = ({ isActive }) => {
+export const SponsorsPage: React.FC<SponsorsPageProps> = ({ isActive = true }) => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const filteredSponsors: SponsorItem[] =
@@ -83,9 +83,23 @@ export const SponsorsPage: React.FC<SponsorsPageProps> = ({ isActive }) => {
         <div className="sponsor-cta-action">
           <a
             href="mailto:saeindiabitsindri@gmail.com?subject=Sponsorship%20Inquiry%20-%20SAE%20BIT%20Sindri"
-            className="btn btn-primary"
+            className="ref-btn ref-btn-primary effect-shine"
           >
             Partner With Us
+            <svg
+              aria-hidden="true"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
           </a>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 interface EventsPageProps {
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 interface EventDetail {
@@ -94,7 +94,7 @@ const TOP_CARDS = [
   },
 ];
 
-export const EventsPage: React.FC<EventsPageProps> = ({ isActive }) => {
+export const EventsPage: React.FC<EventsPageProps> = ({ isActive = true }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isFading, setIsFading] = useState<boolean>(false);
   const timelineRef = useRef<HTMLDivElement | null>(null);

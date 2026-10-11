@@ -9,21 +9,22 @@ import { TeamTeaser } from '../components/home/TeamTeaser';
 import { JoinTeaser } from '../components/home/JoinTeaser';
 
 interface HomePageProps {
-  isActive: boolean;
-  onNavigate: (page: string) => void;
+  isActive?: boolean;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ isActive, onNavigate }) => {
+export const HomePage: React.FC<HomePageProps> = ({ isActive = true }) => {
   return (
     <section className={`page ${isActive ? 'active' : ''}`} id="page-home">
-      <HeroSection onNavigate={onNavigate} />
+      <HeroSection />
       <DbcScrollShowcase />
-      <AboutTeaser onNavigate={onNavigate} />
-      <EventsTeaser onNavigate={onNavigate} />
-      <SponsorsTeaser onNavigate={onNavigate} />
+      <AboutTeaser />
+      <EventsTeaser />
+      <SponsorsTeaser />
       <GlimpsesSection />
-      <TeamTeaser onNavigate={onNavigate} />
-      <JoinTeaser onNavigate={onNavigate} />
+      <TeamTeaser />
+      <JoinTeaser />
     </section>
   );
 };
+
+export default HomePage;

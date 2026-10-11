@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+
 import './styles/main.css';
 import './styles/landing.css';
 import './styles/intro.css';
@@ -9,102 +11,126 @@ import { IntroOverlay } from './components/intro/IntroOverlay';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { MobileScrollTrack } from './components/layout/MobileScrollTrack';
-
-import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { CompetitionsPage } from './pages/CompetitionsPage';
-import { EventsPage } from './pages/EventsPage';
-import { TeamPage } from './pages/TeamPage';
-import { SponsorsPage } from './pages/SponsorsPage';
-import { DepartmentsPage } from './pages/DepartmentsPage';
-import { JoinPage } from './pages/JoinPage';
+import { RouteMetadata } from './components/common/RouteMetadata';
+import { ScrollToTop } from './components/common/ScrollToTop';
+import { RouteLoadingFallback } from './components/common/RouteLoadingFallback';
 
 import { initCarFollower3D, CarFollower3D } from './carFollower3D';
 
-const VALID_PAGES = [
-  'home',
-  'about',
-  'competitions',
-  'events',
-  'team',
-  'sponsors',
-  'departments',
-  'join',
-];
+// Synchronously import HomePage for instant first-paint without lazy-loading lag
+import { HomePage } from './pages/HomePage';
 
-export const App: React.FC = () => {
-  const getInitialPage = (): string => {
-    let hash = window.location.hash.replace('#', '').trim();
-    if (hash === 'bearers') hash = 'team';
-    if (hash === 'achievements') hash = 'competitions';
-    return VALID_PAGES.includes(hash) ? hash : 'home';
-  };
+// Code-split secondary route components for performance and optimal loading
+const AboutPage = React.lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const CompetitionsPage = React.lazy(() => import('./pages/CompetitionsPage').then((m) => ({ default: m.CompetitionsPage })));
+const EventsPage = React.lazy(() => import('./pages/EventsPage').then((m) => ({ default: m.EventsPage })));
+const TeamPage = React.lazy(() => import('./pages/TeamPage').then((m) => ({ default: m.TeamPage })));
+const SponsorsPage = React.lazy(() => import('./pages/SponsorsPage').then((m) => ({ default: m.SponsorsPage })));
+const DepartmentsPage = React.lazy(() => import('./pages/DepartmentsPage').then((m) => ({ default: m.DepartmentsPage })));
+const JoinPage = React.lazy(() => import('./pages/JoinPage').then((m) => ({ default: m.JoinPage })));
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
-  const [currentPage, setCurrentPage] = useState<string>(getInitialPage);
+// Observer for triggering reveal animations across client-side route changes
+const ScrollRevealObserver: React.FC = () => {
+  const location = useLocation();
 
-  const navigateTo = useCallback((pageOrId: string) => {
-    let target = pageOrId;
-    if (target === 'bearers') target = 'team';
-    if (target === 'achievements') target = 'competitions';
-
-    if (VALID_PAGES.includes(target)) {
-      setCurrentPage(target);
-      try {
-        history.pushState(null, '', '#' + target);
-      } catch (_) {
-        window.location.hash = '#' + target;
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      // In-page section anchor (e.g. 'dbcShowcase', 'home-about', 'join-application')
-      setCurrentPage('home');
-      try {
-        history.pushState(null, '', '#' + target);
-      } catch (_) {
-        window.location.hash = '#' + target;
-      }
-      setTimeout(() => {
-        const el = document.getElementById(target);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 60);
-    }
-  }, []);
-
-  // Listen to hashchange & popstate
   useEffect(() => {
-    const handleHashChange = () => {
-      let hash = window.location.hash.replace('#', '').trim();
-      if (hash === 'bearers') hash = 'team';
-      if (hash === 'achievements') hash = 'competitions';
-      if (VALID_PAGES.includes(hash)) {
-        setCurrentPage(hash);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (hash) {
-        const el = document.getElementById(hash);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+    let io: IntersectionObserver | null = null;
+
+    const scanAndObserve = () => {
+      const elements = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)');
+      if (!elements.length) return;
+
+      if (!io) {
+        io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io?.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.08, rootMargin: '0px 0px -24px 0px' }
+        );
+      }
+
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        // If element is already inside the viewport or near the top, reveal immediately
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('is-visible');
+        } else {
+          io?.observe(el);
         }
-      } else {
-        setCurrentPage('home');
+      });
+    };
+
+    // Scan immediately
+    scanAndObserve();
+
+    // Additional scheduled scans for any animations or image loads
+    const t1 = setTimeout(scanAndObserve, 50);
+    const t2 = setTimeout(scanAndObserve, 200);
+    const t3 = setTimeout(scanAndObserve, 500);
+
+    // Watch for dynamic DOM insertions
+    const mutObserver = new MutationObserver(() => {
+      scanAndObserve();
+    });
+    mutObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      mutObserver.disconnect();
+      if (io) {
+        io.disconnect();
       }
     };
+  }, [location.pathname]);
 
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('popstate', handleHashChange);
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
-    };
-  }, []);
+  return null;
+};
 
+// Seamless fallback handler for legacy hash bookmarks (e.g. /#competitions -> /competitions)
+const LegacyHashRedirector: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/' && location.hash) {
+      const cleanHash = location.hash.replace('#', '').trim();
+      const legacyRouteMap: Record<string, string> = {
+        about: '/about',
+        competitions: '/competitions',
+        achievements: '/achievements',
+        events: '/events',
+        team: '/team',
+        bearers: '/team',
+        sponsors: '/sponsors',
+        departments: '/departments',
+        join: '/join',
+      };
+
+      if (legacyRouteMap[cleanHash]) {
+        navigate(legacyRouteMap[cleanHash], { replace: true });
+      }
+    }
+  }, [location, navigate]);
+
+  return null;
+};
+
+// App layout wrapper containing shared navigation, 3D cursor car, and page routes
+const AppLayout: React.FC = () => {
   // Initialize 3D Car Follower
   useEffect(() => {
     let carInstance: CarFollower3D | null = null;
     const timer = setTimeout(() => {
       carInstance = initCarFollower3D();
-    }, 100);
+    }, 120);
 
     return () => {
       clearTimeout(timer);
@@ -114,47 +140,46 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // Scroll Reveal Observer
-  useEffect(() => {
-    const elements = document.querySelectorAll<HTMLElement>('[data-reveal]');
-    if (!elements.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -48px' }
-    );
-
-    elements.forEach((el) => observer.observe(el));
-
-    return () => {
-      elements.forEach((el) => observer.unobserve(el));
-    };
-  }, [currentPage]);
-
   return (
     <>
+      <RouteMetadata />
+      <ScrollToTop />
+      <ScrollRevealObserver />
+      <LegacyHashRedirector />
+
       <IntroOverlay />
-      <Navbar currentPage={currentPage} onNavigate={navigateTo} />
-      <main>
-        <HomePage isActive={currentPage === 'home'} onNavigate={navigateTo} />
-        <AboutPage isActive={currentPage === 'about'} onNavigate={navigateTo} />
-        <CompetitionsPage isActive={currentPage === 'competitions'} onNavigate={navigateTo} />
-        <EventsPage isActive={currentPage === 'events'} />
-        <TeamPage isActive={currentPage === 'team'} onNavigate={navigateTo} />
-        <SponsorsPage isActive={currentPage === 'sponsors'} />
-        <DepartmentsPage isActive={currentPage === 'departments'} />
-        <JoinPage isActive={currentPage === 'join'} />
+      <Navbar />
+
+      <main id="mainContent">
+        <Suspense fallback={<RouteLoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/achievements" element={<CompetitionsPage />} />
+            <Route path="/competitions" element={<CompetitionsPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/bearers" element={<Navigate to="/team" replace />} />
+            <Route path="/sponsors" element={<SponsorsPage />} />
+            <Route path="/departments" element={<DepartmentsPage />} />
+            <Route path="/join" element={<JoinPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </main>
-      <Footer onNavigate={navigateTo} />
+
+      <Footer />
       <MobileScrollTrack />
     </>
   );
 };
+
+export const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <AppLayout />
+    </BrowserRouter>
+  );
+};
+
 export default App;

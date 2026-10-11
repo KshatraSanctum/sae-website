@@ -86,10 +86,29 @@
   letter-spacing: 1px;
 }
 
-.custom-events-wrapper .badge-workshop { background-color: #1a7844; color: white; border: none; }
-.custom-events-wrapper .badge-flagship { background-color: transparent; color: #fff; border: 1px solid #374151; }
-.custom-events-wrapper .badge-industrial { background-color: #f69946; color: #000; border: none; }
-.custom-events-wrapper .badge-recruitment { background-color: #3f72af; color: white; border: none; }
+.custom-events-wrapper .badge-workshop {
+  background-color: #1a7844;
+  color: white;
+  border: none;
+}
+
+.custom-events-wrapper .badge-flagship {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #374151;
+}
+
+.custom-events-wrapper .badge-industrial {
+  background-color: #f69946;
+  color: #000;
+  border: none;
+}
+
+.custom-events-wrapper .badge-recruitment {
+  background-color: #3f72af;
+  color: white;
+  border: none;
+}
 
 .custom-events-wrapper .card-meta {
   font-size: 0.8rem;
@@ -107,7 +126,7 @@
   color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.5;
-  flex-grow: 1; 
+  flex-grow: 1;
   margin-bottom: 1.5rem;
 }
 
@@ -147,7 +166,7 @@
   width: 100%;
   margin-bottom: 6rem;
   display: flex;
-  justify-content: flex-end; 
+  justify-content: flex-end;
   opacity: 0.5;
   transition: all 0.4s ease;
   cursor: pointer;
@@ -216,7 +235,7 @@
 
 .custom-events-wrapper .sticky-wrapper {
   position: sticky;
-  top: 100px; 
+  top: 100px;
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
@@ -226,9 +245,9 @@
 }
 
 .custom-events-wrapper .image-box {
-  width: 85%; 
-  height: 260px; 
-  margin: 0 auto 1.5rem auto; 
+  width: 85%;
+  height: 260px;
+  margin: 0 auto 1.5rem auto;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #1f2937;
@@ -242,13 +261,13 @@
 }
 
 .custom-events-wrapper .info-container {
-  width: 85%; 
-  margin: 0 auto; 
+  width: 85%;
+  margin: 0 auto;
   padding: 0;
 }
 
 .custom-events-wrapper .info-container h2 {
-  font-size: 1.8rem; 
+  font-size: 1.8rem;
   margin-bottom: 0.25rem;
   color: var(--text-main);
 }
@@ -263,7 +282,7 @@
 .custom-events-wrapper .info-container p#display-desc {
   color: var(--text-muted);
   line-height: 1.6;
-  font-size: 1.05rem; 
+  font-size: 1.05rem;
 }
 
 .custom-events-wrapper .upcoming-badge {

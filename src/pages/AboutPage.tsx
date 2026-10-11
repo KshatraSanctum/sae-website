@@ -1,13 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface AboutPageProps {
-  isActive: boolean;
-  onNavigate: (page: string) => void;
-}
-
-export const AboutPage: React.FC<AboutPageProps> = ({ isActive, onNavigate }) => {
+export const AboutPage: React.FC = () => {
   return (
-    <section className={`page ref-about-page ${isActive ? 'active' : ''}`} id="page-about">
+    <section className="page ref-about-page active" id="page-about">
       <div className="tech-grid about-bg-grid"></div>
 
       {/* Page Hero / Banner */}
@@ -225,21 +221,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({ isActive, onNavigate }) =>
               <p className="ref-eyebrow text-signal">// BE PART OF THE STORY</p>
               <h3 className="team-join-heading">Ready to step onto the build floor?</h3>
             </div>
-            <a
-              href="#join"
+            <Link
+              to="/join"
               className="ref-btn ref-btn-primary effect-shine"
-              data-page="join"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('join');
-              }}
             >
               Join SAE BIT SINDRI
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m13 6 6 6-6 6" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
