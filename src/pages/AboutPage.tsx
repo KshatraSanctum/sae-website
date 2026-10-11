@@ -71,6 +71,71 @@ export const AboutPage: React.FC = () => {
 
             {/* Visual Feature / Stat highlight */}
             <div data-reveal className="reveal-up reveal-delay about-story-visual">
+              {/* Professors In-Charge Photo Placeholders */}
+              <div className="about-prof-card">
+                <div className="about-card-badge mono">// PROFESSORS IN-CHARGE</div>
+                <div className="about-prof-grid">
+                  {/* Prof 1 Placeholder */}
+                  <div className="prof-item">
+                    <div className="prof-photo-box">
+                      <svg
+                        className="prof-avatar-icon"
+                        width="38"
+                        height="38"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      <span className="prof-photo-label mono">Photo Placeholder</span>
+                    </div>
+                    <div className="prof-info">
+                      <span className="prof-tag mono">PROFESSOR IN-CHARGE</span>
+                      <h4 className="prof-name">Prof. In-Charge</h4>
+                      <p className="prof-sub">
+                        Dept. of Mechanical Engineering<br />BIT Sindri
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Prof 2 Placeholder */}
+                  <div className="prof-item">
+                    <div className="prof-photo-box">
+                      <svg
+                        className="prof-avatar-icon"
+                        width="38"
+                        height="38"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      <span className="prof-photo-label mono">Photo Placeholder</span>
+                    </div>
+                    <div className="prof-info">
+                      <span className="prof-tag mono">PROFESSOR IN-CHARGE</span>
+                      <h4 className="prof-name">Prof. In-Charge</h4>
+                      <p className="prof-sub">
+                        Dept. of Mechanical Engineering<br />BIT Sindri
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* By The Numbers Card */}
               <div className="about-visual-card">
                 <div className="about-card-badge mono">// BY THE NUMBERS</div>
                 <div className="about-numbers-stack">

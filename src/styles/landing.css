@@ -2661,8 +2661,15 @@
 @media (min-width: 1024px) {
   .about-story-grid {
     grid-template-columns: 1.25fr 0.75fr;
-    align-items: start;
+    align-items: stretch;
   }
+}
+
+.about-story-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
 }
 
 .about-story-text h2 {
@@ -2737,30 +2744,134 @@
   margin: 0;
 }
 
+/* Professors In-Charge Card */
+.about-prof-card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--color-paper);
+  padding: 1.35rem 1.5rem;
+  transition: border-color 300ms ease, transform 300ms ease;
+  flex-shrink: 0;
+}
+
+.about-prof-card:hover {
+  border-color: rgba(246, 183, 25, 0.4);
+}
+
+.about-prof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.prof-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.prof-photo-box {
+  width: 100%;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(246, 183, 25, 0.35);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: border-color 200ms ease, background-color 200ms ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.prof-photo-box:hover {
+  border-color: var(--color-signal);
+  background-color: rgba(246, 183, 25, 0.06);
+}
+
+.prof-avatar-icon {
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+.prof-photo-box:hover .prof-avatar-icon {
+  color: var(--color-signal);
+  transform: scale(1.08);
+}
+
+.prof-photo-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-signal);
+}
+
+.prof-info {
+  margin-top: 0.6rem;
+}
+
+.prof-tag {
+  display: block;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-signal);
+  text-transform: uppercase;
+}
+
+.prof-name {
+  margin: 2px 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+.prof-sub {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 480px) {
+  .about-prof-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* About Visual Numbers Stack */
 .about-visual-card {
   border: 1px solid rgba(255, 255, 255, 0.15);
   background-color: var(--color-paper);
-  padding: 2.25rem;
+  padding: 1.5rem 1.75rem;
   position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .about-card-badge {
   font-size: 0.72rem;
   letter-spacing: 0.18em;
   color: var(--color-signal);
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
+  flex-shrink: 0;
 }
 
 .about-numbers-stack {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  justify-content: space-between;
+  flex: 1;
+  gap: 0.75rem;
 }
 
 .about-num-row {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 1.5rem;
+  padding-bottom: 0.65rem;
 }
 
 .about-num-row:last-child {
@@ -2771,7 +2882,7 @@
 .about-big-num {
   display: block;
   font-family: var(--font-display);
-  font-size: 3.5rem;
+  font-size: 2.6rem;
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
@@ -2779,9 +2890,9 @@
 
 .about-num-desc {
   display: block;
-  margin-top: 0.4rem;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
   color: rgba(255, 255, 255, 0.6);
 }
 
