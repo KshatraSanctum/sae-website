@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { SocietyAnimatedLogo } from '../common/SocietyAnimatedLogo';
 
 export const HeroSection: React.FC = () => {
-  const [activeScene, setActiveScene] = useState<'design' | 'build' | 'compete'>('build');
+  const [activeScene, setActiveScene] = useState<'design' | 'build' | 'compete' | null>(null);
 
   return (
     <section className="ref-hero">
@@ -25,18 +26,18 @@ export const HeroSection: React.FC = () => {
         data-scene="compete"
       />
       <div className="hero-gradient-overlay"></div>
-      <div className="tech-grid" style={{ position: 'absolute', inset: 0, opacity: 0.2 }}></div>
       <div
         className="ambient-glow"
         style={{
           position: 'absolute',
-          right: '10rem',
-          top: '5rem',
-          width: '34rem',
-          height: '34rem',
+          right: '8rem',
+          top: '4rem',
+          width: '38rem',
+          height: '38rem',
           borderRadius: '9999px',
-          backgroundColor: 'rgba(246, 183, 25, 0.2)',
-          filter: 'blur(48px)',
+          backgroundColor: 'rgba(246, 183, 25, 0.18)',
+          filter: 'blur(56px)',
+          pointerEvents: 'none',
         }}
       ></div>
 
@@ -50,7 +51,7 @@ export const HeroSection: React.FC = () => {
           <h1
             className="slogan hero-enter hero-delay-2"
             id="heroSlogan"
-            onMouseLeave={() => setActiveScene('build')}
+            onMouseLeave={() => setActiveScene(null)}
           >
             <button
               type="button"
@@ -115,7 +116,25 @@ export const HeroSection: React.FC = () => {
             </Link>
           </div>
         </div>
+
+        {/* Right Side: Animated Chapter Crest (Hides when hovering on Design / Build / Compete) */}
+        <div
+          className={`hero-visual-box hero-enter hero-delay-3 ${activeScene ? 'is-hidden' : ''}`}
+          aria-hidden={activeScene !== null}
+        >
+          <div className="hero-logo-frame">
+            <SocietyAnimatedLogo
+              size={390}
+              activeScene={activeScene}
+            />
+          </div>
+          <div className="hero-logo-telemetry mono">
+            <span className="hero-telemetry-dot" />
+            <span className="hero-telemetry-text">EST. BIT SINDRI · SAE CHAPTER</span>
+          </div>
+        </div>
       </div>
     </section>
   );
 };
+
