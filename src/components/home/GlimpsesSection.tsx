@@ -1,21 +1,21 @@
 import React from 'react';
 
 const TRACK_1_ITEMS = [
-  { img: '/glimpses/tech_fest.webp', badge: 'TECH MAHOTSAV', title: 'Vehicle Unveiling & Demos' },
-  { img: '/glimpses/tech_fest1.webp', badge: 'EXHIBITION', title: 'Formula & Buggy Showcase' },
-  { img: '/glimpses/tech_fest2.webp', badge: 'CAMPUS DRIVE', title: 'Student Innovations on Display' },
-  { img: '/glimpses/tech_fest3.webp', badge: 'LIVE DEMO', title: 'Aero Dynamics & Track Testing' },
-  { img: '/glimpses/tech_fest4.webp', badge: 'SHOWCASE', title: 'Chapter Interactive Pavilion' },
-  { img: '/glimpses/tech_fest5.webp', badge: 'MOTORSPORT', title: 'Trackside Pit & Engineering' },
+  { img: '/glimpses/tech_fest.webp', badge: 'TVARAN FEST', title: 'Driven By Passion Photobooth' },
+  { img: '/glimpses/tech_fest1.webp', badge: 'TEAM SPIRIT', title: 'Chapter Crew at Tvaran Booth' },
+  { img: '/glimpses/tech_fest2.webp', badge: 'MECH COSPLAY', title: 'Optimus Prime Helmet Craft' },
+  { img: '/glimpses/tech_fest3.webp', badge: 'CHAPTER PRIDE', title: 'Giant 3D SAE INDIA Installation' },
+  { img: '/glimpses/tech_fest4.webp', badge: 'FORMULA STUDENT', title: 'In the Cockpit of Formula Racecar' },
+  { img: '/glimpses/tech_fest5.webp', badge: 'SOCIETY FAMILY', title: 'Annual Chapter Fest Gathering' },
 ];
 
 const TRACK_2_ITEMS = [
-  { img: '/glimpses/workshop.webp', badge: 'WORKSHOP BAY', title: 'Engine Teardown & Mechanics' },
-  { img: '/glimpses/workshop2.webp', badge: 'FABRICATION', title: 'Chassis CAD & Metalworking' },
-  { img: '/events/supra sae 2012.webp', badge: 'SUPRA FORMULA', title: 'National Track Trials & Testing' },
-  { img: '/events/baja sae india 2015.webp', badge: 'BAJA OFF-ROAD', title: 'All-Terrain Vehicle Endurance' },
-  { img: '/events/aerothon 2023.webp', badge: 'AEROSPACE', title: 'Aerothon UAV Flight Dynamics' },
-  { img: '/glimpses/puja4.webp', badge: 'CREW UNITY', title: 'The Collegiate Chapter Family' },
+  { img: '/glimpses/workshop.webp', badge: 'UAV & PROPULSION', title: 'Drone Motor & Aerodynamics Briefing' },
+  { img: '/glimpses/workshop2.webp', badge: 'TECH SEMINAR', title: 'Automotive Powertrain & Drivetrain Lecture' },
+  { img: '/achievements/supra sae 2012.webp', badge: 'SUPRA SAE', title: 'Team Speedy Avengers (Car #115)' },
+  { img: '/achievements/baja sae india 2015.webp', badge: 'BAJA SAE', title: 'mBAJA Pit Lane & Driver Prep at NATRAX' },
+  { img: '/achievements/aerothon 2023.webp', badge: 'AEROSPACE & UAV', title: 'Team Vayu Custom Quadcopter Drone' },
+  { img: '/glimpses/puja4.webp', badge: 'TRADITION', title: 'Vishwakarma Puja Celebration at The Bay' },
 ];
 
 export const GlimpsesSection: React.FC = () => {

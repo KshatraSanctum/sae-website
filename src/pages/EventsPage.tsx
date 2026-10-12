@@ -1,222 +1,278 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 interface EventItem {
   id: string;
   index: string;
   glyph: string;
-  category: 'flagship' | 'workshop' | 'shakedown' | 'aero';
+  category: 'flagship' | 'competition' | 'workshop' | 'community';
   categoryLabel: string;
   dateBadge: string;
   fullDate: string;
   title: string;
   subtitle: string;
-  status: 'open' | 'upcoming' | 'finale';
+  status: 'conducted' | 'annual';
   statusText: string;
   image: string;
   venue: string;
   timing: string;
   shortDesc: string;
   longDesc: string;
+  instagramUrl: string;
   specs: {
     label: string;
     value: string;
   }[];
 }
 
+const InstagramIcon: React.FC<{ size?: number; className?: string }> = ({ size = 14, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+    style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0 }}
+  >
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+  </svg>
+);
+
 const ALL_EVENTS: EventItem[] = [
   {
-    id: 'cad-clinic',
-    index: '01 / 07',
-    glyph: '⌁',
-    category: 'workshop',
-    categoryLabel: 'Workshops & Clinics',
-    dateBadge: 'OCT 28',
-    fullDate: 'October 28, 2026',
-    title: 'SolidWorks CAD & FEA Clinic',
-    subtitle: 'Parametric Chassis & Aerodynamic Modeling',
-    status: 'open',
-    statusText: 'Registration Open',
-    image: '/glimpses/workshop.webp',
-    venue: 'Mechanical CAD Lab, BIT Sindri',
-    timing: '14:00 — 18:00 IST',
-    shortDesc:
-      'Hands-on SolidWorks parametric modeling, roll-cage triangulation rulebook compliance, and ANSYS FEA structural stress simulations.',
-    longDesc:
-      'Led by senior chassis captains, this hands-on CAD masterclass walks participants through 3D wireframe generation, weldment structural members, rulebook safety margins, and finite element impact analysis for collegiate BAJA and SUPRA competitions.',
-    specs: [
-      { label: 'Tooling', value: 'SolidWorks 2024 & ANSYS Workbench' },
-      { label: 'Eligibility', value: 'Open to all Engineering Batches' },
-      { label: 'Bay', value: 'Mechanical CAD Lab' },
-      { label: 'Prerequisite', value: 'Basic Engineering Drawing' },
-    ],
-  },
-  {
-    id: 'laws-of-motion',
-    index: '02 / 07',
+    id: 'tvaran-tech-fest',
+    index: '01 / 08',
     glyph: '✦',
     category: 'flagship',
-    categoryLabel: 'Flagship Meet',
-    dateBadge: 'NOV 18',
-    fullDate: 'November 18, 2026',
-    title: 'Laws of Motion 2026',
-    subtitle: 'The Chapter’s Premier Annual Tech Assembly',
-    status: 'open',
-    statusText: 'Registration Open · Limited Slots',
-    image: '/events/lom 2026.webp',
-    venue: 'Main Arena & Mechanical Bay #2, BIT Sindri',
-    timing: '09:30 — 21:00 IST',
+    categoryLabel: 'Annual Flagship Fest',
+    dateBadge: 'MAY 09–10',
+    fullDate: 'May 09 — May 10, 2026',
+    title: 'TECH FEST — TVARAN',
+    subtitle: 'Annual Technical Fest of SAE INDIA BIT Sindri',
+    status: 'annual',
+    statusText: 'Conducted · Annual Flagship',
+    image: '/events/TECH_FEST.jpeg',
+    venue: 'BIT Sindri Campus & Arenas',
+    timing: '2-Day Annual Fest',
     shortDesc:
-      'The premier annual multi-disciplinary congregation. High-speed RC dogfights, CAD model speed-runs, and live dynamic shakedowns under floodlights.',
+      'TVARAN is the annual technical fest of SAE INDIA BIT Sindri, celebrating innovation, creativity, and engineering excellence through exciting competitions, technical challenges, and collaborative events.',
     longDesc:
-      'Laws of Motion (LOM) is SAE BIT Sindri’s premier annual assembly. Uniting student engineers across Eastern India, LOM features dynamic vehicle sprints, autonomous drone obstacle flights, balsa-wood glider challenges, and technical engineering evaluations.',
+      'TVARAN is the premier annual technical festival organized by SAE INDIA BIT Sindri. Celebrating hands-on creativity and competitive spirit, the fest hosts robotics obstacle arenas, mechanical build-offs, mobility case study challenges, and technical campus quests. It stands as our chapter’s defining annual celebration of engineering passion and teamwork.',
+    instagramUrl:
+      'https://www.instagram.com/reel/DYCLwnfT5Kw/?utm_source=ig_web_copy_link&psln=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
     specs: [
-      { label: 'Disciplines', value: 'Buggy Shakedown · FPV Drone · RC Glider' },
-      { label: 'Venue', value: 'East Ground & Mechanical Bay #2' },
-      { label: 'Team Size', value: '1 to 5 Members per Track' },
-      { label: 'Awards', value: 'Cash Pool + National SAE India Certification' },
+      { label: 'Event Type', value: 'Flagship Multi-Track Technical Fest' },
+      { label: 'Dates Held', value: '09th May 2026 – 10th May 2026' },
+      { label: 'Host Chapter', value: 'SAE INDIA Collegiate Society BIT Sindri' },
+      { label: 'Highlights', value: 'Robotics, Bike Build, EV Hackathons & Quests' },
     ],
   },
   {
-    id: 'baja-shakedown',
-    index: '03 / 07',
+    id: 'auto-clue-quest',
+    index: '02 / 08',
+    glyph: '⌁',
+    category: 'competition',
+    categoryLabel: 'Campus Challenge',
+    dateBadge: 'MAY 09',
+    fullDate: 'May 09, 2026',
+    title: 'AUTO-CLUE QUEST',
+    subtitle: 'Logical Thinking, Puzzles & Clue Hunt',
+    status: 'conducted',
+    statusText: 'Conducted at TVARAN',
+    image: '/events/AUTO-CLUE_QUEST.jpeg',
+    venue: 'Campus Grounds & Quad, BIT Sindri',
+    timing: 'Full-Day Campus Quest',
+    shortDesc:
+      'AUTO-CLUE QUEST is an exciting campus challenge that combines quizzes, puzzles, and clue-solving to test participants’ logical thinking, teamwork, and problem-solving skills.',
+    longDesc:
+      'A thrilling treasure and intelligence quest hosted as part of TVARAN 2026. Participant teams raced across campus solving cryptic engineering puzzles, automotive riddles, and physical checkpoints, pushing their speed, teamwork, and analytical deduction to the limit.',
+    instagramUrl:
+      'https://www.instagram.com/p/DX7VrB8kqDO/?utm_source=ig_web_copy_link&cplk=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
+    specs: [
+      { label: 'Category', value: 'Logic, Puzzles & Scavenger Quest' },
+      { label: 'Date Held', value: '09th May 2026' },
+      { label: 'Festival', value: 'TVARAN 2026' },
+      { label: 'Focus', value: 'Analytical Deduction & Team Problem-Solving' },
+    ],
+  },
+  {
+    id: 'build-a-bike',
+    index: '03 / 08',
+    glyph: '⚙',
+    category: 'competition',
+    categoryLabel: 'Mechanical Challenge',
+    dateBadge: 'MAY 09–10',
+    fullDate: 'May 09 — May 10, 2026',
+    title: 'BUILD A BIKE',
+    subtitle: 'Bicycle Assembly & Performance Challenge',
+    status: 'conducted',
+    statusText: 'Conducted at TVARAN',
+    image: '/events/BUILD_A_BIKE.jpeg',
+    venue: 'Mechanical Fabrication Bay, BIT Sindri',
+    timing: '2-Day Mechanical Arena',
+    shortDesc:
+      'BUILD A BIKE is an exciting mechanical challenge that tests participants’ technical knowledge, precision, and teamwork through bicycle assembly and performance tasks.',
+    longDesc:
+      'A true test of craftsmanship and mechanical problem-solving. Teams received disassembled components and were evaluated on assembly precision, drivetrain calibration, alignment, brake tuning, and live performance ride testing under time-attack conditions.',
+    instagramUrl:
+      'https://www.instagram.com/p/DX7Wmx0ExAy/?utm_source=ig_web_copy_link&srtk=MzRlODBiNWFlZA==',
+    specs: [
+      { label: 'Discipline', value: 'Mechanical Assembly & Precision Tuning' },
+      { label: 'Dates Held', value: '09th May 2026 – 10th May 2026' },
+      { label: 'Venue', value: 'Central Mechanical Fabrication Bay' },
+      { label: 'Criteria', value: 'Build Speed, Mechanical Accuracy & Ride Stability' },
+    ],
+  },
+  {
+    id: 'technothon',
+    index: '04 / 08',
+    glyph: '⚡',
+    category: 'competition',
+    categoryLabel: 'EV Case Study',
+    dateBadge: 'MAY 09',
+    fullDate: 'May 09, 2026',
+    title: 'TECHNOTHON',
+    subtitle: 'India EV & Green Mobility Case Study Challenge',
+    status: 'conducted',
+    statusText: 'Conducted at TVARAN',
+    image: '/events/TECHNOTHON.jpeg',
+    venue: 'Seminar Hall, BIT Sindri',
+    timing: 'Case Presentations & Jury Defense',
+    shortDesc:
+      'TECHNOTHON is a case study presentation competition focused on India’s EV and mobility industry, encouraging strategic insights and sustainable engineering solutions.',
+    longDesc:
+      'TECHNOTHON challenged participants to analyze the crucial bottlenecks facing India’s electric mobility revolution: battery chemistry economics, charging network infrastructure, thermal safety, and fleet electrification. Teams pitched research-backed frameworks to a panel of expert evaluators.',
+    instagramUrl:
+      'https://www.instagram.com/p/DX7U26Tkzbs/?utm_source=ig_web_copy_link&dlrf=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
+    specs: [
+      { label: 'Theme', value: 'EV Ecosystem, Batteries & Sustainable Mobility' },
+      { label: 'Date Held', value: '09th May 2026' },
+      { label: 'Format', value: 'Executive Deck Presentation & Defense' },
+      { label: 'Festival', value: 'TVARAN 2026' },
+    ],
+  },
+  {
+    id: 'dirt-drive',
+    index: '05 / 08',
     glyph: '▰',
-    category: 'shakedown',
-    categoryLabel: 'Dynamic Shakedowns',
-    dateBadge: 'DEC 12',
-    fullDate: 'December 12, 2026',
-    title: 'BAJA National Endurance Shakedown',
-    subtitle: 'All-Terrain Dynamic Track Testing',
-    status: 'upcoming',
-    statusText: 'Upcoming Track Day',
-    image: '/events/baja sae india 2015.webp',
-    venue: 'Off-Road Test Circuit, BIT Sindri',
-    timing: '08:00 — 16:30 IST',
+    category: 'competition',
+    categoryLabel: 'Bot Obstacle Challenge',
+    dateBadge: 'MAY 10',
+    fullDate: 'May 10, 2026',
+    title: 'DIRT DRIVE',
+    subtitle: 'All-Terrain Wireless Bot Arena',
+    status: 'conducted',
+    statusText: 'Conducted at TVARAN',
+    image: '/events/DRIT_DRIVE.jpeg',
+    venue: 'Off-Road Obstacle Arena, BIT Sindri',
+    timing: 'Track Heats & Final Shakedown',
     shortDesc:
-      'A grueling 4-hour simulated endurance run over mud trenches, rock crawls, and suspension articulators to stress-test CVT tuning and roll-cage welds.',
+      'TVARAN presents DIRT DRIVE, an exciting bot-based challenge that tests creativity, teamwork, and precision through demanding obstacle tracks and unique terrain hurdles.',
     longDesc:
-      'Before our all-terrain buggy travels to national competition tracks, the vehicle undergoes continuous endurance testing. Pilots evaluate damper rebound, steering scrub radius, CVT belt temperature, and hydraulic brake balance over harsh obstacle tracks.',
+      'Student-engineered rovers and bot prototypes took on extreme obstacle terrain featuring mud trenches, elevated ramps, rumble strips, and sharp hairpin curves. The challenge tested chassis rigidity, wireless radio responsiveness, high-torque drivetrain durability, and piloting agility.',
+    instagramUrl:
+      'https://www.instagram.com/p/DX7j3H0k_hc/?utm_source=ig_web_copy_link&cplk=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
     specs: [
-      { label: 'Vehicle', value: 'Single-Seater All-Terrain Buggy' },
-      { label: 'Focus', value: 'Suspension Travel & CVT Drivetrain' },
-      { label: 'Format', value: 'Maneuverability + 4-Hour Endurance' },
-      { label: 'Location', value: 'Dirt Proving Track' },
+      { label: 'Track Type', value: 'Multi-Surface All-Terrain Obstacle Arena' },
+      { label: 'Date Held', value: '10th May 2026' },
+      { label: 'Hardware', value: 'Custom-Built Wired / Wireless Bots' },
+      { label: 'Festival', value: 'TVARAN 2026' },
     ],
   },
   {
-    id: 'engine-teardown',
-    index: '04 / 07',
+    id: 'orientation-2026',
+    index: '06 / 08',
+    glyph: '✦',
+    category: 'community',
+    categoryLabel: 'Induction & Welcome',
+    dateBadge: 'SEP 11',
+    fullDate: 'September 11, 2026',
+    title: 'ORIENTATION — BATCH OF 2026',
+    subtitle: 'Welcoming the Next Generation of Mobility Engineers',
+    status: 'conducted',
+    statusText: 'Successfully Completed',
+    image: '/events/ORIENTATION.jpeg',
+    venue: 'Deshpande Auditorium, BIT Sindri',
+    timing: 'Interactive Induction Session',
+    shortDesc:
+      'SAE INDIA BIT Sindri warmly welcomed the Batch of 2026, inspiring new members to explore automotive engineering, embrace innovation, and join our chapter family.',
+    longDesc:
+      'A high-energy welcome address introducing freshman engineers to collegiate motorsports, UAV flight development, workshop safety, and the culture of pair-programming, manufacturing, and national SAE India competitions. Senior leaders showcased our fleet of BAJA buggies, Formula racecars, and aero platforms.',
+    instagramUrl:
+      'https://www.instagram.com/p/DcyfcVWR51u/?utm_source=ig_web_copy_link&mdxt=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
+    specs: [
+      { label: 'Target Batch', value: 'Incoming Engineering Batch of 2026' },
+      { label: 'Date Held', value: '11th September 2026' },
+      { label: 'Venue', value: 'Campus Auditorium' },
+      { label: 'Keynotes', value: 'Motorsports, Aero Division & Chapter Roadmap' },
+    ],
+  },
+  {
+    id: 'outreach-workshop',
+    index: '07 / 08',
     glyph: '◒',
     category: 'workshop',
-    categoryLabel: 'Workshops & Clinics',
-    dateBadge: 'JAN 16',
-    fullDate: 'January 16, 2027',
-    title: 'Powertrain & Engine Teardown',
-    subtitle: 'IC Block Dismantle & EV Motor Diagnostics',
-    status: 'upcoming',
-    statusText: 'Upcoming Workshop',
-    image: '/glimpses/workshop2.webp',
-    venue: 'Automotive Bay #1, BIT Sindri',
-    timing: '10:00 — 17:00 IST',
+    categoryLabel: 'School Outreach Workshop',
+    dateBadge: 'WORKSHOP',
+    fullDate: 'School STEM & Automobile Outreach',
+    title: 'OUTREACH AUTOMOTIVE WORKSHOP',
+    subtitle: 'Saraswati Shishu Vidya Mandir, Tetulmari',
+    status: 'conducted',
+    statusText: 'Outreach Completed',
+    image: '/events/workshop2.webp',
+    venue: 'Saraswati Shishu Vidya Mandir, Tetulmari',
+    timing: 'Technical Demonstration Sessions',
     shortDesc:
-      'Hands-on session dismantling competition IC engines down to the crankcase, valve trains, and transmission gearing.',
+      'SAE INDIA BIT Sindri organized a workshop at Saraswati Shishu Vidya Mandir, Tetulmari, featuring technical demonstrations to promote automobile engineering awareness.',
     longDesc:
-      'Get your hands covered in grease. We deconstruct single-cylinder race engines, calibrate valve lash, inspect cam profiles, analyze air-fuel induction, and compare performance with 48V PMSM electric motor drivetrains.',
+      'Demonstrating our commitment to STEM community education, senior chapter members conducted an interactive automotive workshop for high school students. The session featured hands-on teardown models, powertrain working principles, aerodynamic basics, and interactive discussions to inspire future engineers.',
+    instagramUrl:
+      'https://www.instagram.com/p/DRUxH8ykppe/?utm_source=ig_web_copy_link&exln=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
     specs: [
-      { label: 'Hardware', value: '10HP IC Motor + 48V PMSM EV Drive' },
-      { label: 'Topics', value: 'Valvetrain, Cam Timing, BMS Controllers' },
-      { label: 'Safety', value: 'Full Safety Gear Provided' },
-      { label: 'Format', value: 'Benchtop Teardown & Live Rebuild' },
+      { label: 'Host School', value: 'Saraswati Shishu Vidya Mandir, Tetulmari' },
+      { label: 'Focus', value: 'Automotive Mechanics & Science Fundamentals' },
+      { label: 'Format', value: 'Working Hardware Demos & Q&A Interactive' },
+      { label: 'Mentors', value: 'SAE INDIA BIT Sindri Technical Team' },
     ],
   },
   {
-    id: 'skytrace-sprint',
-    index: '05 / 07',
+    id: 'vishwakarma-puja',
+    index: '08 / 08',
     glyph: '✦',
-    category: 'aero',
-    categoryLabel: 'Aeromodelling & Drone',
-    dateBadge: 'FEB 06',
-    fullDate: 'February 06, 2027',
-    title: 'Skytrace FPV Aerothon & Drone Sprint',
-    subtitle: 'Low-Latency Obstacle Racing',
-    status: 'upcoming',
-    statusText: 'Upcoming Meet',
-    image: '/events/National aeromodelling competetion 2023.webp',
-    venue: 'East Ground Air Corridor, BIT Sindri',
-    timing: '15:00 — 19:30 IST',
+    category: 'community',
+    categoryLabel: 'Tradition & Celebration',
+    dateBadge: 'SEP 17',
+    fullDate: 'September 17, 2026',
+    title: 'VISHWAKARMA POOJA CELEBRATION',
+    subtitle: 'Blessings for Craftsmanship, Tools & Machinery',
+    status: 'conducted',
+    statusText: 'Celebrated at The Bay',
+    image: '/events/Vishwakarma Pooja.jpeg',
+    venue: 'Mechanical Fabrication Bay, BIT Sindri',
+    timing: 'Annual Workshop Puja & Gathering',
     shortDesc:
-      'High-speed obstacle racing through illuminated air gates and technical slaloms with 5.8GHz low-latency video telemetry.',
+      'Vishwakarma Puja was celebrated in the workshop with devotion and enthusiasm, seeking blessings for safety, prosperity, and success in all engineering endeavours.',
     longDesc:
-      'Student drone pilots strap on 5.8GHz FPV headsets to navigate high-speed gates and technical slaloms with sub-millisecond reaction times. Open to carbon quadcopters, micro-whoops, and custom-tuned frames.',
+      'A deeply cherished tradition in the life of SAE BIT Sindri. The entire society gathers in the mechanical workshop to clean, polish, and worship the machine tools, welding equipment, chassis rigs, and competition vehicles, honoring the divine architect and seeking blessings for safety and success in all upcoming national competitions.',
+    instagramUrl:
+      'https://www.instagram.com/reel/DdgdoDwztlu/?utm_source=ig_web_copy_link&vrfl=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==',
     specs: [
-      { label: 'Airframe', value: '3" to 5" Carbon Prop Quads' },
-      { label: 'Video Feed', value: '5.8 GHz Low-Latency Telemetry' },
-      { label: 'Format', value: 'Double Elimination Speed Bracket' },
-      { label: 'Flight Line', value: 'East Ground Corridor' },
-    ],
-  },
-  {
-    id: 'paper-aero',
-    index: '06 / 07',
-    glyph: '+',
-    category: 'aero',
-    categoryLabel: 'Aeromodelling & Drone',
-    dateBadge: 'MAR 14',
-    fullDate: 'March 14, 2027',
-    title: 'Paper Aero & Sub-Scale Glider Derby',
-    subtitle: 'Fundamental Airfoil Physics & Open Glide',
-    status: 'upcoming',
-    statusText: 'Upcoming Meet',
-    image: '/events/aerothon 2023.webp',
-    venue: 'Main Campus Quad & Airstrip',
-    timing: '11:00 — 16:00 IST',
-    shortDesc:
-      'Balsa-wood airframes, clean thermals, and exploring lift-to-drag ratios, dihedral angles, and airfoil camber.',
-    longDesc:
-      'Before constructing radio-controlled giants, we return to the fundamental physics of flight. Students fabricate lightweight balsa-wood gliders to test dihedral stability, center-of-gravity balance, and unpowered glide distance.',
-    specs: [
-      { label: 'Materials', value: 'Balsa Wood, Carbon Spars, Depron' },
-      { label: 'Focus', value: 'Lift-to-Drag Ratio & Dihedral Stability' },
-      { label: 'Metric', value: 'Max Time Aloft & Glide Distance' },
-      { label: 'Eligibility', value: 'Open to All Batches' },
-    ],
-  },
-  {
-    id: 'supra-sprint',
-    index: '07 / 07',
-    glyph: '↗',
-    category: 'shakedown',
-    categoryLabel: 'Dynamic Shakedowns',
-    dateBadge: 'APR 18',
-    fullDate: 'April 18, 2027',
-    title: 'SUPRA Formula Student Track Day',
-    subtitle: 'Formula Student Circuit Shakedown',
-    status: 'finale',
-    statusText: 'Season Finale Track Day',
-    image: '/events/supra sae india 2019.webp',
-    venue: 'Proving Runway & Circuit, BIT Sindri',
-    timing: '09:00 — 18:00 IST',
-    shortDesc:
-      'Our closing tarmac shakedown: downforce aero packages, steering scrub radius dialed in, and high-speed telemetry runs before national championships.',
-    longDesc:
-      'The pinnacle of the collegiate motorsport season. The Formula Student racecar takes to the tarmac for skidpad lateral-G evaluation, 75-meter acceleration launches, and full-circuit autocross timing with live telemetry feeds.',
-    specs: [
-      { label: 'Class', value: 'Formula Student Single-Seater' },
-      { label: 'Track Focus', value: 'Skidpad Lateral G & Autocross Timing' },
-      { label: 'Telemetry', value: 'Hall-Effect Wheel Speeds & CAN Bus' },
-      { label: 'Target Track', value: 'Buddh International Circuit (BIC)' },
+      { label: 'Tradition', value: 'Annual Vishwakarma Jayanti' },
+      { label: 'Date Held', value: '17th September 2026' },
+      { label: 'Location', value: 'Central Mechanical Fabrication Bay' },
+      { label: 'Community', value: 'Collegiate Members, Faculty & Alumni' },
     ],
   },
 ];
 
-type CategoryFilter = 'all' | 'flagship' | 'workshop' | 'shakedown' | 'aero';
+type CategoryFilter = 'all' | 'flagship' | 'competition' | 'workshop' | 'community';
 type ViewMode = 'grid' | 'timeline';
 
 export const EventsPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [modalEvent, setModalEvent] = useState<EventItem | null>(null);
-  const [emailInput, setEmailInput] = useState('');
-  const [subscribeStatus, setSubscribeStatus] = useState<{ message: string; isError: boolean } | null>(null);
 
   // Close modal on Escape
   useEffect(() => {
@@ -251,80 +307,64 @@ export const EventsPage: React.FC = () => {
     return ALL_EVENTS.filter((e) => e.category === cat).length;
   };
 
-  const featuredEvent = ALL_EVENTS.find((e) => e.id === 'laws-of-motion') || ALL_EVENTS[1];
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!emailInput || !emailInput.includes('@')) {
-      setSubscribeStatus({
-        message: 'Please provide a valid email to receive registration calls.',
-        isError: true,
-      });
-      return;
-    }
-    setSubscribeStatus({
-      message: 'You are on the paddock alert list. Watch your inbox for upcoming registrations!',
-      isError: false,
-    });
-    setEmailInput('');
-  };
+  const featuredEvent = ALL_EVENTS[0]; // TECH FEST (TVARAN)
 
   return (
     <div className="events-hub-page" id="page-events">
       {/* =====================================================================
-          1. LIVE TELEMETRY TICKER STRIP (NEXT EVENT ALERT)
+          1. ARCHIVE TELEMETRY STRIP (FLAGSHIP FEST RECAP)
           ===================================================================== */}
-      <section className="events-ticker-wrapper" aria-label="Next Upcoming Event Ticker">
+      <section className="events-ticker-wrapper" aria-label="Flagship Event Ticker">
         <div className="events-hub-container events-ticker-inner">
           <div className="events-ticker-badge">
             <span className="live-beacon-dot" aria-hidden="true" />
-            Next Chapter Event
+            Flagship Festival Recap
           </div>
           <div className="events-ticker-text">
-            <strong>Laws of Motion 2026</strong>
+            <strong>{featuredEvent.title}</strong>
             <span>·</span>
-            <span className="ticker-date">Nov 18, 2026</span>
+            <span className="ticker-date">{featuredEvent.fullDate}</span>
             <span>·</span>
-            <span>Mechanical Bay #2, BIT Sindri</span>
+            <span>{featuredEvent.venue}</span>
           </div>
           <button
             className="events-ticker-action"
             type="button"
             onClick={() => setModalEvent(featuredEvent)}
           >
-            Register / Field Notes <span aria-hidden="true">→</span>
+            Explore Fest Archive <span aria-hidden="true">→</span>
           </button>
         </div>
       </section>
 
       {/* =====================================================================
-          2. PURPOSEFUL EVENT PAGE HEADER
+          2. PURPOSEFUL EVENT PAGE HEADER (ARCHIVE & RECAP)
           ===================================================================== */}
       <header className="events-page-header">
         <div className="events-hub-container">
           <div className="events-header-eyebrow">
             <span className="eyebrow-line" aria-hidden="true" />
-            Chapter Calendar &amp; Paddock · 2026–2027 Season
+            Chapter History &amp; Event Archive · Hosted by SAE BIT Sindri
           </div>
           <h1>
             Events &amp;<br />
-            <em>Competitions.</em>
+            <em>Showcases.</em>
           </h1>
           <p>
-            Explore upcoming chapter meets, hands-on fabrication workshops, and national dynamic
-            track shakedowns hosted by SAE BIT Sindri.
+            An archival chronicle of technical fests, student design competitions, school STEM outreach workshops,
+            and traditions successfully organized by SAE INDIA BIT Sindri.
           </p>
         </div>
       </header>
 
       {/* =====================================================================
-          3. FEATURED UPCOMING EVENT SPOTLIGHT CARD
+          3. FEATURED EVENT SPOTLIGHT CARD: TECH FEST (TVARAN)
           ===================================================================== */}
-      <section className="featured-spotlight-section" aria-label="Featured Upcoming Event">
+      <section className="featured-spotlight-section" aria-label="Flagship Technical Fest Spotlight">
         <div className="events-hub-container">
           <div className="spotlight-section-title">
-            <span className="spotlight-tag">// Premier Upcoming Meet</span>
-            <span className="featured-date-chip">Next on the Calendar</span>
+            <span className="spotlight-tag">// Annual Flagship Festival</span>
+            <span className="featured-date-chip">Conducted Successfully</span>
           </div>
 
           <article className="featured-event-card">
@@ -336,11 +376,11 @@ export const EventsPage: React.FC = () => {
               <div className="featured-card-visual-overlay" />
               <div className="featured-visual-top">
                 <span className="featured-flagship-pill">FLAGSHIP EVENT</span>
-                <span className="featured-coordinate">23°39′N 86°28′E</span>
+                <span className="featured-coordinate">BIT SINDRI</span>
               </div>
               <div className="featured-visual-bottom">
                 <span className="featured-visual-stamp">
-                  Season <strong>2026—27</strong>
+                  Season <strong>2026</strong>
                 </span>
               </div>
             </div>
@@ -369,29 +409,30 @@ export const EventsPage: React.FC = () => {
                     <dd>{featuredEvent.venue}</dd>
                   </div>
                   <div className="featured-meta-item">
-                    <dt>Window</dt>
-                    <dd>{featuredEvent.timing}</dd>
+                    <dt>Dates Held</dt>
+                    <dd>09–10 May 2026</dd>
                   </div>
                   <div className="featured-meta-item">
-                    <dt>Class</dt>
-                    <dd>Buggy · FPV · RC Aero</dd>
+                    <dt>Tracks</dt>
+                    <dd>Quests · Bots · Bike · EV</dd>
                   </div>
                 </dl>
 
                 <div className="featured-actions">
-                  <button
-                    className="ev-btn ev-btn-gold"
-                    type="button"
-                    onClick={() => setModalEvent(featuredEvent)}
+                  <a
+                    href={featuredEvent.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ev-btn ev-btn-insta"
                   >
-                    Register Your Seat <span aria-hidden="true">→</span>
-                  </button>
+                    <InstagramIcon size={16} /> Watch Reel on Instagram <span aria-hidden="true">↗</span>
+                  </a>
                   <button
                     className="ev-btn ev-btn-outline"
                     type="button"
                     onClick={() => setModalEvent(featuredEvent)}
                   >
-                    View Field Notes &amp; Rules <span aria-hidden="true">↗</span>
+                    View Fest Details &amp; Notes <span aria-hidden="true">↗</span>
                   </button>
                 </div>
               </div>
@@ -407,14 +448,14 @@ export const EventsPage: React.FC = () => {
         <div className="events-hub-container">
           <div className="events-controls-bar">
             {/* Discipline Filter Tabs */}
-            <div className="events-filter-group" role="group" aria-label="Filter events by discipline">
+            <div className="events-filter-group" role="group" aria-label="Filter events by category">
               <button
                 className={`events-filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
                 type="button"
                 onClick={() => setActiveFilter('all')}
                 aria-pressed={activeFilter === 'all'}
               >
-                All Meets <span>0{countFor('all')}</span>
+                All Events <span>0{countFor('all')}</span>
               </button>
               <button
                 className={`events-filter-btn ${activeFilter === 'flagship' ? 'active' : ''}`}
@@ -422,7 +463,15 @@ export const EventsPage: React.FC = () => {
                 onClick={() => setActiveFilter('flagship')}
                 aria-pressed={activeFilter === 'flagship'}
               >
-                Flagship Meets <span>0{countFor('flagship')}</span>
+                Flagship Fest <span>0{countFor('flagship')}</span>
+              </button>
+              <button
+                className={`events-filter-btn ${activeFilter === 'competition' ? 'active' : ''}`}
+                type="button"
+                onClick={() => setActiveFilter('competition')}
+                aria-pressed={activeFilter === 'competition'}
+              >
+                Competitions <span>0{countFor('competition')}</span>
               </button>
               <button
                 className={`events-filter-btn ${activeFilter === 'workshop' ? 'active' : ''}`}
@@ -433,20 +482,12 @@ export const EventsPage: React.FC = () => {
                 Workshops <span>0{countFor('workshop')}</span>
               </button>
               <button
-                className={`events-filter-btn ${activeFilter === 'shakedown' ? 'active' : ''}`}
+                className={`events-filter-btn ${activeFilter === 'community' ? 'active' : ''}`}
                 type="button"
-                onClick={() => setActiveFilter('shakedown')}
-                aria-pressed={activeFilter === 'shakedown'}
+                onClick={() => setActiveFilter('community')}
+                aria-pressed={activeFilter === 'community'}
               >
-                Dynamic Shakedowns <span>0{countFor('shakedown')}</span>
-              </button>
-              <button
-                className={`events-filter-btn ${activeFilter === 'aero' ? 'active' : ''}`}
-                type="button"
-                onClick={() => setActiveFilter('aero')}
-                aria-pressed={activeFilter === 'aero'}
-              >
-                Aero &amp; Drone <span>0{countFor('aero')}</span>
+                Chapter &amp; Tradition <span>0{countFor('community')}</span>
               </button>
             </div>
 
@@ -492,18 +533,14 @@ export const EventsPage: React.FC = () => {
                     <span className="roster-category-chip">{item.categoryLabel}</span>
                     <span
                       className={`roster-status-chip ${
-                        item.status === 'open'
-                          ? 'status-open'
-                          : item.status === 'finale'
-                          ? 'status-finale'
-                          : 'status-upcoming'
+                        item.status === 'annual' ? 'status-annual' : 'status-conducted'
                       }`}
                     >
                       {item.statusText}
                     </span>
                   </div>
                   <div className="roster-date-badge">
-                    <strong>{item.dateBadge}</strong> · 2026–27
+                    <strong>{item.dateBadge}</strong> · 2026
                   </div>
                 </div>
 
@@ -523,13 +560,14 @@ export const EventsPage: React.FC = () => {
                     >
                       Field Notes <span aria-hidden="true">↗</span>
                     </button>
-                    <button
-                      className="roster-register-btn"
-                      type="button"
-                      onClick={() => setModalEvent(item)}
+                    <a
+                      href={item.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="roster-insta-link"
                     >
-                      {item.status === 'open' ? 'Register →' : 'Details →'}
-                    </button>
+                      <InstagramIcon size={12} /> Instagram <span aria-hidden="true">↗</span>
+                    </a>
                   </div>
                 </div>
               </article>
@@ -554,12 +592,20 @@ export const EventsPage: React.FC = () => {
 
                   <div className="timeline-card-actions">
                     <button
-                      className="ev-btn ev-btn-gold"
+                      className="ev-btn ev-btn-outline"
                       type="button"
                       onClick={() => setModalEvent(item)}
                     >
-                      {item.status === 'open' ? 'Register Seat →' : 'View Notes →'}
+                      View Notes →
                     </button>
+                    <a
+                      href={item.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ev-btn ev-btn-insta"
+                    >
+                      <InstagramIcon size={14} /> Instagram ↗
+                    </a>
                   </div>
                 </div>
               </div>
@@ -568,48 +614,46 @@ export const EventsPage: React.FC = () => {
         )}
 
         {/* =====================================================================
-            6. NOTIFICATION RUNWAY CALLOUT
+            6. CHAPTER NEXT MILESTONE CTA (MATCHING HOME & ACHIEVEMENTS)
             ===================================================================== */}
-        <section className="events-notify-card" aria-label="Paddock Notifications">
-          <div className="events-notify-copy">
-            <h2>
-              Stay close to<br />
-              <em>the runway.</em>
-            </h2>
-            <p>
-              Get seasonal drop notifications, workshop seat openings, and paddock calls straight
-              from our engineering bays.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubscribe} noValidate>
-            <div className="notify-form-row">
-              <input
-                type="email"
-                placeholder="engineer@bitsindri.ac.in"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                required
-                aria-label="Email Address for Event Notifications"
-              />
-              <button className="ev-btn ev-btn-gold" type="submit">
-                Notify Me <span aria-hidden="true">↗</span>
-              </button>
+        <section className="events-bottom-cta" aria-label="Join SAE BIT Sindri">
+          <div className="events-cta-inner">
+            <div className="events-cta-copy">
+              <p className="events-cta-eyebrow">// PASSION FUELS THE DRIVE · PRECISION WINS THE RACE</p>
+              <h2 className="events-cta-heading">
+                <span className="cta-heading-line">GREAT MACHINES AREN'T BORN.</span>
+                <span className="cta-heading-line">THEY'RE ENGINEERED HERE.</span>
+              </h2>
             </div>
-            {subscribeStatus && (
-              <div
-                className={`notify-form-status ${subscribeStatus.isError ? 'error' : ''}`}
-                role="status"
+
+            <div className="events-cta-actions">
+              <Link
+                to="/join"
+                className="events-cta-btn events-cta-btn-primary effect-shine"
               >
-                {subscribeStatus.message}
-              </div>
-            )}
-          </form>
+                Join SAE BIT SINDRI
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </Link>
+              <Link
+                to="/team"
+                className="events-cta-btn events-cta-btn-outline"
+              >
+                Meet the Team Behind It
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
 
       {/* =====================================================================
-          7. INTERACTIVE FIELD NOTES MODAL DIALOG
+          7. INTERACTIVE FIELD NOTES & EVENT MODAL DIALOG
           ===================================================================== */}
       {modalEvent && (
         <div
@@ -633,20 +677,28 @@ export const EventsPage: React.FC = () => {
                 ×
               </button>
 
+              {/* Event Image Banner */}
+              <div
+                className="modal-header-image"
+                style={{ backgroundImage: `url('${modalEvent.image}')` }}
+                role="img"
+                aria-label={modalEvent.title}
+              />
+
               <div className="modal-category-label">
                 {modalEvent.categoryLabel} · {modalEvent.index}
               </div>
 
               <h2 id="dialog-event-title">{modalEvent.title}</h2>
               <div className="modal-meta-line">
-                {modalEvent.fullDate} · {modalEvent.venue} · {modalEvent.timing}
+                {modalEvent.fullDate} · {modalEvent.venue}
               </div>
 
               <div className="modal-rule-line" />
 
               <p className="modal-body-desc">{modalEvent.longDesc}</p>
 
-              {/* Technical Specifications Table */}
+              {/* Specifications & Overview Table */}
               <dl className="modal-specs-table">
                 {modalEvent.specs.map((spec, idx) => (
                   <div key={`spec-${idx}`}>
@@ -657,16 +709,14 @@ export const EventsPage: React.FC = () => {
               </dl>
 
               <div className="modal-actions-strip">
-                <button
-                  className="ev-btn ev-btn-gold"
-                  type="button"
-                  onClick={() => {
-                    alert(`Seat Registration for ${modalEvent.title} recorded! Our coordinators will reach out.`);
-                    setModalEvent(null);
-                  }}
+                <a
+                  href={modalEvent.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ev-btn ev-btn-insta"
                 >
-                  Confirm Seat Registration <span aria-hidden="true">→</span>
-                </button>
+                  <InstagramIcon size={16} /> Open Post / Reel on Instagram <span aria-hidden="true">↗</span>
+                </a>
                 <button
                   className="ev-btn ev-btn-outline"
                   type="button"

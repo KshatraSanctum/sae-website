@@ -24,5 +24,7 @@ dist-ssr
 *.sw?
 team.md
 event.md
+events.md
+footer.md
 ref_src/
 .next/

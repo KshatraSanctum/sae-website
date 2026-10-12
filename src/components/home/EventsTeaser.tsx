@@ -7,8 +7,8 @@ export const EventsTeaser: React.FC = () => {
       <div className="ref-container">
         <div data-reveal className="reveal-up ref-events-head">
           <div>
-            <p className="ref-eyebrow text-signal">On the calendar</p>
-            <h2 className="ref-events-heading">Upcoming events</h2>
+            <p className="ref-eyebrow text-signal">Chapter Highlights</p>
+            <h2 className="ref-events-heading">Hosted Events &amp; Meets</h2>
           </div>
           <svg
             className="ref-events-calendar-icon"
@@ -27,13 +27,13 @@ export const EventsTeaser: React.FC = () => {
         <div className="ref-events-list">
           <article data-reveal className="reveal-side ref-event-item">
             <div className="ref-event-date-col">
-              <span className="ref-event-date-num">18</span>
-              <span className="ref-event-date-month">AUG</span>
+              <span className="ref-event-date-num">09</span>
+              <span className="ref-event-date-month">MAY</span>
             </div>
             <div>
-              <p className="ref-event-type">Workshop</p>
-              <h3 className="ref-event-title">EV Powertrain Fundamentals</h3>
-              <p className="ref-event-meta">10:00 AM · Innovation Lab</p>
+              <p className="ref-event-type">Flagship Tech Fest</p>
+              <h3 className="ref-event-title">TECH FEST — TVARAN 2026</h3>
+              <p className="ref-event-meta">Annual 2-Day Festival · BIT Sindri</p>
             </div>
             <Link
               to="/events"
@@ -57,13 +57,13 @@ export const EventsTeaser: React.FC = () => {
 
           <article data-reveal className="reveal-side reveal-delay ref-event-item">
             <div className="ref-event-date-col">
-              <span className="ref-event-date-num">02</span>
+              <span className="ref-event-date-num">11</span>
               <span className="ref-event-date-month">SEP</span>
             </div>
             <div>
-              <p className="ref-event-type">Orientation</p>
-              <h3 className="ref-event-title">Fall Recruitment &amp; Team Welcome</h3>
-              <p className="ref-event-meta">5:30 PM · Mechanical Hall B</p>
+              <p className="ref-event-type">Chapter Induction</p>
+              <h3 className="ref-event-title">Orientation — Batch of 2026</h3>
+              <p className="ref-event-meta">Welcoming Freshman Engineers · Campus Auditorium</p>
             </div>
             <Link
               to="/events"
@@ -87,13 +87,13 @@ export const EventsTeaser: React.FC = () => {
 
           <article data-reveal className="reveal-side reveal-delay-2 ref-event-item">
             <div className="ref-event-date-col">
-              <span className="ref-event-date-num">14</span>
-              <span className="ref-event-date-month">OCT</span>
+              <span className="ref-event-date-num">17</span>
+              <span className="ref-event-date-month">SEP</span>
             </div>
             <div>
-              <p className="ref-event-type">Guest Lecture</p>
-              <h3 className="ref-event-title">Aerodynamics in Competition Design</h3>
-              <p className="ref-event-meta">3:00 PM · Online via Teams</p>
+              <p className="ref-event-type">Chapter Tradition</p>
+              <h3 className="ref-event-title">Vishwakarma Pooja Celebration</h3>
+              <p className="ref-event-meta">Blessings for Tools &amp; Machines · Mechanical Bay</p>
             </div>
             <Link
               to="/events"
@@ -121,7 +121,7 @@ export const EventsTeaser: React.FC = () => {
             to="/events"
             className="ref-btn ref-btn-outline effect-shine"
           >
-            View All Chapter Events
+            Explore Full Events Archive
             <svg
               width="18"
               height="18"

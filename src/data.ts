@@ -70,7 +70,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "2nd Prize",
     statLabel: "Safest Vehicle Category",
     copy: "Team “WONDERS” secured Second Prize in the Safest Vehicle Category (BAJA SAE INDIA 2011), demonstrating our commitment to safety, innovation, and engineering excellence. This achievement reflects our teamwork, technical expertise, and dedication to developing a safe and reliable vehicle.",
-    image: "/events/sae india baja 2011.webp",
+    image: "/achievements/sae india baja 2011.webp",
     imageAlt: "Team Wonders at BAJA SAE India 2011",
     highlight: "National Safety Trophy Winner"
   },
@@ -84,7 +84,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Sole Qualifier",
     statLabel: "Representing Bihar & Jharkhand",
     copy: "Team “Speedy Avengers” proudly represented Bihar and Jharkhand, becoming the only team from both states to qualify for the main event (Supra 2012). This achievement showcased our engineering excellence, dedication, teamwork, and passion for motorsports.",
-    image: "/events/supra sae 2012.webp",
+    image: "/achievements/supra sae 2012.webp",
     imageAlt: "Team Speedy Avengers at SUPRA SAE India 2012",
     highlight: "State Representation Milestone"
   },
@@ -98,7 +98,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "6th / 150",
     statLabel: "All-India Standing",
     copy: "Team “Quad Quarks” achieved an outstanding 6th position among 150 teams from across the country at QUAD TORC 2014. This achievement showcased our engineering skills, innovation, and teamwork.",
-    image: "/events/quad torc 2014.webp",
+    image: "/achievements/quad torc 2014.webp",
     imageAlt: "Team Quad Quarks at QUAD TORC 2014",
     highlight: "Top 6 National Standing"
   },
@@ -112,7 +112,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Main Event",
     statLabel: "NATRAX Indore Finalist",
     copy: "Team “Incredibles” made its mark by becoming the only team from Bihar and Jharkhand to qualify for the main event (BAJA SAE INDIA 2015) at NATRAX, Indore. This milestone highlighted our team’s perseverance, engineering capabilities, and determination to compete at the national level.",
-    image: "/events/baja sae india 2015.webp",
+    image: "/achievements/baja sae india 2015.webp",
     imageAlt: "Team Incredibles at BAJA SAE India 2015",
     highlight: "Sole State Qualifier at NATRAX"
   },
@@ -126,7 +126,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "2nd Prize",
     statLabel: "Safest Vehicle Category",
     copy: "Team “Wonders” earned Second Prize in the Safest Vehicle Category at SUPRA SAE India 2016. This achievement reflected our commitment to safety-focused design, robust engineering, and innovation in student motorsports.",
-    image: "/events/supra sae india 2016.webp",
+    image: "/achievements/supra sae india 2016.webp",
     imageAlt: "Team Wonders at SUPRA SAE India 2016",
     highlight: "National Safety Trophy Winner"
   },
@@ -140,7 +140,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "19th Place",
     statLabel: "National Main Event Finish",
     copy: "Team “Spitfire” secured an impressive 19th-place finish at SUPRA SAE India 2017, competing against teams from across the country. The result marked another milestone in our journey of designing, building, and racing an indigenous formula-style vehicle.",
-    image: "/events/2017 supra sae.webp",
+    image: "/achievements/2017 supra sae.webp",
     imageAlt: "Team Spitfire at SUPRA SAE India 2017",
     highlight: "Top 20 Formula Student Finish"
   },
@@ -154,7 +154,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Top 50",
     statLabel: "Technical Inspection Qualified",
     copy: "Team “Spitfire” earned a place among the top 50 teams to qualify for technical inspection (SUPRA SAE INDIA 2019). This milestone reflected the precision of our vehicle design and brought us one step closer to competing on the national stage.",
-    image: "/events/supra sae india 2019.webp",
+    image: "/achievements/supra sae india 2019.webp",
     imageAlt: "Team Spitfire at SUPRA SAE India 2019",
     highlight: "Scrutineering Clearance"
   },
@@ -168,7 +168,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "26th Rank",
     statLabel: "Virtual Stage Standing",
     copy: "Team “Wonders” secured an impressive 26th rank in the virtual event of E-BAJA SAE India 2020. This achievement highlighted our ability to adapt to digital competition while showcasing our vehicle design and engineering concepts.",
-    image: "/events/e baja 2020.webp",
+    image: "/achievements/e baja 2020.webp",
     imageAlt: "Team Wonders at E-BAJA SAE India 2020",
     highlight: "EV Design Transition"
   },
@@ -182,7 +182,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "AIR 18",
     statLabel: "All-India Rank Overall",
     copy: "Team “Wonders” secured an AIR-18 position at Effi-Cycle 2020, showcasing its innovative approach to sustainable mobility. The achievement reflected our commitment to energy-efficient design and eco-friendly engineering solutions.",
-    image: "/events/efficycle 2021.webp",
+    image: "/achievements/efficycle 2021.webp",
     imageAlt: "Team Wonders at Effi-Cycle",
     highlight: "All-India Top 20 Standing"
   },
@@ -196,7 +196,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "1st Place",
     statLabel: "Hackathon Champions",
     copy: "Teams “Vidojas” and “Trailblazers-V” secured 1st place in the Vahaan Hackathon 2021 (AUTOSPARX), showcasing excellence in automotive design and creative problem-solving. Their winning concepts highlighted innovative styling, design precision, and a forward-thinking approach to vehicle aesthetics.",
-    image: "/events/Autosparx 2021.webp",
+    image: "/achievements/Autosparx 2021.webp",
     imageAlt: "Teams Vidojas and Trailblazers-V at Vahaan Hackathon 2021",
     highlight: "National 1st Place Victory"
   },
@@ -210,7 +210,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Rank 24",
     statLabel: "National Finals Qualifier",
     copy: "Team “Vayu” secured an impressive 24th rank at Aerothon 2023, earning a place in the finals. This achievement marked a significant step in our journey of UAV innovation, flight-system development, and aerospace engineering.",
-    image: "/events/aerothon 2023.webp",
+    image: "/achievements/aerothon 2023.webp",
     imageAlt: "Team Vayu at Aerothon 2023",
     highlight: "National UAV Finals Debut"
   },
@@ -224,7 +224,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Finalists",
     statLabel: "Both Teams in National Finals",
     copy: "At the National Aeromodelling Competition 2023, our teams “Jatayu” and “Pushpak” successfully secured places in the finals. Their performance reflected our growing expertise in aircraft design, aeromodelling, and practical aerospace engineering.",
-    image: "/events/National aeromodelling competetion 2023.webp",
+    image: "/achievements/National aeromodelling competetion 2023.webp",
     imageAlt: "Teams Jatayu and Pushpak at National Aeromodelling Competition 2023",
     highlight: "Dual-Team Finals Qualification"
   },
@@ -238,7 +238,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Finalists",
     statLabel: "Final Round at IIT Kharagpur",
     copy: "Teams “Jatayu” and “Minos” successfully secured places in the final round of Laws of Motion 2025. Their achievement highlighted their aeromodelling expertise, innovative aircraft designs, and dedication to turning engineering concepts into practical flying models.",
-    image: "/events/Laws of Motion 2025.webp",
+    image: "/achievements/Laws of Motion 2025.webp",
     imageAlt: "Teams Jatayu and Minos at Laws of Motion 2025",
     highlight: "IIT Kharagpur Finalists"
   },
@@ -252,7 +252,7 @@ export const COMPETITION_MILESTONES: CompetitionMilestone[] = [
     stat: "Top Finalists",
     statLabel: "Competition Top-Performing Teams",
     copy: "Our teams “Wayuyaan” and “Kamikaze” proudly secured places in the finals, emerging as two of the competition’s top-performing teams. Their performance showcased exceptional technical skills, innovative aircraft designs, and strong teamwork. Both teams demonstrated remarkable precision, creativity, and problem-solving abilities throughout the competition. Their achievement reflects our growing excellence in aeromodelling and aerospace engineering.",
-    image: "/events/lom 2026.webp",
+    image: "/achievements/lom 2026.webp",
     imageAlt: "Teams Wayuyaan and Kamikaze at National Aero Championship",
     highlight: "Top-Performing Flight Finalists"
   }

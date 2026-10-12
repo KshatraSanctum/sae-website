@@ -47,8 +47,20 @@
 }
 
 .events-hub-container {
-  width: min(calc(100% - 40px), var(--ev-maxw));
-  margin-inline: auto;
+  max-width: 80rem; /* 1280px - matching navbar ref-container exactly */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .events-hub-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 /* ==========================================================================
@@ -66,7 +78,7 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 16px;
 }
 
 .events-ticker-badge {
@@ -79,6 +91,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ev-emerald);
+  flex-shrink: 0;
 }
 
 .live-beacon-dot {
@@ -102,6 +115,9 @@
 .events-ticker-text {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
   gap: 12px;
   font-family: var(--ev-mono);
   font-size: 0.72rem;
@@ -120,20 +136,36 @@
 
 .events-ticker-action {
   font-family: var(--ev-mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--ev-gold);
-  text-decoration: none;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: color 0.2s ease, gap 0.2s ease;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  background: rgba(246, 183, 25, 0.12);
+  border: 1px solid rgba(246, 183, 25, 0.45);
+  color: var(--ev-gold);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
 }
 
 .events-ticker-action:hover {
-  color: var(--ev-gold-soft);
+  background: var(--ev-gold);
+  border-color: var(--ev-gold);
+  color: #070a11;
   gap: 10px;
+  box-shadow: 0 0 16px var(--ev-gold-glow);
+}
+
+.events-ticker-action:focus-visible {
+  box-shadow: 0 0 0 2px var(--ev-gold);
 }
 
 /* ==========================================================================
@@ -451,6 +483,56 @@
   background: rgba(246, 183, 25, 0.06);
 }
 
+.ev-btn-insta {
+  color: #ffffff !important;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 16px rgba(220, 39, 67, 0.35);
+}
+
+.ev-btn-insta:hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 39, 67, 0.5);
+  color: #ffffff !important;
+}
+
+.roster-insta-link {
+  font-family: var(--ev-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #faf9f5;
+  background: rgba(220, 39, 67, 0.15);
+  border: 1px solid rgba(220, 39, 67, 0.45);
+  padding: 6px 12px;
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roster-insta-link:hover {
+  background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+  border-color: transparent;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.modal-header-image {
+  width: 100%;
+  height: 240px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 2px;
+  border: 1px solid var(--ev-line);
+  margin-bottom: 20px;
+}
+
 /* ==========================================================================
    4. EVENTS CONTROLS & FILTER BAR
    ========================================================================== */
@@ -628,20 +710,22 @@
   border-radius: 2px;
 }
 
-.status-open {
+.status-open,
+.status-conducted {
   color: var(--ev-emerald);
   background: rgba(16, 185, 129, 0.15);
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-.status-upcoming {
+.status-upcoming,
+.status-annual {
   color: var(--ev-gold);
   background: rgba(246, 183, 25, 0.15);
   border: 1px solid rgba(246, 183, 25, 0.4);
 }
 
 .status-finale {
-  color: var(--ev-amber-soft);
+  color: var(--ev-amber);
   background: rgba(229, 157, 35, 0.15);
   border: 1px solid rgba(229, 157, 35, 0.4);
 }
@@ -1004,80 +1088,114 @@
 }
 
 /* ==========================================================================
-   8. NOTIFICATION CALLOUT CARD (SEASON DROPS)
+   8. CHAPTER BOTTOM YELLOW CTA (MATCHING ACHIEVEMENTS & HOME)
    ========================================================================== */
-.events-notify-card {
-  margin-top: 48px;
-  padding: clamp(32px, 5vw, 56px);
-  background:
-    radial-gradient(circle at 90% 20%, rgba(246, 183, 25, 0.12), transparent 40%),
-    radial-gradient(circle at 10% 80%, rgba(16, 185, 129, 0.08), transparent 40%),
-    var(--ev-bg-card);
-  border: 1px solid var(--ev-line-light);
+.events-bottom-cta {
+  margin-top: 64px;
+  background: var(--ev-gold); /* SAE Signal Yellow #f6b719 */
+  color: #070a11;
+  padding: clamp(40px, 6vw, 64px) clamp(24px, 4vw, 48px);
   border-radius: 4px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
-  gap: 40px;
-  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
-.events-notify-copy h2 {
-  margin: 0 0 10px;
-  font-family: var(--ev-display);
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--ev-white);
-}
-
-.events-notify-copy h2 em {
-  font-family: var(--ev-serif);
-  font-style: italic;
-  color: var(--ev-gold);
-}
-
-.events-notify-copy p {
-  margin: 0;
-  color: var(--ev-muted);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.notify-form-row {
+.events-cta-inner {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 28px;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
-.notify-form-row input {
-  flex: 1;
-  min-width: 0;
-  height: 46px;
-  padding: 0 16px;
-  color: var(--ev-white);
-  background: rgba(7, 10, 17, 0.85);
-  border: 1px solid var(--ev-line-light);
-  border-radius: 2px;
-  outline: none;
-  font-family: inherit;
-  font-size: 0.9rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+@media (min-width: 860px) {
+  .events-cta-inner {
+    flex-direction: row;
+    align-items: flex-end;
+  }
 }
 
-.notify-form-row input:focus {
-  border-color: var(--ev-gold);
-  box-shadow: 0 0 12px var(--ev-gold-glow);
-}
-
-.notify-form-status {
-  margin-top: 10px;
+.events-cta-eyebrow {
   font-family: var(--ev-mono);
-  font-size: 0.68rem;
-  color: var(--ev-emerald);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(7, 10, 17, 0.7);
+  margin: 0 0 10px;
 }
 
-.notify-form-status.error {
-  color: #ef4444;
+.events-cta-heading {
+  font-family: var(--ev-display);
+  font-size: clamp(1.65rem, 2.7vw, 2.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: #070a11;
+  margin: 0;
+}
+
+.cta-heading-line {
+  display: block;
+}
+
+@media (min-width: 680px) {
+  .cta-heading-line {
+    white-space: nowrap;
+  }
+}
+
+.events-cta-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.events-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 3.4rem;
+  padding: 0 1.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+  border-radius: 2px;
+}
+
+.events-cta-btn-primary {
+  background: #070a11;
+  color: #ffffff !important;
+  border: 1px solid #070a11;
+  box-shadow: 0 6px 20px rgba(7, 10, 17, 0.35);
+}
+
+.events-cta-btn-primary:hover {
+  transform: translateY(-3px);
+  background: #141c2e;
+  color: #ffffff !important;
+}
+
+.events-cta-btn-outline {
+  background: transparent;
+  color: #070a11 !important;
+  border: 2px solid #070a11;
+}
+
+.events-cta-btn-outline:hover {
+  transform: translateY(-3px);
+  background: rgba(7, 10, 17, 0.1);
+  color: #070a11 !important;
 }
 
 /* ==========================================================================
@@ -1094,11 +1212,6 @@
 
   .events-grid-layout {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .events-notify-card {
-    grid-template-columns: 1fr;
-    gap: 28px;
   }
 }
 
