@@ -2,9 +2,15 @@ import React, { useEffect } from 'react';
 import { initIntro } from '../../intro';
 
 export const IntroOverlay: React.FC = () => {
+  const isNoIntro = typeof window !== 'undefined' && window.location.search.includes('no_intro');
+
   useEffect(() => {
-    initIntro();
-  }, []);
+    if (!isNoIntro) {
+      initIntro();
+    }
+  }, [isNoIntro]);
+
+  if (isNoIntro) return null;
 
   return (
     <div id="introOverlay">

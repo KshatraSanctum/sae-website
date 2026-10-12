@@ -48,39 +48,54 @@ export const HeroSection: React.FC = () => {
             <p className="hero-tag-text">Engineering the future of mobility</p>
           </div>
 
-          <h1
-            className="slogan hero-enter hero-delay-2"
-            id="heroSlogan"
-            onMouseLeave={() => setActiveScene(null)}
-          >
-            <button
-              type="button"
-              className={`slogan-word ${activeScene === 'design' ? 'is-active' : ''}`}
-              data-scene="design"
-              onMouseEnter={() => setActiveScene('design')}
-              onFocus={() => setActiveScene('design')}
+          <div className="hero-slogan-wrap">
+            <h1
+              className="slogan hero-enter hero-delay-2"
+              id="heroSlogan"
+              onMouseLeave={() => setActiveScene(null)}
             >
-              Design.
-            </button>
-            <button
-              type="button"
-              className={`slogan-word ${activeScene === 'build' ? 'is-active' : ''}`}
-              data-scene="build"
-              onMouseEnter={() => setActiveScene('build')}
-              onFocus={() => setActiveScene('build')}
+              <button
+                type="button"
+                className={`slogan-word ${activeScene === 'design' ? 'is-active' : ''}`}
+                data-scene="design"
+                onMouseEnter={() => setActiveScene('design')}
+                onFocus={() => setActiveScene('design')}
+              >
+                Design.
+              </button>
+              <button
+                type="button"
+                className={`slogan-word ${activeScene === 'build' ? 'is-active' : ''}`}
+                data-scene="build"
+                onMouseEnter={() => setActiveScene('build')}
+                onFocus={() => setActiveScene('build')}
+              >
+                Build.
+              </button>
+              <button
+                type="button"
+                className={`slogan-word ${activeScene === 'compete' ? 'is-active' : ''}`}
+                data-scene="compete"
+                onMouseEnter={() => setActiveScene('compete')}
+                onFocus={() => setActiveScene('compete')}
+              >
+                Compete.
+              </button>
+            </h1>
+
+            {/* Mobile-only Crest beside DBC */}
+            <div
+              className={`hero-visual-box hero-visual-box-mobile ${activeScene ? 'is-hidden' : ''}`}
+              aria-hidden={activeScene !== null}
             >
-              Build.
-            </button>
-            <button
-              type="button"
-              className={`slogan-word ${activeScene === 'compete' ? 'is-active' : ''}`}
-              data-scene="compete"
-              onMouseEnter={() => setActiveScene('compete')}
-              onFocus={() => setActiveScene('compete')}
-            >
-              Compete.
-            </button>
-          </h1>
+              <div className="hero-logo-frame">
+                <SocietyAnimatedLogo
+                  size="100%"
+                  activeScene={activeScene}
+                />
+              </div>
+            </div>
+          </div>
 
           <p className="hero-enter hero-delay-3 hero-sub hero-subtext">
             The official collegiate mobility chapter of BIT Sindri. Designing and engineering national-tier
@@ -117,9 +132,9 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Side: Animated Chapter Crest (Hides when hovering on Design / Build / Compete) */}
+        {/* Right Side: Animated Chapter Crest (Desktop only, hides when hovering) */}
         <div
-          className={`hero-visual-box hero-enter hero-delay-3 ${activeScene ? 'is-hidden' : ''}`}
+          className={`hero-visual-box hero-visual-box-desktop hero-enter hero-delay-3 ${activeScene ? 'is-hidden' : ''}`}
           aria-hidden={activeScene !== null}
         >
           <div className="hero-logo-frame">
