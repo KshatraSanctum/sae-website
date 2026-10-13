@@ -1346,29 +1346,84 @@
 }
 
 .ref-event-item {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   display: grid;
   gap: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 1.75rem 0;
-  transition: all 500ms ease;
+  padding: 1.75rem 1rem;
+  transition: all 400ms ease;
 }
 
 @media (min-width: 640px) {
   .ref-event-item {
     grid-template-columns: 100px 1fr auto;
     align-items: center;
+    padding: 2rem 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .ref-event-item {
-    padding: 2.25rem 0;
+    padding: 2.25rem 2rem;
   }
 }
 
 .ref-event-item:hover {
   border-bottom-color: var(--color-signal);
   background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Event Image Half-Division Faded Backdrop (Right 50%) */
+.ref-event-visual-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ref-event-visual-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  opacity: 0.52;
+  filter: saturate(1.15) contrast(1.05);
+  transform: scale(1);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), opacity 400ms ease;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.22) 20%, rgba(0, 0, 0, 0.78) 58%, #000000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.22) 20%, rgba(0, 0, 0, 0.78) 58%, #000000 100%);
+}
+
+.ref-event-visual-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--color-ink, #070a10) 0%,
+    rgba(7, 10, 16, 0.75) 24%,
+    transparent 78%
+  );
+  pointer-events: none;
+}
+
+.ref-event-item:hover .ref-event-visual-img {
+  opacity: 0.88;
+  transform: scale(1.04);
+}
+
+/* Ensure text and actions sit clearly above the image backdrop */
+.ref-event-date-col,
+.ref-event-info-col,
+.ref-event-item > div:not(.ref-event-visual-backdrop) {
+  position: relative;
+  z-index: 2;
 }
 
 .ref-event-date-col {
@@ -1418,21 +1473,31 @@
   margin-bottom: 0;
 }
 
+.ref-event-arrow-btn,
 .ref-event-action-btn {
+  position: relative;
+  z-index: 2;
   display: grid;
   width: 3rem;
   height: 3rem;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 200ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background-color: rgba(7, 10, 16, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 2px;
+  transition: all 220ms ease;
   color: #ffffff;
   text-decoration: none;
+  justify-self: end;
 }
 
+.ref-event-item:hover .ref-event-arrow-btn,
 .ref-event-item:hover .ref-event-action-btn {
   border-color: var(--color-signal);
   background-color: var(--color-signal);
   color: var(--color-ink);
+  transform: translateX(4px);
 }
 
 /* ===================== SPONSORS TEASER SHOWCASE ===================== */
@@ -2204,6 +2269,19 @@
   color: rgba(255, 255, 255, 0.5);
   justify-self: center;
   white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.footer-telemetry-center:hover {
+  color: #ffffff;
+}
+
+.footer-telemetry-center:hover .telemetry-coords {
+  color: var(--color-signal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .telemetry-sep {
@@ -2243,11 +2321,8 @@
   padding: 4.75rem 0 0;
   background-color: #070a10;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
     radial-gradient(circle at 12% 0%, rgba(246, 183, 25, 0.08), transparent 32%),
     linear-gradient(180deg, rgba(8, 12, 20, 0.72), rgba(5, 7, 12, 0.98));
-  background-size: 44px 44px, 44px 44px, auto, auto;
 }
 
 .ref-footer-main-wrapper::before {
@@ -2272,7 +2347,7 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.035);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.055);
   pointer-events: none;
   white-space: nowrap;
   user-select: none;
@@ -3040,6 +3115,7 @@
 /* Team Join Banner */
 .team-join-banner {
   margin-top: 3rem;
+  margin-bottom: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
