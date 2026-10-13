@@ -39,57 +39,37 @@ export const SocietyAnimatedLogo: React.FC<SocietyAnimatedLogoProps> = ({
       style={{
         width: dim,
         height: dim,
-        position: 'relative',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}
-      aria-label="Animated SAE BIT Sindri Collegiate Society Official Emblem"
+      role="img"
+      aria-label="SAE BIT Sindri Collegiate Society Official Emblem"
     >
       {/* Outer Atmospheric Aura (Pulse on Hover & Scene-reactive) */}
       {showGlow && (
         <div
           className="society-logo-backdrop-glow"
-          style={{
-            position: 'absolute',
-            inset: '-15%',
-            borderRadius: '50%',
-            background: `radial-gradient(circle, ${getSceneGlow()} 0%, transparent 70%)`,
-            filter: 'blur(32px)',
-            pointerEvents: 'none',
-            zIndex: 0,
-            transition: 'background 0.5s ease',
-          }}
+          style={{ '--society-logo-glow': getSceneGlow() } as React.CSSProperties}
+          aria-hidden="true"
         />
       )}
 
       {/* High-Resolution Master Animated Vector SVG */}
-      <div
-        className="society-logo-disc"
-        style={{
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          zIndex: 1,
-          borderRadius: '50%',
-          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.45)',
-          overflow: 'hidden',
-          backgroundColor: '#ffffff',
-        }}
-      >
-        <img
-          src="/Society%20of%20Automotive%20Engineers7858_animated.svg"
-          alt="SAE India BIT Sindri Animated Emblem with Rotating Gear and Orbiting Electrons"
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'block',
-            objectFit: 'contain',
-            userSelect: 'none',
-            pointerEvents: 'none',
-          }}
-          loading="eager"
-        />
+      <div className="society-logo-disc">
+        <picture>
+          <source
+            media="(prefers-reduced-motion: reduce)"
+            srcSet="/Society%20of%20Automotive%20Engineers7858.svg"
+          />
+          <img
+            src="/Society%20of%20Automotive%20Engineers7858_animated.svg"
+            alt=""
+            aria-hidden="true"
+            width={1080}
+            height={1080}
+            draggable={false}
+            loading="eager"
+            decoding="async"
+          />
+        </picture>
       </div>
     </div>
   );

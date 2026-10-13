@@ -276,6 +276,15 @@ export const CORE_TEAM_MEMBERS: CoreTeamMember[] = [
     objectPosition: "center 20%",
   },
   {
+    name: "Pradeep Mistri",
+    post: "Vice Chairperson",
+    subPost: "Manufacturing Head",
+    image: "/team/pradeep_mistri.webp",
+    linkedin: "https://www.linkedin.com/in/pradeep-mistri?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    email: "pradeepmistri012@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
     name: "Md Sagir Ansari",
     post: "Vice Chairperson",
     subPost: "Steering & Suspension Head",
@@ -355,6 +364,14 @@ export const CORE_TEAM_MEMBERS: CoreTeamMember[] = [
     objectPosition: "center 20%",
   },
   {
+    name: "Himanshu Shekhar",
+    post: "Joint Treasurer",
+    image: "/team/himanshu_shekhar.webp",
+    linkedin: "https://www.linkedin.com/in/himanshu-shekhar-a18b49234?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    email: "shekharhimanshu820student@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
     name: "Amarjeet Kumar Prajapati",
     post: "Joint Treasurer",
     subPost: "Powertrain Head",
@@ -370,6 +387,22 @@ export const CORE_TEAM_MEMBERS: CoreTeamMember[] = [
     image: "/team/anupriya_kumari.webp",
     linkedin: "https://www.linkedin.com/in/anupriya-kumari-251b29290",
     email: "anupriyayadav705@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Payal Kumari",
+    post: "Event Coordinator",
+    image: "/team/payal.webp",
+    linkedin: "https://www.linkedin.com/in/payal-kumari-9b9b18290",
+    email: "payalkumari11199@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Shubhanshu Jaiswal",
+    post: "Sponsorship Head",
+    image: "/team/shubhanshu_jaiswal.webp",
+    linkedin: "https://www.linkedin.com/in/shubhanshu-jaiswal-87546728b?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+    email: "kumarkittu729@gmail.com",
     objectPosition: "center 20%",
   },
   {

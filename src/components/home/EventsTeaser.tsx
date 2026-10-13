@@ -1,6 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const FEATURED_EVENTS = [
+  {
+    day: '09',
+    month: 'MAY',
+    type: 'Flagship Tech Fest',
+    title: 'TECH FEST — TVARAN 2026',
+    meta: 'Annual 2-Day Festival · BIT Sindri',
+    image: '/events/TECH_FEST.jpeg',
+  },
+  {
+    day: '11',
+    month: 'SEP',
+    type: 'Chapter Induction',
+    title: 'Orientation — Batch of 2026',
+    meta: 'Welcoming Freshman Engineers · Campus Auditorium',
+    image: '/events/ORIENTATION.jpeg',
+  },
+  {
+    day: '17',
+    month: 'SEP',
+    type: 'Chapter Tradition',
+    title: 'Vishwakarma Pooja Celebration',
+    meta: 'Blessings for Tools & Machines · Mechanical Bay',
+    image: '/events/Vishwakarma Pooja.jpeg',
+  },
+];
+
 export const EventsTeaser: React.FC = () => {
   return (
     <section id="home-events" className="ref-events-section">
@@ -25,95 +52,53 @@ export const EventsTeaser: React.FC = () => {
         </div>
 
         <div className="ref-events-list">
-          <article data-reveal className="reveal-side ref-event-item">
-            <div className="ref-event-date-col">
-              <span className="ref-event-date-num">09</span>
-              <span className="ref-event-date-month">MAY</span>
-            </div>
-            <div>
-              <p className="ref-event-type">Flagship Tech Fest</p>
-              <h3 className="ref-event-title">TECH FEST — TVARAN 2026</h3>
-              <p className="ref-event-meta">Annual 2-Day Festival · BIT Sindri</p>
-            </div>
-            <Link
-              to="/events"
-              className="ref-event-arrow-btn"
-              aria-label="View event details"
-            >
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          {FEATURED_EVENTS.map((item, index) => {
+            const delayClass = index === 1 ? 'reveal-delay' : index === 2 ? 'reveal-delay-2' : '';
+            return (
+              <article
+                key={item.title}
+                data-reveal
+                className={`reveal-side ${delayClass} ref-event-item`}
               >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </Link>
-          </article>
+                {/* Event Image Half-Division Faded Backdrop */}
+                <div className="ref-event-visual-backdrop" aria-hidden="true">
+                  <div
+                    className="ref-event-visual-img"
+                    style={{ backgroundImage: `url('${item.image}')` }}
+                  />
+                  <div className="ref-event-visual-gradient" />
+                </div>
 
-          <article data-reveal className="reveal-side reveal-delay ref-event-item">
-            <div className="ref-event-date-col">
-              <span className="ref-event-date-num">11</span>
-              <span className="ref-event-date-month">SEP</span>
-            </div>
-            <div>
-              <p className="ref-event-type">Chapter Induction</p>
-              <h3 className="ref-event-title">Orientation — Batch of 2026</h3>
-              <p className="ref-event-meta">Welcoming Freshman Engineers · Campus Auditorium</p>
-            </div>
-            <Link
-              to="/events"
-              className="ref-event-arrow-btn"
-              aria-label="View event details"
-            >
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </Link>
-          </article>
-
-          <article data-reveal className="reveal-side reveal-delay-2 ref-event-item">
-            <div className="ref-event-date-col">
-              <span className="ref-event-date-num">17</span>
-              <span className="ref-event-date-month">SEP</span>
-            </div>
-            <div>
-              <p className="ref-event-type">Chapter Tradition</p>
-              <h3 className="ref-event-title">Vishwakarma Pooja Celebration</h3>
-              <p className="ref-event-meta">Blessings for Tools &amp; Machines · Mechanical Bay</p>
-            </div>
-            <Link
-              to="/events"
-              className="ref-event-arrow-btn"
-              aria-label="View event details"
-            >
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </Link>
-          </article>
+                <div className="ref-event-date-col">
+                  <span className="ref-event-date-num">{item.day}</span>
+                  <span className="ref-event-date-month">{item.month}</span>
+                </div>
+                <div className="ref-event-info-col">
+                  <p className="ref-event-type">{item.type}</p>
+                  <h3 className="ref-event-title">{item.title}</h3>
+                  <p className="ref-event-meta">{item.meta}</p>
+                </div>
+                <Link
+                  to="/events"
+                  className="ref-event-arrow-btn"
+                  aria-label={`View event details for ${item.title}`}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </Link>
+              </article>
+            );
+          })}
         </div>
 
         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>

@@ -24,11 +24,18 @@ export const Footer: React.FC = () => {
             <span className="telemetry-beacon-dot" aria-hidden="true" />
             <span className="telemetry-label">WORKSHOP &amp; FABRICATION BAY ACTIVE</span>
           </div>
-          <div className="footer-telemetry-center">
-            <span>23.656676° N, 86.474804° E</span>
+          <a
+            href="https://maps.app.goo.gl/HvS35hDbBtfP6R9b6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-telemetry-center"
+            title="Open in Google Maps: 23.656674° N, 86.474817° E"
+            aria-label="Open in Google Maps: 23.656674° N, 86.474817° E"
+          >
+            <span className="telemetry-coords">23.656674° N, 86.474817° E</span>
             <span className="telemetry-sep">·</span>
             <span>BIT SINDRI, DHANBAD</span>
-          </div>
+          </a>
           <button
             type="button"
             className="footer-back-to-top-btn"
