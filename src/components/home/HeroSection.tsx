@@ -1,9 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SocietyAnimatedLogo } from '../common/SocietyAnimatedLogo';
 
+const MOBILE_HERO_QUERY = '(max-width: 1023px)';
+
+const getInitialMobileLayout = () =>
+  typeof window !== 'undefined' && window.matchMedia(MOBILE_HERO_QUERY).matches;
+
 export const HeroSection: React.FC = () => {
   const [activeScene, setActiveScene] = useState<'design' | 'build' | 'compete' | null>(null);
+  const [isMobileLayout, setIsMobileLayout] = useState(getInitialMobileLayout);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(MOBILE_HERO_QUERY);
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      setIsMobileLayout(event.matches);
+    };
+
+    setIsMobileLayout(mediaQuery.matches);
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleViewportChange);
+      return () => mediaQuery.removeEventListener('change', handleViewportChange);
+    }
+
+    mediaQuery.addListener(handleViewportChange);
+    return () => mediaQuery.removeListener(handleViewportChange);
+  }, []);
 
   return (
     <section className="ref-hero">
@@ -83,18 +106,20 @@ export const HeroSection: React.FC = () => {
               </button>
             </h1>
 
-            {/* Mobile-only Crest beside DBC */}
-            <div
-              className={`hero-visual-box hero-visual-box-mobile ${activeScene ? 'is-hidden' : ''}`}
-              aria-hidden={activeScene !== null}
-            >
-              <div className="hero-logo-frame">
-                <SocietyAnimatedLogo
-                  size="100%"
-                  activeScene={activeScene}
-                />
+            {/* Mount one animated crest at a time so hidden layouts do not consume GPU work. */}
+            {isMobileLayout && (
+              <div
+                className={`hero-visual-box hero-visual-box-mobile ${activeScene ? 'is-hidden' : ''}`}
+                aria-hidden={activeScene !== null}
+              >
+                <div className="hero-logo-frame">
+                  <SocietyAnimatedLogo
+                    size="100%"
+                    activeScene={activeScene}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <p className="hero-enter hero-delay-3 hero-sub hero-subtext">
@@ -132,24 +157,25 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Side: Animated Chapter Crest (Desktop only, hides when hovering) */}
-        <div
-          className={`hero-visual-box hero-visual-box-desktop hero-enter hero-delay-3 ${activeScene ? 'is-hidden' : ''}`}
-          aria-hidden={activeScene !== null}
-        >
-          <div className="hero-logo-frame">
-            <SocietyAnimatedLogo
-              size={390}
-              activeScene={activeScene}
-            />
+        {/* Right Side: Animated Chapter Crest (desktop only, hides when hovering) */}
+        {!isMobileLayout && (
+          <div
+            className={`hero-visual-box hero-visual-box-desktop hero-enter hero-delay-3 ${activeScene ? 'is-hidden' : ''}`}
+            aria-hidden={activeScene !== null}
+          >
+            <div className="hero-logo-frame">
+              <SocietyAnimatedLogo
+                size={390}
+                activeScene={activeScene}
+              />
+            </div>
+            <div className="hero-logo-telemetry mono">
+              <span className="hero-telemetry-dot" />
+              <span className="hero-telemetry-text">EST. BIT SINDRI · SAE CHAPTER</span>
+            </div>
           </div>
-          <div className="hero-logo-telemetry mono">
-            <span className="hero-telemetry-dot" />
-            <span className="hero-telemetry-text">EST. BIT SINDRI · SAE CHAPTER</span>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );
 };
-
