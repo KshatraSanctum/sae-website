@@ -28,6 +28,12 @@
       scroll-behavior: smooth;
     }
 
+    html.modal-open,
+    body.modal-open {
+      overflow: hidden !important;
+      overscroll-behavior: none !important;
+    }
+
     body {
       margin: 0;
       background: var(--bg);
@@ -290,7 +296,6 @@
     /* ---------- layout shell ---------- */
     main {
       position: relative;
-      z-index: 1;
     }
 
     .page {
