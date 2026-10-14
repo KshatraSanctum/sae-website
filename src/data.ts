@@ -388,7 +388,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/sujal_kumar.webp",
     linkedin: "https://www.linkedin.com/in/sujal-yadav-06ab94312",
-    email: "",
+    email: "sujalkumaryadav8570@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -396,7 +396,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/prahlad_bhagat.webp",
     linkedin: "https://www.linkedin.com/in/prahlad-bhagat-597bb4339",
-    email: "",
+    email: "prahlabhagat24@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -404,7 +404,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/deepak_kumar_yadav.webp",
     linkedin: "https://www.linkedin.com/in/deepak-kumar-yadav-13ab00338",
-    email: "",
+    email: "dygamer.9087@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -412,7 +412,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/karan_mahto.webp",
     linkedin: "https://www.linkedin.com/in/karan-mahto-08a2b831b",
-    email: "",
+    email: "karanrajkaran651@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -420,7 +420,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/aniket_raj.webp",
     linkedin: "https://www.linkedin.com/in/aniket-raj-399993329",
-    email: "",
+    email: "aniketraj95726060@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -428,7 +428,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/subham_mohanty.webp",
     linkedin: "https://www.linkedin.com/in/subham-mohanty-481870324",
-    email: "",
+    email: "subhammohanty1107@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -436,7 +436,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/siddharth_kumar.webp",
     linkedin: "https://www.linkedin.com/in/siddharth-gupta-53b13032a",
-    email: "",
+    email: "sid13may2005@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -444,7 +444,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/rohit_kumar.webp",
     linkedin: "https://www.linkedin.com/in/rohit-kumar-64339a279",
-    email: "",
+    email: "rohitkuamr2005@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -452,7 +452,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/lucky_chatterjee.webp",
     linkedin: "https://www.linkedin.com/in/lucky-chatterjee",
-    email: "",
+    email: "luckychatterjee4220006@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -460,7 +460,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/hardik_kumar_gupta.webp",
     linkedin: "https://www.linkedin.com/in/hardik-kumar-gupta-1a1589339",
-    email: "",
+    email: "hardik369.jmt@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -468,7 +468,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/pankaj_kumar.webp",
     linkedin: "https://www.linkedin.com/in/pankaj-kumar-b9713a339",
-    email: "",
+    email: "pk0393539@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -476,7 +476,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/mado_tudu.webp",
     linkedin: "https://www.linkedin.com/in/mado-tudu-a6705a36a",
-    email: "",
+    email: "tudumado3@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -484,7 +484,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/punam_kumari.webp",
     linkedin: "https://www.linkedin.com/in/punam-kumari-9b0733340",
-    email: "",
+    email: "kumaripunam0307@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -492,7 +492,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/nishi_priya.webp",
     linkedin: "https://www.linkedin.com/in/nishi-priya-108a87361",
-    email: "",
+    email: "nishipriya341@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -500,7 +500,7 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/prince_kumar_mahto.webp",
     linkedin: "https://www.linkedin.com/in/prince-kumar-069a29325",
-    email: "",
+    email: "prince.official9538@gmail.com",
     objectPosition: "center 20%",
   },
   {
@@ -508,15 +508,15 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     post: "Member",
     image: "/team/raj_kumar.webp",
     linkedin: "https://www.linkedin.com/in/raj-kumar-843058377",
-    email: "",
+    email: "rajksinha3@gmail.com",
     objectPosition: "center 20%",
   },
   {
     name: "Yash Srivastava",
     post: "Member",
     image: "/team/yash_srivastava.webp",
-    linkedin: "www.linkedin.com/in/yash-srivastava-247121359",
-    email: "",
+    linkedin: "https://www.linkedin.com/in/yash-srivastava-247121359/",
+    email: "yashsrivastava190@gmail.com",
     objectPosition: "center 20%",
   }
 ];
