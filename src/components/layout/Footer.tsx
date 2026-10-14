@@ -1,12 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const FOOTER_NAV_ITEMS = [
+interface FooterNavItem {
+  path: string;
+  label: string;
+  badge?: string;
+  highlight?: boolean;
+}
+
+const FOOTER_NAV_ITEMS: FooterNavItem[] = [
   { path: '/about', label: 'About Chapter' },
   { path: '/achievements', label: 'Hall of Fame' },
   { path: '/events', label: 'Events Archive' },
   { path: '/team', label: 'Our Crew' },
   { path: '/sponsors', label: 'Sponsors & Partners' },
+  { path: '/track', label: 'Race Track 🏎️', badge: 'BETA' },
   { path: '/join', label: 'Join The Society', highlight: true },
 ];
 
@@ -105,6 +113,7 @@ export const Footer: React.FC = () => {
                   >
                     <span className="nav-link-chevron" aria-hidden="true">→</span>
                     <span>{item.label}</span>
+                    {item.badge && <span className="footer-beta-box">{item.badge}</span>}
                     {item.highlight && <span className="nav-highlight-beacon" aria-hidden="true" />}
                   </Link>
                 </li>
