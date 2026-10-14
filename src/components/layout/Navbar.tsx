@@ -12,6 +12,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/achievements', label: 'Achievements', altPaths: ['/competitions'] },
   { path: '/events', label: 'Events' },
   { path: '/team', label: 'Team', altPaths: ['/bearers'] },
+  { path: '/track', label: 'Race Track 🏁', altPaths: ['/circuit', '/race'] },
   { path: '/sponsors', label: 'Sponsors' },
 ];
 

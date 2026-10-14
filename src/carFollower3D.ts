@@ -30,11 +30,21 @@ interface SkidQuad {
   connectToNext: boolean;
 }
 
+let activeCarFollower: CarFollower3D | null = null;
+
+export function getActiveCarFollower3D(): CarFollower3D | null {
+  return activeCarFollower;
+}
+
 export class CarFollower3D {
   private canvas!: HTMLCanvasElement;
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
+
+  // Track mode flag & grid locking
+  private forceFreeDrive = false;
+  private lockedScreenPos: { x: number; y: number; heading: number } | null = null;
 
   // Car 3D hierarchy
   private carRoot = new THREE.Group();
@@ -191,8 +201,13 @@ export class CarFollower3D {
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('mouseleave', this.onMouseLeave);
     window.addEventListener('mouseenter', this.onMouseEnter);
+    window.addEventListener('touchstart', this.onTouchStart, { passive: true });
+    window.addEventListener('touchmove', this.onTouchMove, { passive: true });
     window.addEventListener('resize', this.onWindowResize);
     window.addEventListener('scroll', this.onScroll, { passive: true });
+
+    activeCarFollower = this;
+    (window as unknown as { __carFollower3D?: CarFollower3D }).__carFollower3D = this;
 
     if (this.isMobile) {
       this.parkingState = 'ACTIVE';
@@ -801,7 +816,35 @@ export class CarFollower3D {
       this.mouseHistory.shift();
     }
 
+    if (this.lockedScreenPos) return;
     this.updateTargetFromScreen(e.clientX, e.clientY);
+  };
+
+  private onTouchStart = (e: TouchEvent): void => {
+    if (!this.forceFreeDrive) return;
+    if (this.lockedScreenPos) return;
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      this.isMouseOnScreen = true;
+      this.lastMouseMoveTime = performance.now();
+      this.updateTargetFromScreen(touch.clientX, touch.clientY);
+    }
+  };
+
+  private onTouchMove = (e: TouchEvent): void => {
+    if (!this.forceFreeDrive) return;
+    if (this.lockedScreenPos) return;
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      this.isMouseOnScreen = true;
+      this.lastMouseMoveTime = performance.now();
+      const now = performance.now();
+      this.mouseHistory.push({ x: touch.clientX, y: touch.clientY, time: now });
+      if (this.mouseHistory.length > 12) {
+        this.mouseHistory.shift();
+      }
+      this.updateTargetFromScreen(touch.clientX, touch.clientY);
+    }
   };
 
   private onMouseLeave = (): void => {
@@ -952,6 +995,117 @@ export class CarFollower3D {
     }
   }
 
+  // ===================== RACE TRACK & TELEMETRY API =====================
+
+  public setForceFreeDrive(enabled: boolean): void {
+    this.forceFreeDrive = enabled;
+    if (!enabled) {
+      this.lockedScreenPos = null;
+    }
+  }
+
+  public isParked(): boolean {
+    return this.parkingState === 'PARKED' || this.parkingState === 'AUTODOCKING';
+  }
+
+  public lockToGrid(screenX: number, screenY: number, headingRad = 0): void {
+    this.lockedScreenPos = { x: screenX, y: screenY, heading: headingRad };
+    this.teleportTo(screenX, screenY, headingRad);
+  }
+
+  public unlockFromGrid(): void {
+    this.lockedScreenPos = null;
+  }
+
+  public isLockedToGrid(): boolean {
+    return this.lockedScreenPos !== null;
+  }
+
+  public getCarScreenPos(): { x: number; y: number } {
+    const v = this.carPos.clone();
+    v.project(this.camera);
+    return {
+      x: ((v.x + 1) / 2) * window.innerWidth,
+      y: ((-v.y + 1) / 2) * window.innerHeight,
+    };
+  }
+
+  public teleportTo(screenX: number, screenY: number, headingRad = 0): void {
+    const worldPos = this.screenToWorld(screenX, screenY);
+    if (worldPos) {
+      this.carPos.copy(worldPos);
+      this.targetWorld.copy(worldPos);
+    }
+    this.carVel.set(0, 0, 0);
+    this.speed = 0;
+    this.headingAngle = headingRad;
+    this.angularVelocity = 0;
+    this.steerAngle = 0;
+    this.rollAngle = 0;
+    this.pitchAngle = 0;
+    if (this.carRoot) {
+      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+      this.carRoot.rotation.y = -this.headingAngle;
+    }
+    if (this.frontLeftWheelGroup) this.frontLeftWheelGroup.rotation.y = 0;
+    if (this.frontRightWheelGroup) this.frontRightWheelGroup.rotation.y = 0;
+    if (this.suspensionGroup) this.suspensionGroup.rotation.set(0, 0, 0);
+
+    // Disconnect skid marks so teleport doesn't drag across the screen
+    if (this.skidQuads.length > 0) {
+      this.skidQuads[this.skidQuads.length - 1].connectToNext = false;
+    }
+    this.hasLastTirePos = false;
+  }
+
+  public triggerCrashBurst(): void {
+    // Spawn a burst of billowing crash tire smoke
+    for (let i = 0; i < 18; i++) {
+      const p = this.smokePool.find(item => !item.active);
+      if (!p) break;
+      p.active = true;
+      p.sprite.visible = true;
+      p.sprite.position.set(
+        this.carPos.x + (Math.random() - 0.5) * 6,
+        this.carPos.y + 0.4 + Math.random() * 1.5,
+        this.carPos.z + (Math.random() - 0.5) * 6
+      );
+      p.size = 3.5 + Math.random() * 3.0;
+      p.maxSize = 22.0 + Math.random() * 10.0;
+      p.sprite.scale.set(p.size, p.size, 1);
+      p.velocity.set(
+        (Math.random() - 0.5) * 2.5,
+        0.8 + Math.random() * 1.4,
+        (Math.random() - 0.5) * 2.5
+      );
+      p.alpha = 0.85;
+      p.sprite.material.opacity = p.alpha;
+      p.decay = 0.022 + Math.random() * 0.012;
+      p.sprite.material.rotation = Math.random() * Math.PI * 2;
+      p.rotSpeed = (Math.random() - 0.5) * 0.08;
+    }
+
+    // Flash underglow in emergency red
+    if (this.underglowLight) {
+      this.underglowLight.color.setHex(0xff1822);
+      this.underglowLight.intensity = 2.8;
+      setTimeout(() => {
+        if (this.underglowLight) {
+          this.underglowLight.color.setHex(0xf6b719);
+          this.underglowLight.intensity = 0.55;
+        }
+      }, 500);
+    }
+  }
+
+  public getSpeed(): number {
+    return this.speed;
+  }
+
+  public getHeading(): number {
+    return this.headingAngle;
+  }
+
   private updateUI(state: 'ACTIVE' | 'AUTODOCKING' | 'PARKED'): void {
     const btn = this.navPitBtn || document.getElementById('navPitBtn') as HTMLButtonElement | null;
     const label = this.navPitLabel || document.getElementById('navPitLabel');
@@ -1019,8 +1173,27 @@ export class CarFollower3D {
   private updatePhysics(dt: number): void {
     if (!this.carRoot) return;
 
-    if (this.isMobile) {
+    if (this.isMobile && !this.forceFreeDrive) {
       this.updateMobilePhysics(dt);
+      return;
+    }
+
+    // 0. GRID LOCK STATE: Hold stationary at the start grid on the race track
+    if (this.lockedScreenPos && this.parkingState === 'ACTIVE') {
+      const gridWorld = this.screenToWorld(this.lockedScreenPos.x, this.lockedScreenPos.y);
+      if (gridWorld) {
+        this.carPos.copy(gridWorld);
+        this.targetWorld.copy(gridWorld);
+        this.carRoot.position.set(gridWorld.x, 0, gridWorld.z);
+        this.carRoot.rotation.y = -this.lockedScreenPos.heading;
+        this.headingAngle = this.lockedScreenPos.heading;
+        this.updateCarScale();
+      }
+      this.carVel.set(0, 0, 0);
+      this.speed = 0;
+      this.frontLeftWheelGroup.rotation.y = 0;
+      this.frontRightWheelGroup.rotation.y = 0;
+      this.suspensionGroup.rotation.set(0, 0, 0);
       return;
     }
 
@@ -1404,12 +1577,20 @@ export class CarFollower3D {
     if (this.navPitBtn) {
       this.navPitBtn.removeEventListener('click', this.onPitBtnClick);
     }
+    window.removeEventListener('touchstart', this.onTouchStart);
+    window.removeEventListener('touchmove', this.onTouchMove);
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseleave', this.onMouseLeave);
     window.removeEventListener('mouseenter', this.onMouseEnter);
     window.removeEventListener('resize', this.onWindowResize);
     window.removeEventListener('scroll', this.onScroll);
+    if (activeCarFollower === this) {
+      activeCarFollower = null;
+    }
+    if ((window as unknown as { __carFollower3D?: CarFollower3D | null }).__carFollower3D === this) {
+      (window as unknown as { __carFollower3D?: CarFollower3D | null }).__carFollower3D = null;
+    }
     if (this.canvas && this.canvas.parentElement) {
       this.canvas.parentElement.removeChild(this.canvas);
     }
