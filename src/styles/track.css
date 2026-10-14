@@ -178,9 +178,9 @@ body:has(.track-page) #mobileScrollTrack,
 /* ===================== START GRID LAUNCH CARD ===================== */
 .track-grid-launch-card {
   position: absolute;
-  bottom: 24px;
-  left: 28%;
-  transform: translateX(-50%);
+  top: 43%;
+  left: 24%;
+  transform: translate(-50%, -50%);
   background: rgba(10, 15, 26, 0.94);
   border: 2px solid #10b981;
   border-radius: 14px;
@@ -195,8 +195,8 @@ body:has(.track-page) #mobileScrollTrack,
 }
 
 @keyframes launchCardFloat {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-4px); }
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-4px); }
 }
 
 .track-grid-launch-meta {
@@ -756,5 +756,14 @@ body:has(.track-page) #mobileScrollTrack,
   .track-light-bulb {
     width: 9px;
     height: 9px;
+  }
+  .track-grid-launch-card {
+    top: 50%;
+    left: 50%;
+    width: 88%;
+    max-width: 310px;
+    padding: 10px 14px;
+    flex-direction: column;
+    text-align: center;
   }
 }
