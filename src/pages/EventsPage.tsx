@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 
 interface EventItem {
@@ -288,11 +289,20 @@ export const EventsPage: React.FC = () => {
   // Prevent scroll while modal is active
   useEffect(() => {
     if (modalEvent) {
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
     } else {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     }
     return () => {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
   }, [modalEvent]);
@@ -655,80 +665,82 @@ export const EventsPage: React.FC = () => {
       {/* =====================================================================
           7. INTERACTIVE FIELD NOTES & EVENT MODAL DIALOG
           ===================================================================== */}
-      {modalEvent && (
-        <div
-          className="events-modal-backdrop"
-          onClick={() => setModalEvent(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="dialog-event-title"
-        >
+      {modalEvent &&
+        createPortal(
           <div
-            className="events-modal-dialog"
-            onClick={(e) => e.stopPropagation()}
+            className="events-modal-backdrop"
+            onClick={() => setModalEvent(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dialog-event-title"
           >
-            <div className="events-modal-inner">
-              <button
-                className="events-modal-close"
-                type="button"
-                aria-label="Close event details modal"
-                onClick={() => setModalEvent(null)}
-              >
-                ×
-              </button>
-
-              {/* Event Image Banner */}
-              <div
-                className="modal-header-image"
-                style={{ backgroundImage: `url('${modalEvent.image}')` }}
-                role="img"
-                aria-label={modalEvent.title}
-              />
-
-              <div className="modal-category-label">
-                {modalEvent.categoryLabel} · {modalEvent.index}
-              </div>
-
-              <h2 id="dialog-event-title">{modalEvent.title}</h2>
-              <div className="modal-meta-line">
-                {modalEvent.fullDate} · {modalEvent.venue}
-              </div>
-
-              <div className="modal-rule-line" />
-
-              <p className="modal-body-desc">{modalEvent.longDesc}</p>
-
-              {/* Specifications & Overview Table */}
-              <dl className="modal-specs-table">
-                {modalEvent.specs.map((spec, idx) => (
-                  <div key={`spec-${idx}`}>
-                    <dt>{spec.label}</dt>
-                    <dd>{spec.value}</dd>
-                  </div>
-                ))}
-              </dl>
-
-              <div className="modal-actions-strip">
-                <a
-                  href={modalEvent.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ev-btn ev-btn-insta"
-                >
-                  <InstagramIcon size={16} /> Open Post / Reel on Instagram <span aria-hidden="true">↗</span>
-                </a>
+            <div
+              className="events-modal-dialog"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="events-modal-inner">
                 <button
-                  className="ev-btn ev-btn-outline"
+                  className="events-modal-close"
                   type="button"
+                  aria-label="Close event details modal"
                   onClick={() => setModalEvent(null)}
                 >
-                  Close Notes
+                  ×
                 </button>
+
+                {/* Event Image Banner */}
+                <div
+                  className="modal-header-image"
+                  style={{ backgroundImage: `url('${modalEvent.image}')` }}
+                  role="img"
+                  aria-label={modalEvent.title}
+                />
+
+                <div className="modal-category-label">
+                  {modalEvent.categoryLabel} · {modalEvent.index}
+                </div>
+
+                <h2 id="dialog-event-title">{modalEvent.title}</h2>
+                <div className="modal-meta-line">
+                  {modalEvent.fullDate} · {modalEvent.venue}
+                </div>
+
+                <div className="modal-rule-line" />
+
+                <p className="modal-body-desc">{modalEvent.longDesc}</p>
+
+                {/* Specifications & Overview Table */}
+                <dl className="modal-specs-table">
+                  {modalEvent.specs.map((spec, idx) => (
+                    <div key={`spec-${idx}`}>
+                      <dt>{spec.label}</dt>
+                      <dd>{spec.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className="modal-actions-strip">
+                  <a
+                    href={modalEvent.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ev-btn ev-btn-insta"
+                  >
+                    <InstagramIcon size={16} /> Open Post / Reel on Instagram <span aria-hidden="true">↗</span>
+                  </a>
+                  <button
+                    className="ev-btn ev-btn-outline"
+                    type="button"
+                    onClick={() => setModalEvent(null)}
+                  >
+                    Close Notes
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

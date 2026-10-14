@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { COMPETITION_MILESTONES, type CompetitionMilestone } from '../data';
 
@@ -149,17 +150,83 @@ export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive = t
     }
   };
 
-  // Keyboard navigation for lightbox
+  const backdropRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard navigation & key scroll prevention for lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setActivePhotoModal(null);
+      } else if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' '].includes(e.key)) {
+        const activeEl = document.activeElement;
+        const isInsideModal = activeEl && backdropRef.current?.contains(activeEl);
+        if (!isInsideModal) {
+          e.preventDefault();
+        }
       }
     };
     if (activePhotoModal) {
       window.addEventListener('keydown', handleKeyDown);
     }
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activePhotoModal]);
+
+  // Lock both html & body scroll and intercept wheel propagation when photo modal is active
+  useEffect(() => {
+    if (!activePhotoModal) return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
+    // Apply class and direct styles to lock both html and body
+    document.documentElement.classList.add('modal-open');
+    document.body.classList.add('modal-open');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    // Intercept non-passive wheel events on PC to prevent background scroll-chaining
+    const backdrop = backdropRef.current;
+    const handleWheel = (e: WheelEvent) => {
+      const target = e.target as HTMLElement | null;
+      const scrollable = target?.closest('.comp-lightbox-details, .comp-lightbox-body') as HTMLElement | null;
+      if (scrollable) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollable;
+        const canScroll = scrollHeight > clientHeight;
+        if (canScroll) {
+          const isAtTop = scrollTop <= 0 && e.deltaY < 0;
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0;
+          if (!isAtTop && !isAtBottom) {
+            return; // Allow internal details scrolling
+          }
+        }
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const target = e.target as HTMLElement | null;
+      const scrollable = target?.closest('.comp-lightbox-details, .comp-lightbox-body') as HTMLElement | null;
+      if (!scrollable) {
+        e.preventDefault();
+      }
+    };
+
+    if (backdrop) {
+      backdrop.addEventListener('wheel', handleWheel, { passive: false });
+      backdrop.addEventListener('touchmove', handleTouchMove, { passive: false });
+    }
+
+    return () => {
+      document.documentElement.classList.remove('modal-open');
+      document.body.classList.remove('modal-open');
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.overflow = originalBodyOverflow;
+      if (backdrop) {
+        backdrop.removeEventListener('wheel', handleWheel);
+        backdrop.removeEventListener('touchmove', handleTouchMove);
+      }
+    };
   }, [activePhotoModal]);
 
   return (
@@ -411,50 +478,75 @@ export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive = t
         </section>
 
         {/* ===================== LIGHTBOX MODAL ===================== */}
-        {activePhotoModal && (
-          <div
-            className="comp-lightbox-backdrop"
-            onClick={() => setActivePhotoModal(null)}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
+        {activePhotoModal &&
+          createPortal(
             <div
-              className="comp-lightbox-modal"
-              onClick={(e) => e.stopPropagation()}
+              ref={backdropRef}
+              className="comp-lightbox-backdrop"
+              onClick={() => setActivePhotoModal(null)}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
             >
-              <button
-                type="button"
-                className="comp-lightbox-close"
-                onClick={() => setActivePhotoModal(null)}
-                aria-label="Close photo preview"
+              <div
+                className="comp-lightbox-modal"
+                onClick={(e) => e.stopPropagation()}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
-              </button>
+                <button
+                  type="button"
+                  className="comp-lightbox-close"
+                  onClick={() => setActivePhotoModal(null)}
+                  aria-label="Close photo preview"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
 
-              <div className="comp-lightbox-img-wrap">
-                <img
-                  src={activePhotoModal.image}
-                  alt={activePhotoModal.imageAlt}
-                  className="comp-lightbox-img"
-                />
-              </div>
+                <div className="comp-lightbox-body">
+                  <div className="comp-lightbox-img-wrap">
+                    <img
+                      src={activePhotoModal.image}
+                      alt={activePhotoModal.imageAlt}
+                      className="comp-lightbox-img"
+                    />
+                  </div>
 
-              <div className="comp-lightbox-footer">
-                <div>
-                  <h3 id="modal-title" className="comp-lightbox-title">
-                    {activePhotoModal.competition}
-                  </h3>
-                  <p className="comp-lightbox-sub">
-                    {activePhotoModal.team} · {activePhotoModal.year} · {activePhotoModal.stat}
-                  </p>
+                  <div className="comp-lightbox-details">
+                    <div className="comp-card-badge-row">
+                      <span className={`comp-cat-badge ${categoryBadgeClassMap[activePhotoModal.category] || 'cat-formula'}`}>
+                        {activePhotoModal.categoryLabel}
+                      </span>
+                      <span className="comp-team-pill">{activePhotoModal.team}</span>
+                      <span className="comp-milestone-index">
+                        Milestone {String(COMPETITION_MILESTONES.findIndex((m) => m.id === activePhotoModal.id) + 1).padStart(2, '0')} / {COMPETITION_MILESTONES.length}
+                      </span>
+                    </div>
+
+                    <div className="comp-card-year">{activePhotoModal.year}</div>
+                    <h2 id="modal-title" className="comp-lightbox-title">
+                      {activePhotoModal.competition}
+                    </h2>
+
+                    <div className="comp-highlight-tag">
+                      <span>★</span> {activePhotoModal.highlight}
+                    </div>
+
+                    <p className="comp-lightbox-copy">{activePhotoModal.copy}</p>
+
+                    <div className="comp-stat-callout">
+                      <strong className="comp-stat-number">{activePhotoModal.stat}</strong>
+                      <div className="comp-stat-label-wrap">
+                        <span className="comp-stat-badge-lead">OFFICIAL RESULT</span>
+                        <span className="comp-stat-label">{activePhotoModal.statLabel}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            </div>,
+            document.body
+          )}
       </div>
     </section>
   );

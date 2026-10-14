@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SocietyAnimatedLogo } from '../common/SocietyAnimatedLogo';
 
-const MOBILE_HERO_QUERY = '(max-width: 1023px)';
+const MOBILE_HERO_QUERY = '(max-width: 767px)';
 
 const getInitialMobileLayout = () =>
   typeof window !== 'undefined' && window.matchMedia(MOBILE_HERO_QUERY).matches;
@@ -65,12 +65,29 @@ export const HeroSection: React.FC = () => {
       ></div>
 
       <div className="ref-container hero-content-wrap">
+        {/* Mobile Background Crest (watermark behind the copy with reduced opacity) */}
+        {isMobileLayout && (
+          <div
+            className={`hero-visual-backdrop-mobile ${activeScene ? 'is-hidden' : ''}`}
+            aria-hidden="true"
+          >
+            <div className="hero-logo-frame">
+              <SocietyAnimatedLogo
+                size="100%"
+                activeScene={activeScene}
+              />
+            </div>
+          </div>
+        )}
+
         <div className="hero-copy-box">
+          {/* 1. Header Tagline Row */}
           <div className="hero-enter hero-delay-1 hero-tag-row">
             <span className="hero-tag-line"></span>
             <p className="hero-tag-text">Engineering the future of mobility</p>
           </div>
 
+          {/* 2. Slogan: Design. Build. Compete. */}
           <div className="hero-slogan-wrap">
             <h1
               className="slogan hero-enter hero-delay-2"
@@ -81,6 +98,7 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 className={`slogan-word ${activeScene === 'design' ? 'is-active' : ''}`}
                 data-scene="design"
+                onClick={() => setActiveScene(prev => prev === 'design' ? null : 'design')}
                 onMouseEnter={() => setActiveScene('design')}
                 onFocus={() => setActiveScene('design')}
               >
@@ -90,6 +108,7 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 className={`slogan-word ${activeScene === 'build' ? 'is-active' : ''}`}
                 data-scene="build"
+                onClick={() => setActiveScene(prev => prev === 'build' ? null : 'build')}
                 onMouseEnter={() => setActiveScene('build')}
                 onFocus={() => setActiveScene('build')}
               >
@@ -99,34 +118,22 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 className={`slogan-word ${activeScene === 'compete' ? 'is-active' : ''}`}
                 data-scene="compete"
+                onClick={() => setActiveScene(prev => prev === 'compete' ? null : 'compete')}
                 onMouseEnter={() => setActiveScene('compete')}
                 onFocus={() => setActiveScene('compete')}
               >
                 Compete.
               </button>
             </h1>
-
-            {/* Mount one animated crest at a time so hidden layouts do not consume GPU work. */}
-            {isMobileLayout && (
-              <div
-                className={`hero-visual-box hero-visual-box-mobile ${activeScene ? 'is-hidden' : ''}`}
-                aria-hidden={activeScene !== null}
-              >
-                <div className="hero-logo-frame">
-                  <SocietyAnimatedLogo
-                    size="100%"
-                    activeScene={activeScene}
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
+          {/* 4. Short Description */}
           <p className="hero-enter hero-delay-3 hero-sub hero-subtext">
             The official collegiate mobility chapter of BIT Sindri. Designing and engineering national-tier
             championship racecars, aerodynamic drones, electric powertrains, and the engineering leaders of tomorrow.
           </p>
 
+          {/* 5. CTA Row */}
           <div className="hero-enter hero-delay-4 hero-cta-row">
             <Link
               to="/join"
