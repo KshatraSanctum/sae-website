@@ -1,40 +1,48 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getActiveCarFollower3D, CarFollower3D } from '../carFollower3D';
+import { useTrackFullscreen } from '../hooks/useTrackFullscreen';
 import { TrackAudio } from '../utils/trackAudio';
+import {
+  TRACK,
+  closestTrackPosition,
+  screenToTrack,
+  trackToScreen,
+  type CircuitPoint,
+  type TrackDifficulty,
+} from '../utils/trackCircuit';
+import { readPersonalBest, savePersonalBest } from '../utils/trackRace';
 import '../styles/track.css';
 
-// SVG Circuit Dimensions
-// SVG Circuit Dimensions
-const SVG_WIDTH = 1350;
-const SVG_HEIGHT = 900;
+const HUD_UPDATE_INTERVAL_MS = 80;
+type RaceState = 'STANDBY' | 'STARTING' | 'RACING';
+type NextCheckpoint = 's1' | 's2' | 's3' | 'finish';
+type TrackTimeout = ReturnType<typeof window.setTimeout>;
 
-// The Circuit Spline: Autódromo José Carlos Pace (Interlagos)
-// Start/Finish Straight -> Senna S (T1-T2) -> Curva do Sol (T3) -> Reta Oposta (Bottom Straight) ->
-// Descida do Lago (T4-T5) -> Ferradura (T6-T7) -> Pinheirinho (T8) -> Mergulho (T9) ->
-// Bico de Pato (T10) -> Junção (T11-T12) -> Subida dos Boxes (T13) -> Arquibancadas (T14-T15) -> Start
-const TRACK_PATH_D =
-  'M 360 270 L 190 430 C 130 490, 80 500, 80 550 C 80 595, 120 615, 150 625 C 180 635, 150 710, 135 750 C 115 800, 180 815, 260 815 L 800 815 C 860 815, 885 780, 885 710 C 885 645, 855 595, 785 555 L 560 450 C 490 425, 465 365, 480 305 C 495 245, 560 235, 650 240 C 700 245, 720 325, 690 375 C 665 415, 710 430, 765 395 C 820 355, 905 245, 950 225 C 975 210, 985 245, 945 300 C 890 375, 865 440, 875 500 C 885 550, 940 580, 1030 580 C 1120 580, 1215 510, 1250 420 C 1285 330, 1260 205, 1160 155 C 1060 115, 700 125, 540 135 C 480 140, 420 210, 360 270 Z';
+const [S1_CHECKPOINT, S2_CHECKPOINT, S3_CHECKPOINT] = TRACK.checkpoints;
 
-interface SamplePoint {
-  x: number;
-  y: number;
-  pct: number;
+interface SamplePoint extends CircuitPoint {
   index: number;
 }
 
 export const TrackPage: React.FC = () => {
   const arenaRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const startZoneRef = useRef<SVGGElement>(null);
   const audioRef = useRef<TrackAudio | null>(null);
 
   // Gameplay State: 'STANDBY' (on grid waiting for start) | 'STARTING' | 'RACING'
-  const [raceState, setRaceState] = useState<'STANDBY' | 'STARTING' | 'RACING'>('STANDBY');
-  const raceStateRef = useRef<'STANDBY' | 'STARTING' | 'RACING'>('STANDBY');
+  const [raceState, setRaceState] = useState<RaceState>('STANDBY');
+  const raceStateRef = useRef<RaceState>('STANDBY');
   raceStateRef.current = raceState;
 
   const [isCarParked, setIsCarParked] = useState(false);
-  const [difficulty, setDifficulty] = useState<'STANDARD' | 'PRO'>('STANDARD');
+  const isCarParkedRef = useRef(false);
+  const [isCarAvailable, setIsCarAvailable] = useState(false);
+  const isCarAvailableRef = useRef(false);
+  const [difficulty, setDifficulty] = useState<TrackDifficulty>('STANDARD');
+  const difficultyRef = useRef<TrackDifficulty>(difficulty);
+  difficultyRef.current = difficulty;
   const [isMuted, setIsMuted] = useState(false);
   const [isCrashed, setIsCrashed] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
@@ -43,6 +51,7 @@ export const TrackPage: React.FC = () => {
   // Telemetry & Timing
   const [lapTimeDisplay, setLapTimeDisplay] = useState('00:00.000');
   const [bestLapTime, setBestLapTime] = useState<number | null>(null);
+  const bestLapTimeRef = useRef<number | null>(null);
   const [speedKmh, setSpeedKmh] = useState(0);
   const [rpmPct, setRpmPct] = useState(0);
 
@@ -65,7 +74,102 @@ export const TrackPage: React.FC = () => {
   const currentLapElapsedRef = useRef(0);
   const isCrashedCooldownRef = useRef(false);
   const checkpointsRef = useRef({ s1: false, s2: false, s3: false });
+  const nextCheckpointRef = useRef<NextCheckpoint>('s1');
+  const lastTrackIndexRef = useRef<number | null>(null);
+  const lapProgressRef = useRef(0);
+  const reverseTravelRef = useRef(0);
+  const lapRouteValidRef = useRef(true);
+  const lastCheckpointTimeRef = useRef<number | null>(null);
   const animFrameRef = useRef<number | null>(null);
+  const startTimeoutRef = useRef<TrackTimeout | null>(null);
+  const initTimerRef = useRef<TrackTimeout | null>(null);
+  const shakeTimeoutRef = useRef<TrackTimeout | null>(null);
+  const crashRecoveryTimeoutRef = useRef<TrackTimeout | null>(null);
+  const lifecycleTokenRef = useRef(0);
+  const isMountedRef = useRef(true);
+  const lastHudUpdateRef = useRef(0);
+  const fullscreenPendingRef = useRef(false);
+  const [isStartHovered, setIsStartHovered] = useState(false);
+  const isStartHoveredRef = useRef(false);
+
+  const setStartZoneHovered = useCallback((hovered: boolean) => {
+    if (isStartHoveredRef.current === hovered) return;
+    isStartHoveredRef.current = hovered;
+    setIsStartHovered(hovered);
+  }, []);
+
+  const disarmStartZone = useCallback(() => {
+    setStartZoneHovered(false);
+  }, [setStartZoneHovered]);
+
+  const handleStartZoneHover = useCallback((event: React.PointerEvent<SVGGElement>) => {
+    if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+    if (
+      (event.pointerType === 'pen' && (event.buttons !== 0 || event.pressure > 0)) ||
+      raceStateRef.current !== 'STANDBY' ||
+      fullscreenPendingRef.current ||
+      crashRecoveryTimeoutRef.current !== null ||
+      document.hidden ||
+      !document.hasFocus() ||
+      !event.currentTarget.matches(':hover')
+    ) {
+      disarmStartZone();
+      return;
+    }
+
+    if (!isStartHoveredRef.current) {
+      setStartZoneHovered(true);
+      // Moving back onto the circuit releases stale toolbar focus without scrolling.
+      arenaRef.current?.focus({ preventScroll: true });
+    }
+  }, [disarmStartZone, setStartZoneHovered]);
+
+  const handleStartZoneContact = useCallback((event: React.PointerEvent<SVGGElement>) => {
+    // Pen contact and touch cannot establish or retain a hover-based start.
+    if (event.pointerType !== 'mouse') disarmStartZone();
+  }, [disarmStartZone]);
+
+  const clearTrackedTimers = useCallback(() => {
+    if (startTimeoutRef.current !== null) {
+      window.clearTimeout(startTimeoutRef.current);
+      startTimeoutRef.current = null;
+    }
+    if (initTimerRef.current !== null) {
+      window.clearTimeout(initTimerRef.current);
+      initTimerRef.current = null;
+    }
+    if (shakeTimeoutRef.current !== null) {
+      window.clearTimeout(shakeTimeoutRef.current);
+      shakeTimeoutRef.current = null;
+    }
+    if (crashRecoveryTimeoutRef.current !== null) {
+      window.clearTimeout(crashRecoveryTimeoutRef.current);
+      crashRecoveryTimeoutRef.current = null;
+    }
+  }, []);
+
+  const resetLapTracking = useCallback(() => {
+    checkpointsRef.current = { s1: false, s2: false, s3: false };
+    nextCheckpointRef.current = 's1';
+    lastTrackIndexRef.current = null;
+    lapProgressRef.current = 0;
+    reverseTravelRef.current = 0;
+    lapRouteValidRef.current = true;
+    lastCheckpointTimeRef.current = null;
+  }, []);
+
+  const getTrackScreenMatrix = useCallback(() => {
+    const path = pathRef.current;
+    if (!path) return null;
+
+    const matrix = path.getScreenCTM();
+    if (!matrix) return null;
+
+    const determinant = matrix.a * matrix.d - matrix.b * matrix.c;
+    if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-10) return null;
+
+    return matrix;
+  }, []);
 
   // Format milliseconds into MM:SS.mmm
   const formatTime = (ms: number): string => {
@@ -78,32 +182,76 @@ export const TrackPage: React.FC = () => {
 
   // Calculate the live screen position of the Start Grid (at T15/Main Straight Start Line)
   const getStartGridScreenPos = useCallback(() => {
-    if (!arenaRef.current || pointsRef.current.length === 0) return null;
-    const rect = arenaRef.current.getBoundingClientRect();
-    const startPt = pointsRef.current[0] || { x: 360, y: 270 };
-    return {
-      x: rect.left + (startPt.x / SVG_WIDTH) * rect.width,
-      y: rect.top + (startPt.y / SVG_HEIGHT) * rect.height,
-    };
-  }, []);
+    if (pointsRef.current.length === 0) return null;
+    const matrix = getTrackScreenMatrix();
+    if (!matrix) return null;
 
-  // Lock car stationary at the Start Grid Line (facing along main straight towards Turn 1 at 2.386 rad)
+    const startPt = pointsRef.current[0] || TRACK.start;
+    const screenPoint = trackToScreen(startPt, matrix);
+    if (!Number.isFinite(screenPoint.x) || !Number.isFinite(screenPoint.y)) return null;
+    return screenPoint;
+  }, [getTrackScreenMatrix]);
+
+  const getStartGridHeading = useCallback(
+    (car: CarFollower3D, startScreenPos: { x: number; y: number }) => {
+      if (pointsRef.current.length < 2) return TRACK.start.heading;
+      const matrix = getTrackScreenMatrix();
+      if (!matrix) return TRACK.start.heading;
+
+      const nextScreenPos = trackToScreen(pointsRef.current[1], matrix);
+      const startWorld = car.screenToWorld(startScreenPos.x, startScreenPos.y);
+      const nextWorld = car.screenToWorld(nextScreenPos.x, nextScreenPos.y);
+      if (!startWorld || !nextWorld) return TRACK.start.heading;
+
+      const dx = nextWorld.x - startWorld.x;
+      const dz = nextWorld.z - startWorld.z;
+      if (!Number.isFinite(dx) || !Number.isFinite(dz) || Math.hypot(dx, dz) < 1e-6) {
+        return TRACK.start.heading;
+      }
+      return Math.atan2(dz, dx);
+    },
+    [getTrackScreenMatrix]
+  );
+
+  // Lock car stationary at the Start Grid Line, facing towards Turn 1.
   const lockCarToGrid = useCallback(
     (carInstance?: CarFollower3D | null) => {
       const car = carInstance || getActiveCarFollower3D();
       if (!car) return;
       const pos = getStartGridScreenPos();
       if (pos) {
-        car.lockToGrid(pos.x, pos.y, 2.386); // Heading 2.386 rad = facing towards Turn 1
+        car.lockToGrid(pos.x, pos.y, getStartGridHeading(car, pos));
       }
     },
-    [getStartGridScreenPos]
+    [getStartGridHeading, getStartGridScreenPos]
   );
 
   // Launch and Start the Race
   const startRace = useCallback(() => {
+    // Recheck browser hit testing: layout changes can move the zone away from a stationary pointer.
+    if (!isStartHoveredRef.current || !startZoneRef.current?.matches(':hover')) {
+      disarmStartZone();
+      return false;
+    }
+
     const car = getActiveCarFollower3D();
-    if (!car) return;
+    if (
+      !car ||
+      !isCarAvailableRef.current ||
+      pointsRef.current.length === 0 ||
+      getStartGridScreenPos() === null ||
+      raceStateRef.current !== 'STANDBY' ||
+      startTimeoutRef.current !== null ||
+      fullscreenPendingRef.current ||
+      crashRecoveryTimeoutRef.current !== null ||
+      isCrashedCooldownRef.current ||
+      document.hidden ||
+      !document.hasFocus()
+    ) return false;
+
+    clearTrackedTimers();
+    isCrashedCooldownRef.current = false;
+    disarmStartZone();
 
     // If car is parked in navbar pit bay, release it first
     if (car.isParked()) {
@@ -113,6 +261,7 @@ export const TrackPage: React.FC = () => {
     setRaceState('STARTING');
     raceStateRef.current = 'STARTING';
     setIsCrashed(false);
+    setIsShaking(false);
 
     // Audio rev engine
     audioRef.current?.startEngine();
@@ -121,10 +270,31 @@ export const TrackPage: React.FC = () => {
     lockCarToGrid(car);
 
     // After brief 300ms launch sequence, unlock car so it follows user pointer from the grid
-    setTimeout(() => {
-      car.unlockFromGrid();
+    const startToken = ++lifecycleTokenRef.current;
+    startTimeoutRef.current = window.setTimeout(() => {
+      startTimeoutRef.current = null;
+
+      const activeCar = getActiveCarFollower3D();
+      if (
+        !isMountedRef.current ||
+        lifecycleTokenRef.current !== startToken ||
+        raceStateRef.current !== 'STARTING' ||
+        !activeCar ||
+        activeCar !== car ||
+        activeCar.isParked()
+      ) {
+        if (isMountedRef.current && raceStateRef.current === 'STARTING') {
+          raceStateRef.current = 'STANDBY';
+          setRaceState('STANDBY');
+        }
+        return;
+      }
+
+      activeCar.unlockFromGrid();
       lapStartTimeRef.current = performance.now();
-      checkpointsRef.current = { s1: false, s2: false, s3: false };
+      resetLapTracking();
+      currentLapElapsedRef.current = 0;
+      lastHudUpdateRef.current = 0;
       setS1Cleared(false);
       setS2Cleared(false);
       setS3Cleared(false);
@@ -134,46 +304,82 @@ export const TrackPage: React.FC = () => {
       setRaceState('RACING');
       raceStateRef.current = 'RACING';
     }, 320);
-  }, [lockCarToGrid]);
+    return true;
+  }, [clearTrackedTimers, disarmStartZone, getStartGridScreenPos, lockCarToGrid, resetLapTracking]);
 
   // Reset to Standby Grid
   const resetToGrid = useCallback(
     (reason?: string) => {
+      clearTrackedTimers();
+      ++lifecycleTokenRef.current;
       lapStartTimeRef.current = null;
       currentLapElapsedRef.current = 0;
       setLapTimeDisplay('00:00.000');
       setRaceState('STANDBY');
       raceStateRef.current = 'STANDBY';
-      checkpointsRef.current = { s1: false, s2: false, s3: false };
+      resetLapTracking();
       setS1Cleared(false);
       setS2Cleared(false);
       setS3Cleared(false);
       setS1Time(null);
       setS2Time(null);
       setS3Time(null);
-
-      const car = getActiveCarFollower3D();
-      if (car) {
-        lockCarToGrid(car);
-      }
+      setIsCrashed(false);
+      setIsShaking(false);
+      setShowCelebration(false);
+      setIsNewRecord(false);
+      disarmStartZone();
+      isCrashedCooldownRef.current = false;
+      setSpeedKmh(0);
+      setRpmPct(0);
+      lastHudUpdateRef.current = 0;
 
       if (reason) {
         setCrashMessage(reason);
       }
+
+      const car = getActiveCarFollower3D();
+      if (car) {
+        if (car.isParked()) {
+          setIsCarAvailable(true);
+          return;
+        }
+        lockCarToGrid(car);
+      }
     },
-    [lockCarToGrid]
+    [clearTrackedTimers, disarmStartZone, lockCarToGrid, resetLapTracking]
   );
+
+  const handleFullscreenBeforeChange = useCallback(() => {
+    resetToGrid('🏁 FULLSCREEN VIEW CHANGED — RACE RESET');
+  }, [resetToGrid]);
+
+  const fullscreen = useTrackFullscreen(handleFullscreenBeforeChange);
+  fullscreenPendingRef.current = fullscreen.pending;
 
   // Initialize Best Lap from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('sae_track_best_lap');
-    if (saved) {
-      const val = parseFloat(saved);
-      if (!isNaN(val) && val > 0) {
-        setBestLapTime(val);
-      }
+    let savedBest: number | null = null;
+    try {
+      const saved = readPersonalBest(window.localStorage, difficulty);
+      savedBest = saved === null ? null : saved / 1000;
+    } catch (_) {
+      savedBest = null;
     }
-  }, []);
+
+    bestLapTimeRef.current = savedBest;
+    setBestLapTime(savedBest);
+  }, [difficulty]);
+
+  // Stop lifecycle callbacks from mutating this page after navigation/unmount.
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      ++lifecycleTokenRef.current;
+      clearTrackedTimers();
+    };
+  }, [clearTrackedTimers]);
 
   // Initialize Track Audio & Mode Setup
   useEffect(() => {
@@ -181,15 +387,30 @@ export const TrackPage: React.FC = () => {
     audioRef.current = audio;
     setIsMuted(audio.isAudioMuted);
 
-    // Keyboard shortcut: Press Space / Enter to start, R to reset
+    // Keyboard shortcuts: a fresh Space press while hovering starts; R resets.
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.isComposing) return;
+      const target = e.target instanceof Element ? e.target : null;
+      const isTextEntry = Boolean(
+        target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])') ||
+          (target instanceof HTMLElement && target.isContentEditable)
+      );
+
+      if (isTextEntry) return;
+
       if (e.key === 'r' || e.key === 'R') {
         resetToGrid('GRID RESET TRIGGERED');
-      } else if (e.key === ' ' || e.key === 'Enter') {
-        if (raceStateRef.current === 'STANDBY') {
-          e.preventDefault();
-          startRace();
+      } else if (e.key === ' ') {
+        if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        const nativeControlSelector = 'button, a[href], input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"]';
+        if (
+          target?.closest(nativeControlSelector) ||
+          document.activeElement?.closest(nativeControlSelector)
+        ) {
+          return;
         }
+
+        if (startRace()) e.preventDefault();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -202,39 +423,93 @@ export const TrackPage: React.FC = () => {
 
   // Main Track Physics & Game Loop
   useEffect(() => {
-    let car = getActiveCarFollower3D();
+    let car: CarFollower3D | null = getActiveCarFollower3D();
+    let freeDriveCar: CarFollower3D | null = null;
+
+    const updateCarAvailability = (available: boolean) => {
+      if (isCarAvailableRef.current === available) return;
+      isCarAvailableRef.current = available;
+      setIsCarAvailable(available);
+    };
+
+    const updateParkedState = (parked: boolean) => {
+      if (isCarParkedRef.current === parked) return;
+      isCarParkedRef.current = parked;
+      setIsCarParked(parked);
+    };
+
+    const scheduleResetAlertCleanup = () => {
+      shakeTimeoutRef.current = window.setTimeout(() => {
+        shakeTimeoutRef.current = null;
+        if (isMountedRef.current) {
+          setIsShaking(false);
+        }
+      }, 450);
+
+      crashRecoveryTimeoutRef.current = window.setTimeout(() => {
+        crashRecoveryTimeoutRef.current = null;
+        if (isMountedRef.current) {
+          setIsCrashed(false);
+          isCrashedCooldownRef.current = false;
+        }
+      }, 850);
+    };
+
+    const invalidateLap = (reason: string) => {
+      if (!lapRouteValidRef.current) return;
+      lapRouteValidRef.current = false;
+      resetToGrid(reason);
+      // resetToGrid prepares the next lap, while this flag prevents another
+      // invalidation from the same frame before the state ref is observed.
+      lapRouteValidRef.current = false;
+      setIsCrashed(true);
+      setIsShaking(true);
+      scheduleResetAlertCleanup();
+    };
 
     // Enable free drive mode so mouse/touch moves freely on track (even on mobile)
     const enableFreeDrive = () => {
       car = getActiveCarFollower3D();
       if (car) {
-        car.setForceFreeDrive(true);
-        // Put car on start grid in standby
-        lockCarToGrid(car);
+        updateCarAvailability(true);
+        if (freeDriveCar !== car) {
+          car.setForceFreeDrive(true);
+          freeDriveCar = car;
+        }
+        // Put car on the start grid only while the page is not racing.
+        if (raceStateRef.current !== 'RACING') {
+          lockCarToGrid(car);
+        }
+      } else {
+        updateCarAvailability(false);
       }
     };
 
     // Retry finding car if instantiated asynchronously
     enableFreeDrive();
-    const initTimer = setTimeout(enableFreeDrive, 150);
+    initTimerRef.current = window.setTimeout(() => {
+      initTimerRef.current = null;
+      enableFreeDrive();
+    }, 150);
 
     // Sample track spline points
     if (pathRef.current) {
       try {
         const totalLen = pathRef.current.getTotalLength();
-        const sampleCount = 650;
         const pts: SamplePoint[] = [];
-        for (let i = 0; i < sampleCount; i++) {
-          const pt = pathRef.current.getPointAtLength((i / sampleCount) * totalLen);
+        for (let i = 0; i < TRACK.sampleCount; i++) {
+          const pt = pathRef.current.getPointAtLength((i / TRACK.sampleCount) * totalLen);
           pts.push({
             x: pt.x,
             y: pt.y,
-            pct: i / sampleCount,
+            pct: i / TRACK.sampleCount,
             index: i,
           });
         }
         pointsRef.current = pts;
-        lockCarToGrid(car);
+        if (raceStateRef.current !== 'RACING') {
+          lockCarToGrid(car);
+        }
       } catch (_) {}
     }
 
@@ -244,54 +519,79 @@ export const TrackPage: React.FC = () => {
       const arena = arenaRef.current;
       const pts = pointsRef.current;
 
-      if (currentCar && arena && pts.length > 0) {
+      if (isStartHoveredRef.current && !startZoneRef.current?.matches(':hover')) {
+        disarmStartZone();
+      }
+
+      if (!currentCar) {
+        updateCarAvailability(false);
+        updateParkedState(false);
+        animFrameRef.current = requestAnimationFrame(tick);
+        return;
+      }
+
+      updateCarAvailability(true);
+      if (freeDriveCar !== currentCar) {
+        currentCar.setForceFreeDrive(true);
+        freeDriveCar = currentCar;
+      }
+
+      if (arena && pts.length > 0) {
         const parked = currentCar.isParked();
-        setIsCarParked(parked);
+        updateParkedState(parked);
 
         // 1. If car is parked in navbar, pause and disarm collision checks completely!
         if (parked) {
-          if (raceStateRef.current === 'RACING') {
+          if (raceStateRef.current !== 'STANDBY') {
+            clearTrackedTimers();
+            ++lifecycleTokenRef.current;
+            lapStartTimeRef.current = null;
+            currentLapElapsedRef.current = 0;
+            resetLapTracking();
+            isCrashedCooldownRef.current = false;
             setRaceState('STANDBY');
             raceStateRef.current = 'STANDBY';
+            setLapTimeDisplay('00:00.000');
           }
           animFrameRef.current = requestAnimationFrame(tick);
           return;
         }
 
-        const rect = arena.getBoundingClientRect();
         const carScreen = currentCar.getCarScreenPos();
 
-        // Project car to SVG coordinate space
-        const carSvgX = ((carScreen.x - rect.left) / rect.width) * SVG_WIDTH;
-        const carSvgY = ((carScreen.y - rect.top) / rect.height) * SVG_HEIGHT;
-
-        // Find closest point on track centerline
-        let minDistSq = Infinity;
-        let closestIdx = 0;
-        for (let i = 0; i < pts.length; i++) {
-          const dx = carSvgX - pts[i].x;
-          const dy = carSvgY - pts[i].y;
-          const dSq = dx * dx + dy * dy;
-          if (dSq < minDistSq) {
-            minDistSq = dSq;
-            closestIdx = i;
-          }
+        // Project the shared screen-space car through the rendered SVG matrix.
+        // The fullscreen arena preserves the 3:2 viewBox with letterboxing, so
+        // wrapper-rectangle ratios would map the car to the wrong track point.
+        const matrix = getTrackScreenMatrix();
+        const carTrackPoint = matrix ? screenToTrack(carScreen, matrix) : null;
+        if (!carTrackPoint || !Number.isFinite(carTrackPoint.x) || !Number.isFinite(carTrackPoint.y)) {
+          animFrameRef.current = requestAnimationFrame(tick);
+          return;
         }
-        const minDist = Math.sqrt(minDistSq);
-        const closestPoint = pts[closestIdx];
+
+        // Project against line segments, including the closing segment, so
+        // collision and progress do not jump at the start/finish seam.
+        const closestPoint = closestTrackPosition(carTrackPoint, pts);
+        const minDist = closestPoint.distance;
+        const closestIdx = Math.round(closestPoint.pct * TRACK.sampleCount) % TRACK.sampleCount;
+        const now = performance.now();
 
         // Telemetry Speed & Audio modulation
         const rawSpeed = currentCar.getSpeed();
         const kmh = Math.round(rawSpeed * 11.5);
-        setSpeedKmh(kmh);
-        setRpmPct(Math.min((kmh / 150) * 100, 100));
+        const shouldUpdateHud = now - lastHudUpdateRef.current >= HUD_UPDATE_INTERVAL_MS;
+        if (shouldUpdateHud) {
+          lastHudUpdateRef.current = now;
+          setSpeedKmh(kmh);
+          setRpmPct(Math.min((kmh / 150) * 100, 100));
+        }
         audioRef.current?.updateEnginePitch(rawSpeed);
 
         // 2. If game is in STANDBY or STARTING, dynamically maintain grid lock with live scroll position!
         if (raceStateRef.current !== 'RACING') {
           const livePos = getStartGridScreenPos();
           if (livePos) {
-            currentCar.lockToGrid(livePos.x, livePos.y, 2.386); // Heading towards Turn 1
+            lockCarToGrid(currentCar);
           }
           animFrameRef.current = requestAnimationFrame(tick);
           return;
@@ -300,107 +600,190 @@ export const TrackPage: React.FC = () => {
         // 3. RACING STATE: Check Track Boundaries
         // Track stroke is 64px, half-width is 32px.
         // Standard allows riding the kerbs (40px); Pro requires staying inside white line (32px).
-        const maxAllowedDist = difficulty === 'PRO' ? 32 : 40;
+        const maxAllowedDist = TRACK.tolerance[difficultyRef.current];
 
         // ================= OFF-TRACK COLLISION DETECTION =================
         if (minDist > maxAllowedDist) {
           if (!isCrashedCooldownRef.current) {
             isCrashedCooldownRef.current = true;
-            setIsCrashed(true);
-            setIsShaking(true);
-            setCrashMessage('💥 OFF TRACK! RETURNING TO START GRID...');
 
             audioRef.current?.playCrash();
             currentCar.triggerCrashBurst();
 
             // Return to STANDBY and lock car back at start grid
-            resetToGrid('💥 OFF TRACK! RE-ARM TO START');
-
-            // Remove shake and crash alert after brief recovery delay
-            setTimeout(() => {
-              setIsShaking(false);
-            }, 450);
-
-            setTimeout(() => {
-              setIsCrashed(false);
-              isCrashedCooldownRef.current = false;
-            }, 850);
+            resetToGrid('💥 OFF TRACK! HOVER START ZONE AND PRESS SPACE');
+            setIsCrashed(true);
+            setIsShaking(true);
+            scheduleResetAlertCleanup();
+            animFrameRef.current = requestAnimationFrame(tick);
+            return;
           }
         } else {
           // ================= ON-TRACK PROGRESSION & TIMING =================
-          const now = performance.now();
-
-          if (lapStartTimeRef.current !== null) {
+          if (lapStartTimeRef.current !== null && lapRouteValidRef.current) {
             const elapsed = now - lapStartTimeRef.current;
             currentLapElapsedRef.current = elapsed;
-            setLapTimeDisplay(formatTime(elapsed));
-
-            // Sector 1 Gate (~30% of circuit, Turn 4 Descida do Lago exit into infield)
-            if (!checkpointsRef.current.s1 && closestPoint.pct >= 0.28 && closestPoint.pct <= 0.35) {
-              checkpointsRef.current.s1 = true;
-              setS1Cleared(true);
-              setS1Time(formatTime(elapsed));
-              audioRef.current?.playCheckpoint();
+            if (shouldUpdateHud) {
+              setLapTimeDisplay(formatTime(elapsed));
             }
 
-            // Sector 2 Gate (~69% of circuit, Turn 12 Junção exit into outfield sweep)
-            if (
-              checkpointsRef.current.s1 &&
-              !checkpointsRef.current.s2 &&
-              closestPoint.pct >= 0.67 &&
-              closestPoint.pct <= 0.74
-            ) {
-              checkpointsRef.current.s2 = true;
-              setS2Cleared(true);
-              setS2Time(formatTime(elapsed));
-              audioRef.current?.playCheckpoint();
-            }
-
-            // Sector 3 Gate (~81% of circuit, Turn 14 Arquibancadas crest onto top straight)
-            if (
-              checkpointsRef.current.s2 &&
-              !checkpointsRef.current.s3 &&
-              closestPoint.pct >= 0.79 &&
-              closestPoint.pct <= 0.86
-            ) {
-              checkpointsRef.current.s3 = true;
-              setS3Cleared(true);
-              setS3Time(formatTime(elapsed));
-              audioRef.current?.playCheckpoint();
-            }
-
-            // Lap Finish Line (Start/Finish Grid, >= 96% or <= 4%)
-            if (
-              checkpointsRef.current.s1 &&
-              checkpointsRef.current.s2 &&
-              checkpointsRef.current.s3 &&
-              (closestPoint.pct >= 0.96 || closestPoint.pct <= 0.04)
-            ) {
-              // CLEAN VALID LAP COMPLETED!
-              const lapTimeSec = elapsed / 1000;
-              setLastFinishedTime(formatTime(elapsed));
-              setShowCelebration(true);
-              audioRef.current?.playLapComplete();
-
-              // Check Best Lap record
-              const currentBest = bestLapTime;
-              if (!currentBest || lapTimeSec < currentBest) {
-                setBestLapTime(lapTimeSec);
-                setIsNewRecord(true);
-                localStorage.setItem('sae_track_best_lap', lapTimeSec.toFixed(3));
-              } else {
-                setIsNewRecord(false);
+            // Track progress must move forward in the sampled path. Small
+            // reverse jitter is tolerated, but sustained reverse travel or a
+            // large jump invalidates the lap before any checkpoint can count.
+            const previousIndex = lastTrackIndexRef.current;
+            if (previousIndex === null) {
+              lastTrackIndexRef.current = closestIdx;
+            } else {
+              let progressDelta = closestIdx - previousIndex;
+              if (progressDelta < -TRACK.sampleCount / 2) {
+                progressDelta += TRACK.sampleCount;
+              } else if (progressDelta > TRACK.sampleCount / 2) {
+                progressDelta -= TRACK.sampleCount;
               }
 
-              // Reset checkpoints & roll seamlessly into next lap
-              checkpointsRef.current = { s1: false, s2: false, s3: false };
-              setS1Cleared(false);
-              setS2Cleared(false);
-              setS3Cleared(false);
-              setS1Time(null);
-              setS2Time(null);
-              setS3Time(null);
-              lapStartTimeRef.current = now; // Start next lap immediately!
+              lastTrackIndexRef.current = closestIdx;
+
+              if (progressDelta > TRACK.sampleCount * TRACK.maxForwardStepPct) {
+                invalidateLap('⚠️ LAP INVALID! ROUTE SKIPPED — RETURNING TO GRID...');
+                animFrameRef.current = requestAnimationFrame(tick);
+                return;
+              }
+
+              if (progressDelta < -TRACK.sampleCount * TRACK.maxReverseStepPct) {
+                invalidateLap('⚠️ LAP INVALID! REVERSED ROUTE — RETURNING TO GRID...');
+                animFrameRef.current = requestAnimationFrame(tick);
+                return;
+              }
+
+              if (progressDelta < 0) {
+                reverseTravelRef.current += Math.abs(progressDelta);
+                if (reverseTravelRef.current > TRACK.sampleCount * TRACK.maxReverseProgress) {
+                  invalidateLap('⚠️ LAP INVALID! REVERSED ROUTE — RETURNING TO GRID...');
+                  animFrameRef.current = requestAnimationFrame(tick);
+                  return;
+                }
+              } else if (progressDelta > 0) {
+                reverseTravelRef.current = Math.max(0, reverseTravelRef.current - progressDelta * 0.5);
+                lapProgressRef.current += progressDelta / TRACK.sampleCount;
+              }
+            }
+
+            const progress = lapProgressRef.current;
+
+            // Checkpoints are consumed in order and only by forward crossing.
+            // Passing beyond a gate without crossing it invalidates the lap.
+            if (nextCheckpointRef.current === S1_CHECKPOINT.id) {
+              if (progress > S1_CHECKPOINT.endPct) {
+                invalidateLap('⚠️ LAP INVALID! CHECKPOINT 1 SKIPPED — RETURNING TO GRID...');
+                animFrameRef.current = requestAnimationFrame(tick);
+                return;
+              }
+              if (
+                progress >= S1_CHECKPOINT.startPct &&
+                elapsed >= TRACK.minCheckpointMs &&
+                (lastCheckpointTimeRef.current === null || elapsed - lastCheckpointTimeRef.current >= TRACK.minCheckpointMs)
+              ) {
+                nextCheckpointRef.current = S2_CHECKPOINT.id;
+                checkpointsRef.current.s1 = true;
+                lastCheckpointTimeRef.current = elapsed;
+                setS1Cleared(true);
+                setS1Time(formatTime(elapsed));
+                audioRef.current?.playCheckpoint();
+              }
+            }
+
+            if (nextCheckpointRef.current === S2_CHECKPOINT.id) {
+              if (progress > S2_CHECKPOINT.endPct) {
+                invalidateLap('⚠️ LAP INVALID! CHECKPOINT 2 SKIPPED — RETURNING TO GRID...');
+                animFrameRef.current = requestAnimationFrame(tick);
+                return;
+              }
+              if (
+                progress >= S2_CHECKPOINT.startPct &&
+                lastCheckpointTimeRef.current !== null &&
+                elapsed - lastCheckpointTimeRef.current >= TRACK.minCheckpointMs
+              ) {
+                nextCheckpointRef.current = S3_CHECKPOINT.id;
+                checkpointsRef.current.s2 = true;
+                lastCheckpointTimeRef.current = elapsed;
+                setS2Cleared(true);
+                setS2Time(formatTime(elapsed));
+                audioRef.current?.playCheckpoint();
+              }
+            }
+
+            if (nextCheckpointRef.current === S3_CHECKPOINT.id) {
+              if (progress > S3_CHECKPOINT.endPct) {
+                invalidateLap('⚠️ LAP INVALID! CHECKPOINT 3 SKIPPED — RETURNING TO GRID...');
+                animFrameRef.current = requestAnimationFrame(tick);
+                return;
+              }
+              if (
+                progress >= S3_CHECKPOINT.startPct &&
+                lastCheckpointTimeRef.current !== null &&
+                elapsed - lastCheckpointTimeRef.current >= TRACK.minCheckpointMs
+              ) {
+                nextCheckpointRef.current = 'finish';
+                checkpointsRef.current.s3 = true;
+                lastCheckpointTimeRef.current = elapsed;
+                setS3Cleared(true);
+                setS3Time(formatTime(elapsed));
+                audioRef.current?.playCheckpoint();
+              }
+            }
+
+            if (nextCheckpointRef.current === 'finish') {
+              if (progress > 1.04) {
+                invalidateLap('⚠️ LAP INVALID! FINISH LINE SKIPPED — RETURNING TO GRID...');
+                animFrameRef.current = requestAnimationFrame(tick);
+                return;
+              }
+
+              if (progress >= 1) {
+                if (elapsed < TRACK.minLapMs) {
+                  invalidateLap('⏱️ LAP INVALID! COMPLETE A FULL-LENGTH LAP — RETURNING TO GRID...');
+                  animFrameRef.current = requestAnimationFrame(tick);
+                  return;
+                }
+
+                // CLEAN VALID LAP COMPLETED!
+                const lapTimeSec = elapsed / 1000;
+                setLastFinishedTime(formatTime(elapsed));
+                setShowCelebration(true);
+                audioRef.current?.playLapComplete();
+
+                // Check the locally scoped personal best for this mode.
+                const currentBest = bestLapTimeRef.current;
+                if (!currentBest || lapTimeSec < currentBest) {
+                  bestLapTimeRef.current = lapTimeSec;
+                  setBestLapTime(lapTimeSec);
+                  setIsNewRecord(true);
+                  savePersonalBest(
+                    window.localStorage,
+                    difficultyRef.current,
+                    Math.round(lapTimeSec * 1000),
+                    currentBest === null ? null : Math.round(currentBest * 1000),
+                  );
+                } else {
+                  setIsNewRecord(false);
+                }
+
+                // Reset checkpoints and roll seamlessly into the next lap.
+                checkpointsRef.current = { s1: false, s2: false, s3: false };
+                nextCheckpointRef.current = 's1';
+                setS1Cleared(false);
+                setS2Cleared(false);
+                setS3Cleared(false);
+                setS1Time(null);
+                setS2Time(null);
+                setS3Time(null);
+                lapProgressRef.current -= 1;
+                reverseTravelRef.current = 0;
+                lastCheckpointTimeRef.current = null;
+                lapStartTimeRef.current = now; // Start next lap immediately!
+                currentLapElapsedRef.current = 0;
+                setLapTimeDisplay('00:00.000');
+              }
             }
           }
         }
@@ -413,30 +796,56 @@ export const TrackPage: React.FC = () => {
 
     // Keep car glued to start grid during scroll or resize while on standby
     const handleScrollOrResize = () => {
-      if (raceStateRef.current !== 'RACING') {
-        const liveCar = getActiveCarFollower3D();
-        const livePos = getStartGridScreenPos();
-        if (liveCar && livePos) {
-          liveCar.lockToGrid(livePos.x, livePos.y, 2.386);
+      disarmStartZone();
+      if (raceStateRef.current !== 'STANDBY') {
+        resetToGrid('🏁 RACE PAUSED — RESET AFTER VIEWPORT CHANGE');
+        return;
+      }
+
+      const liveCar = getActiveCarFollower3D();
+      const livePos = getStartGridScreenPos();
+      if (liveCar && livePos) {
+        lockCarToGrid(liveCar);
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        disarmStartZone();
+        if (raceStateRef.current !== 'STANDBY') {
+          resetToGrid('🏁 RACE PAUSED — RESET AFTER TAB SWITCH');
         }
+      }
+    };
+    const handleWindowBlur = () => {
+      disarmStartZone();
+      if (raceStateRef.current === 'STARTING') {
+        resetToGrid('🏁 START CANCELLED — HOVER START ZONE AND PRESS SPACE');
       }
     };
     window.addEventListener('scroll', handleScrollOrResize, { passive: true });
     window.addEventListener('resize', handleScrollOrResize);
+    window.addEventListener('blur', handleWindowBlur);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      clearTimeout(initTimer);
+      if (initTimerRef.current !== null) {
+        window.clearTimeout(initTimerRef.current);
+        initTimerRef.current = null;
+      }
       window.removeEventListener('scroll', handleScrollOrResize);
       window.removeEventListener('resize', handleScrollOrResize);
+      window.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (animFrameRef.current !== null) {
         cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
       }
       const activeCar = getActiveCarFollower3D();
       if (activeCar) {
         activeCar.setForceFreeDrive(false);
       }
     };
-  }, [difficulty, bestLapTime, lockCarToGrid, resetToGrid, getStartGridScreenPos]);
+  }, [clearTrackedTimers, disarmStartZone, getStartGridScreenPos, getTrackScreenMatrix, lockCarToGrid, resetLapTracking, resetToGrid]);
 
   // Audio mute toggle
   const handleToggleSound = () => {
@@ -455,8 +864,12 @@ export const TrackPage: React.FC = () => {
         <header className="track-header">
           <div className="track-title-group">
             <div className="track-badge-row">
-              <span className="track-badge">Formula Student Circuit</span>
-              {isCarParked ? (
+              <span className="track-badge">{TRACK.title}</span>
+              {!isCarAvailable ? (
+                <span className="track-badge track-badge-unavailable">
+                  ⚠️ 3D CAR UNAVAILABLE
+                </span>
+              ) : isCarParked ? (
                 <span className="track-badge" style={{ borderColor: '#f6b719', color: '#f6b719' }}>
                   🅿️ CAR IN PIT STOP
                 </span>
@@ -469,32 +882,29 @@ export const TrackPage: React.FC = () => {
                   🏁 READY ON GRID
                 </span>
               )}
+              {fullscreen.active && (
+                <span
+                  className="track-badge track-badge-fullscreen"
+                  aria-label={`Fullscreen race view active (${fullscreen.mode === 'native' ? 'native' : 'expanded'} mode)`}
+                >
+                  ⛶ {fullscreen.mode === 'native' ? 'FULLSCREEN' : 'EXPANDED'}
+                </span>
+              )}
             </div>
-            <h1 className="track-title">BIT Sindri International Circuit</h1>
+            <h1 className="track-title">{TRACK.title}</h1>
             <p className="track-subtitle">
-              Drive the 3D Formula Student car with your pointer. Stay inside the track boundaries or respawn!
+              {TRACK.subtitle}. Drive the 3D Formula Student car with your pointer. Stay inside the track boundaries or respawn!
             </p>
           </div>
 
           <div className="track-header-actions">
-            {/* Dedicated Start Race Button */}
-            {raceState !== 'RACING' && (
-              <button
-                type="button"
-                className="track-ctrl-btn track-ctrl-btn-start"
-                onClick={startRace}
-                title="Start race and unlock car (Hotkey: Space)"
-              >
-                <span>{isCarParked ? '🏎️ LAUNCH CAR' : '🏁 START RACE'}</span>
-              </button>
-            )}
-
             {/* Difficulty Toggle */}
             <button
               type="button"
               className={`track-ctrl-btn ${difficulty === 'PRO' ? 'active' : ''}`}
               onClick={() => setDifficulty((d) => (d === 'STANDARD' ? 'PRO' : 'STANDARD'))}
-              title="Toggle Track Boundary Tolerance"
+              disabled={raceState !== 'STANDBY'}
+              title={raceState === 'STANDBY' ? 'Toggle Track Boundary Tolerance' : 'Reset before changing tolerance'}
             >
               <span>Tolerance:</span>
               <strong>{difficulty === 'STANDARD' ? 'Standard (Kerbs allowed)' : 'Pro Sim (Strict)'}</strong>
@@ -527,6 +937,36 @@ export const TrackPage: React.FC = () => {
               )}
             </button>
 
+            {/* Fullscreen / expanded race view */}
+            <button
+              type="button"
+              className={`track-ctrl-btn track-ctrl-btn-fullscreen ${fullscreen.active ? 'active' : ''}`}
+              onClick={fullscreen.toggle}
+              disabled={fullscreen.pending}
+              aria-pressed={fullscreen.active}
+              aria-label={fullscreen.active ? 'Exit fullscreen race view' : 'Enter fullscreen race view'}
+              title="Changing fullscreen view resets the current race attempt"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                {fullscreen.active ? (
+                  <>
+                    <path d="M9 3v6H3" />
+                    <path d="M15 21v-6h6" />
+                    <path d="M3 9l6-6" />
+                    <path d="M21 15l-6 6" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M15 3h6v6" />
+                    <path d="M9 21H3v-6" />
+                    <path d="M21 3l-6 6" />
+                    <path d="M3 21l6-6" />
+                  </>
+                )}
+              </svg>
+              <span>{fullscreen.active ? 'Collapse' : 'Expand'}</span>
+            </button>
+
             {/* Restart Button */}
             <button
               type="button"
@@ -552,11 +992,42 @@ export const TrackPage: React.FC = () => {
           </div>
         </header>
 
+        {(fullscreen.active || fullscreen.message) && (
+          <div className="track-fullscreen-status" role="status" aria-live="polite" aria-atomic="true">
+            {fullscreen.message && <span className="track-fullscreen-message">{fullscreen.message}</span>}
+            {fullscreen.mode === 'expanded' && !fullscreen.message && (
+              <span className="track-fullscreen-message">Browser fullscreen unavailable; using expanded race view.</span>
+            )}
+            {fullscreen.active && (
+              <span className="track-fullscreen-escape-hint">
+                Press <kbd>Esc</kbd> to exit fullscreen.
+              </span>
+            )}
+          </div>
+        )}
+
+        <div
+          id="trackStartHelp"
+          className={`track-start-help ${isStartHovered ? 'is-armed' : ''} ${raceState !== 'STANDBY' || isCrashed ? 'is-hidden' : ''}`}
+          role="status"
+          aria-live="polite"
+          aria-hidden={raceState !== 'STANDBY' || isCrashed}
+        >
+          <span className="track-start-help-icon" aria-hidden="true">💡</span>
+          <span>
+            Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
+          </span>
+        </div>
+
         {/* ===================== MAIN RACE ARENA ===================== */}
         <div
           ref={arenaRef}
           className={`track-arena-wrapper ${isShaking ? 'is-shaking' : ''}`}
           id="trackArena"
+          tabIndex={-1}
+          role="region"
+          aria-label="Race circuit"
+          aria-describedby="trackStartHelp"
         >
           {/* Start Lights Gantry */}
           <div className="track-lights-gantry" aria-hidden="true">
@@ -578,7 +1049,7 @@ export const TrackPage: React.FC = () => {
                 {lapTimeDisplay}
               </div>
               <div className="hud-best-row">
-                <span className="hud-best-badge">BEST</span>
+                <span className="hud-best-badge">PERSONAL BEST</span>
                 <span>{bestLapTime ? formatTime(bestLapTime * 1000) : '--:--.---'}</span>
               </div>
             </div>
@@ -617,34 +1088,45 @@ export const TrackPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom Left Driving Instructions */}
-          <div className="track-hud-bottom-left">
-            💡 <strong>Controls:</strong> Move pointer to the Start Line and click <strong>START RACE</strong> (or press <kbd>Space</kbd>). Stay within white track lines!
-          </div>
+          {!isCarAvailable && (
+            <div className="track-no-car-state" role="status">
+              <strong>3D CAR UNAVAILABLE</strong>
+              <span>WebGL is unavailable. The circuit view remains available.</span>
+            </div>
+          )}
 
-          {/* START GRID INTERACTIVE LAUNCH CARD (Stationed right at Start Line) */}
+          {/* Start guidance only; the SVG zone and Space are the start controls. */}
           {raceState !== 'RACING' && !isCrashed && (
             <div className="track-grid-launch-card">
               <div className="track-grid-launch-meta">
                 <span className="track-grid-launch-badge">
-                  {isCarParked ? 'NAV PIT STOP' : 'START GRID • P1'}
+                  {!isCarAvailable
+                    ? 'CIRCUIT VIEW ONLY'
+                    : raceState === 'STARTING'
+                      ? 'START SEQUENCE'
+                      : isStartHovered
+                        ? 'START ZONE ACTIVE'
+                        : 'HOVER START ZONE • P1'}
                 </span>
                 <h3 className="track-grid-launch-title">
-                  {isCarParked ? 'Car Docked in Pit Bay' : 'Ready to Race'}
+                  {!isCarAvailable
+                    ? '3D Car Unavailable'
+                    : raceState === 'STARTING'
+                      ? 'Starting...'
+                      : isStartHovered
+                        ? <>Press <kbd>Space</kbd> to start</>
+                        : 'Hover to prepare'}
                 </h3>
                 <p className="track-grid-launch-sub">
-                  {isCarParked
-                    ? 'Click to launch car from pit stop to track'
-                    : 'Click button to launch from grid'}
+                  {!isCarAvailable
+                    ? 'WebGL car controls are unavailable; browse the circuit below'
+                    : raceState === 'STARTING'
+                      ? 'Get ready to follow the track with your pointer.'
+                      : isStartHovered
+                        ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
+                        : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
                 </p>
               </div>
-              <button
-                type="button"
-                className={`track-launch-action-btn ${isCarParked ? 'is-pit-launch' : ''}`}
-                onClick={startRace}
-              >
-                <span>{isCarParked ? '🏎️ LAUNCH CAR' : 'START RACE 🏁'}</span>
-              </button>
             </div>
           )}
 
@@ -652,7 +1134,10 @@ export const TrackPage: React.FC = () => {
           {isCrashed && (
             <div className="track-crash-banner" role="alert">
               <div className="track-crash-title">{crashMessage}</div>
-              <p className="track-crash-sub">Tires left the tarmac boundary. Resetting to Start Grid...</p>
+              <p className="track-crash-sub">Track boundary or lap route violation detected. The car is back on the grid.</p>
+              <p className="track-crash-instructions">
+                Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to try again after recovery.
+              </p>
             </div>
           )}
 
@@ -678,7 +1163,7 @@ export const TrackPage: React.FC = () => {
           {/* ===================== VECTOR CIRCUIT SVG ===================== */}
           <svg
             className="track-svg-arena"
-            viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
+            viewBox={`0 0 ${TRACK.width} ${TRACK.height}`}
             preserveAspectRatio="xMidYMid meet"
           >
             <defs>
@@ -688,24 +1173,6 @@ export const TrackPage: React.FC = () => {
                 <stop offset="60%" stopColor="#07100c" />
                 <stop offset="100%" stopColor="#040907" />
               </radialGradient>
-
-              {/* Sector 1 Gradient: Light Cyan / Emerald */}
-              <linearGradient id="s1Grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#00e5ff" />
-                <stop offset="100%" stopColor="#10b981" />
-              </linearGradient>
-
-              {/* Sector 2 Gradient: Vibrant Ocean / Royal Blue */}
-              <linearGradient id="s2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#0284c7" />
-                <stop offset="100%" stopColor="#2563eb" />
-              </linearGradient>
-
-              {/* Sector 3 Gradient: Deep Electric Navy / Sky Blue */}
-              <linearGradient id="s3Grad" x1="100%" y1="100%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="#1d4ed8" />
-                <stop offset="100%" stopColor="#0284c7" />
-              </linearGradient>
 
               {/* Checkered Start/Finish Pattern */}
               <pattern id="checkeredPattern" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -717,7 +1184,7 @@ export const TrackPage: React.FC = () => {
             </defs>
 
             {/* Infield Grass Background */}
-            <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="url(#grassGrad)" />
+            <rect width={TRACK.width} height={TRACK.height} fill="url(#grassGrad)" />
 
             {/* Subtle SAE BIT Sindri Watermark on Infield */}
             <g opacity="0.07" transform="translate(680, 500) scale(0.65)" textAnchor="middle">
@@ -733,12 +1200,12 @@ export const TrackPage: React.FC = () => {
             <ellipse cx="975" cy="210" rx="55" ry="45" fill="#2d2215" opacity="0.35" />
             <ellipse cx="1275" cy="270" rx="50" ry="90" fill="#2d2215" opacity="0.35" />
 
-            {/* 1. ELEVATION SILHOUETTE (Under-track 3D drop offset shadow matching user reference image) */}
+            {/* 1. ELEVATION SILHOUETTE (Under-track 3D drop offset shadow) */}
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#ffffff"
-              strokeWidth="70"
+              strokeWidth={TRACK.kerbWidth - 6}
               strokeLinejoin="round"
               strokeLinecap="round"
               transform="translate(-10, 14)"
@@ -757,18 +1224,18 @@ export const TrackPage: React.FC = () => {
 
             {/* 2. LAYER 1: OUTER RED & WHITE MOTORSPORT KERBS */}
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#ef4444"
-              strokeWidth="76"
+              strokeWidth={TRACK.kerbWidth}
               strokeLinejoin="round"
               strokeLinecap="round"
             />
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#ffffff"
-              strokeWidth="76"
+              strokeWidth={TRACK.kerbWidth}
               strokeDasharray="16 16"
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -778,27 +1245,27 @@ export const TrackPage: React.FC = () => {
             <path
               ref={pathRef}
               id="circuitAsphalt"
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#111622"
-              strokeWidth="64"
+              strokeWidth={TRACK.asphaltWidth}
               strokeLinejoin="round"
               strokeLinecap="round"
             />
 
             {/* 4. LAYER 3: INNER ASPHALT CORE */}
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#1a2234"
-              strokeWidth="56"
+              strokeWidth={TRACK.asphaltWidth - 8}
               strokeLinejoin="round"
               strokeLinecap="round"
             />
 
             {/* 5. DYNAMIC SECTOR RACING GLOW LINE (Matching image cyan/blue/navy flow) */}
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#0284c7"
               strokeWidth="10"
@@ -809,7 +1276,7 @@ export const TrackPage: React.FC = () => {
 
             {/* 6. WHITE TRACK BOUNDARY EDGE LINES */}
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="#f8fafc"
               strokeWidth="2.5"
@@ -820,7 +1287,7 @@ export const TrackPage: React.FC = () => {
 
             {/* Centerline Racing Guideline (Apex Hints) */}
             <path
-              d={TRACK_PATH_D}
+              d={TRACK.path}
               fill="none"
               stroke="rgba(246, 183, 25, 0.28)"
               strokeWidth="1.5"
@@ -829,7 +1296,10 @@ export const TrackPage: React.FC = () => {
             />
 
             {/* Checkered Start / Finish Line Banner & Grid (T15 Main Straight) */}
-            <g id="startFinishLine" transform="translate(360, 270) rotate(-40)">
+            <g
+              id="startFinishLine"
+              transform={`translate(${TRACK.start.x}, ${TRACK.start.y}) rotate(${TRACK.start.rotation})`}
+            >
               <rect x="-14" y="-32" width="28" height="64" fill="url(#checkeredPattern)" rx="2" />
               <line x1="-14" y1="-32" x2="-14" y2="32" stroke="#ffffff" strokeWidth="3" />
               <line x1="14" y1="-32" x2="14" y2="32" stroke="#ffffff" strokeWidth="3" />
@@ -839,17 +1309,38 @@ export const TrackPage: React.FC = () => {
             </g>
 
             {/* Starting Grid Boxes on Main Straight (P1, P2, P3) */}
-            <g transform="translate(320, 305) rotate(-40)">
-              <rect x="-12" y="-12" width="24" height="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
-              <text x="0" y="0" fill="rgba(255,255,255,0.7)" fontSize="9" fontWeight="800" textAnchor="middle">P1</text>
-            </g>
-            <g transform="translate(280, 340) rotate(-40)">
-              <rect x="-12" y="-12" width="24" height="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
-              <text x="0" y="0" fill="rgba(255,255,255,0.7)" fontSize="9" fontWeight="800" textAnchor="middle">P2</text>
-            </g>
-            <g transform="translate(240, 375) rotate(-40)">
-              <rect x="-12" y="-12" width="24" height="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
-              <text x="0" y="0" fill="rgba(255,255,255,0.7)" fontSize="9" fontWeight="800" textAnchor="middle">P3</text>
+            {TRACK.grid.map((gridPosition) => (
+              <g
+                key={gridPosition.label}
+                transform={`translate(${gridPosition.x}, ${gridPosition.y}) rotate(${TRACK.start.rotation})`}
+              >
+                <rect x="-12" y="-12" width="24" height="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
+                <text x="0" y="0" fill="rgba(255,255,255,0.7)" fontSize="9" fontWeight="800" textAnchor="middle">
+                  {gridPosition.label}
+                </text>
+              </g>
+            ))}
+
+            {/* Live start-zone hover target. It follows the first track
+                segment instead of relying on a viewport-relative div. */}
+            <g
+              ref={startZoneRef}
+              className={`track-start-arm-zone ${isStartHovered ? 'is-armed is-hovered' : ''}`}
+              transform={`translate(${TRACK.start.x}, ${TRACK.start.y}) rotate(${(TRACK.start.heading * 180) / Math.PI})`}
+              onPointerEnter={handleStartZoneHover}
+              onPointerMove={handleStartZoneHover}
+              onPointerLeave={disarmStartZone}
+              onPointerCancel={disarmStartZone}
+              onPointerDown={handleStartZoneContact}
+              role="group"
+              aria-label="START ZONE: keep hovering here and press Space to start"
+              aria-describedby="trackStartHelp"
+            >
+              <rect className="track-start-arm-zone-hit" x="46" y="-42" width="112" height="84" rx="12" />
+              <rect className="track-start-arm-zone-outline" x="52" y="-34" width="86" height="68" rx="10" />
+              <text className="track-start-arm-zone-label" x="101" y="-49" textAnchor="middle">
+                {isStartHovered ? 'KEEP HOVERING + SPACE' : 'HOVER + SPACE TO START'}
+              </text>
             </g>
 
             {/* SPEED TRAP MARKER (Target rings in red before Turn 1, matching image!) */}
@@ -862,26 +1353,19 @@ export const TrackPage: React.FC = () => {
               </text>
             </g>
 
-            {/* SECTOR 1 GATE (Descida do Lago exit, Turn 4) */}
-            <g transform="translate(870, 740) rotate(-65)">
-              <line x1="0" y1="-32" x2="0" y2="32" stroke="#38bdf8" strokeWidth="3.5" strokeDasharray="6 4" />
-              <circle cx="0" cy="0" r="13" fill="#0f172a" stroke="#38bdf8" strokeWidth="2" />
-              <text x="0" y="4" fill="#38bdf8" fontSize="10" fontWeight="900" textAnchor="middle">S1</text>
-            </g>
-
-            {/* SECTOR 2 GATE (Junção exit, Turn 12) */}
-            <g transform="translate(995, 580) rotate(10)">
-              <line x1="0" y1="-32" x2="0" y2="32" stroke="#a855f7" strokeWidth="3.5" strokeDasharray="6 4" />
-              <circle cx="0" cy="0" r="13" fill="#0f172a" stroke="#a855f7" strokeWidth="2" />
-              <text x="0" y="4" fill="#a855f7" fontSize="10" fontWeight="900" textAnchor="middle">S2</text>
-            </g>
-
-            {/* SECTOR 3 GATE (Arquibancadas high-speed sweep, Turn 14) */}
-            <g transform="translate(1210, 200) rotate(-60)">
-              <line x1="0" y1="-32" x2="0" y2="32" stroke="#f6b719" strokeWidth="3.5" strokeDasharray="6 4" />
-              <circle cx="0" cy="0" r="13" fill="#0f172a" stroke="#f6b719" strokeWidth="2" />
-              <text x="0" y="4" fill="#f6b719" fontSize="10" fontWeight="900" textAnchor="middle">S3</text>
-            </g>
+            {/* Sector gates use the same geometry source as lap validation. */}
+            {TRACK.checkpoints.map((checkpoint) => (
+              <g
+                key={checkpoint.id}
+                transform={`translate(${checkpoint.x}, ${checkpoint.y}) rotate(${checkpoint.rotation})`}
+              >
+                <line x1="0" y1="-32" x2="0" y2="32" stroke={checkpoint.color} strokeWidth="3.5" strokeDasharray="6 4" />
+                <circle cx="0" cy="0" r="13" fill="#0f172a" stroke={checkpoint.color} strokeWidth="2" />
+                <text x="0" y="4" fill={checkpoint.color} fontSize="10" fontWeight="900" textAnchor="middle">
+                  {checkpoint.label}
+                </text>
+              </g>
+            ))}
 
             {/* Sector Infield Annotations (Matching image typography) */}
             <g transform="translate(260, 720)">
@@ -950,16 +1434,16 @@ export const TrackPage: React.FC = () => {
           </div>
 
           <div className="track-spec-card">
-            <div className="track-spec-title">All-Time Best Lap</div>
+            <div className="track-spec-title">Personal Best</div>
             <div className="track-spec-value">
-              {bestLapTime ? formatTime(bestLapTime * 1000) : '31.420s'}
+              {bestLapTime ? formatTime(bestLapTime * 1000) : '--:--.---'}
             </div>
-            <div className="track-spec-sub">Set by SAE Sindri Pilot</div>
+            <div className="track-spec-sub">Saved locally for {difficulty} mode</div>
           </div>
 
           <div className="track-spec-card">
             <div className="track-spec-title">Formula Car Telemetry</div>
-            <div className="track-spec-value">60 FPS 3D Physics</div>
+            <div className="track-spec-value">Time-Based 3D Physics</div>
             <div className="track-spec-sub">Double wishbones • Drift tire smoke</div>
           </div>
         </section>
