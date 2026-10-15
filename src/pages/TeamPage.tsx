@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { CORE_TEAM_MEMBERS, BATCH_2K24_MEMBERS } from '../data';
 
+// Fisher-Yates shuffle algorithm for unbiased random permutation
+const shuffleMembers = <T,>(array: T[]): T[] => {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
+
 export const TeamPage: React.FC = () => {
+  // Randomize Batch 2K24 members order on mount so every member gets fair visibility
+  const randomized2k24Members = useMemo(() => {
+    return shuffleMembers(BATCH_2K24_MEMBERS);
+  }, []);
+
   return (
     <section className="page ref-team-page active" id="page-team">
       <div className="tech-grid team-bg-grid"></div>
@@ -28,7 +43,6 @@ export const TeamPage: React.FC = () => {
         {/* === CORE TEAM GRID === */}
         <div className="team-grid" id="coreTeamGrid">
           {CORE_TEAM_MEMBERS.map((member, index) => {
-            const numBadge = String(index + 1).padStart(2, '0');
             return (
               <article
                 key={`member-${member.name}-${index}`}
@@ -44,9 +58,6 @@ export const TeamPage: React.FC = () => {
                     loading="lazy"
                   />
                   <div className="team-card-overlay"></div>
-                  <div className="team-card-badge-wrap">
-                    <span className="team-card-badge">{numBadge}</span>
-                  </div>
                   <div className="team-card-socials">
                     {member.linkedin && (
                       <a
@@ -109,8 +120,7 @@ export const TeamPage: React.FC = () => {
 
         {/* === BATCH 2K24 GRID === */}
         <div className="team-grid" id="batch2k24TeamGrid">
-          {BATCH_2K24_MEMBERS.map((member, index) => {
-            const numBadge = String(index + 1).padStart(2, '0');
+          {randomized2k24Members.map((member, index) => {
             return (
               <article
                 key={`batch2k24-${member.name}-${index}`}
@@ -126,9 +136,6 @@ export const TeamPage: React.FC = () => {
                     loading="lazy"
                   />
                   <div className="team-card-overlay"></div>
-                  <div className="team-card-badge-wrap">
-                    <span className="team-card-badge">{numBadge}</span>
-                  </div>
                   <div className="team-card-socials">
                     {member.linkedin && (
                       <a
