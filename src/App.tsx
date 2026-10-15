@@ -28,6 +28,7 @@ const TeamPage = React.lazy(() => import('./pages/TeamPage').then((m) => ({ defa
 const SponsorsPage = React.lazy(() => import('./pages/SponsorsPage').then((m) => ({ default: m.SponsorsPage })));
 const DepartmentsPage = React.lazy(() => import('./pages/DepartmentsPage').then((m) => ({ default: m.DepartmentsPage })));
 const JoinPage = React.lazy(() => import('./pages/JoinPage').then((m) => ({ default: m.JoinPage })));
+const TrackPage = React.lazy(() => import('./pages/TrackPage').then((m) => ({ default: m.TrackPage })));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
 // Observer for triggering reveal animations across client-side route changes
@@ -112,6 +113,9 @@ const LegacyHashRedirector: React.FC = () => {
         sponsors: '/sponsors',
         departments: '/departments',
         join: '/join',
+        track: '/track',
+        circuit: '/track',
+        race: '/track',
       };
 
       if (legacyRouteMap[cleanHash]) {
@@ -163,6 +167,9 @@ const AppLayout: React.FC = () => {
             <Route path="/sponsors" element={<SponsorsPage />} />
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/join" element={<JoinPage />} />
+            <Route path="/track" element={<TrackPage />} />
+            <Route path="/circuit" element={<Navigate to="/track" replace />} />
+            <Route path="/race" element={<Navigate to="/track" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

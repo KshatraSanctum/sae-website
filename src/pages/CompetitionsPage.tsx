@@ -257,9 +257,28 @@ export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive = t
                   From our first national podium in 2011 to multidisciplinary aerial and automotive championship
                   finals. Explore our journey across 14 milestones spanning BAJA, SUPRA, Quad Torc, Aerothon, Effi-Cycle, and Laws of Motion.
                 </p>
-                <span className="comp-hero-stats-badge">
-                  14 National Milestones · 2011—2026
-                </span>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span className="comp-hero-stats-badge">
+                    14 National Milestones · 2011—2026
+                  </span>
+                  <Link
+                    to="/track"
+                    className="comp-hero-stats-badge"
+                    style={{
+                      background: 'rgba(246, 183, 25, 0.16)',
+                      borderColor: 'rgba(246, 183, 25, 0.45)',
+                      color: '#f6b719',
+                      textDecoration: 'none',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span>🏎️ Drive on Race Track</span>
+                    <span style={{ fontSize: '0.85em' }}>→</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

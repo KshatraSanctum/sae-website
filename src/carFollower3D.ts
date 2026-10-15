@@ -1,5 +1,13 @@
 import * as THREE from 'three';
 
+const REFERENCE_FRAME_TIME = 1 / 60;
+const MAX_FRAME_DELTA = 0.1;
+const MAX_PHYSICS_STEP = 1 / 120;
+
+function frameBlend(blend: number, dt: number): number {
+  return 1 - Math.pow(1 - blend, dt / REFERENCE_FRAME_TIME);
+}
+
 // ==========================================================================
 // 3D FORMULA STUDENT CAR CURSOR FOLLOWER
 // Features:
@@ -30,11 +38,21 @@ interface SkidQuad {
   connectToNext: boolean;
 }
 
+let activeCarFollower: CarFollower3D | null = null;
+
+export function getActiveCarFollower3D(): CarFollower3D | null {
+  return activeCarFollower;
+}
+
 export class CarFollower3D {
   private canvas!: HTMLCanvasElement;
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
+
+  // Track mode flag & grid locking
+  private forceFreeDrive = false;
+  private lockedScreenPos: { x: number; y: number; heading: number } | null = null;
 
   // Car 3D hierarchy
   private carRoot = new THREE.Group();
@@ -68,10 +86,11 @@ export class CarFollower3D {
   private navPitBtn: HTMLButtonElement | null = null;
   private navPitLabel: HTMLElement | null = null;
   private navPitSlot: HTMLElement | null = null;
-  private dockingStartTime = 0;
+  private dockingElapsedTime = 0;
 
   // Physics state
   private carPos = new THREE.Vector3(0, 0, 0);
+  // Keep velocity in the original world-units-per-60-Hz-frame units for HUD/audio consumers.
   private carVel = new THREE.Vector3(0, 0, 0);
   private headingAngle = 0; // Yaw in radians
   private angularVelocity = 0;
@@ -94,6 +113,7 @@ export class CarFollower3D {
   // Drift metrics
   private isDrifting = false;
   private driftIntensity = 0;
+  private driftEffectTime = 0;
   private opacity = 0;
 
   // Skid Marks Quad Mesh
@@ -114,6 +134,8 @@ export class CarFollower3D {
 
   private isDestroyed = false;
   private animFrameId: number | null = null;
+  private lastFrameTime: number | null = null;
+  private crashFlashTimeout: ReturnType<typeof window.setTimeout> | null = null;
 
   constructor() {
     this.init();
@@ -191,8 +213,14 @@ export class CarFollower3D {
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('mouseleave', this.onMouseLeave);
     window.addEventListener('mouseenter', this.onMouseEnter);
+    window.addEventListener('touchstart', this.onTouchStart, { passive: true });
+    window.addEventListener('touchmove', this.onTouchMove, { passive: true });
     window.addEventListener('resize', this.onWindowResize);
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
+
+    activeCarFollower = this;
+    (window as unknown as { __carFollower3D?: CarFollower3D }).__carFollower3D = this;
 
     if (this.isMobile) {
       this.parkingState = 'ACTIVE';
@@ -231,7 +259,8 @@ export class CarFollower3D {
     }
 
     // Start loop
-    this.tick();
+    this.lastFrameTime = null;
+    this.animFrameId = requestAnimationFrame(this.tick);
   }
 
   // ===================== 3D CAR MODEL CONSTRUCTION =====================
@@ -636,25 +665,27 @@ export class CarFollower3D {
     p.rotSpeed = (Math.random() - 0.5) * 0.04;
   }
 
-  private updateSmoke(): void {
+  private updateSmoke(dt: number): void {
+    const frameScale = dt / REFERENCE_FRAME_TIME;
+    const drag = Math.pow(0.96, frameScale);
     for (let i = 0; i < this.smokePool.length; i++) {
       const p = this.smokePool[i];
       if (!p.active) continue;
 
       // Update position & buoyancy
-      p.sprite.position.add(p.velocity);
-      p.velocity.y += 0.008; // Gentle thermal rise
-      p.velocity.x *= 0.96;
-      p.velocity.z *= 0.96;
+      p.sprite.position.addScaledVector(p.velocity, frameScale);
+      p.velocity.y += 0.008 * frameScale; // Gentle thermal rise
+      p.velocity.x *= drag;
+      p.velocity.z *= drag;
 
       // Billow & expand outward
-      p.size += (p.maxSize - p.size) * 0.075;
+      p.size += (p.maxSize - p.size) * frameBlend(0.075, dt);
       p.sprite.scale.set(p.size, p.size, 1);
 
       // Fade out
-      p.alpha -= p.decay;
+      p.alpha -= p.decay * frameScale;
       p.sprite.material.opacity = Math.max(0, p.alpha);
-      p.sprite.material.rotation += p.rotSpeed;
+      p.sprite.material.rotation += p.rotSpeed * frameScale;
 
       if (p.alpha <= 0) {
         p.active = false;
@@ -722,11 +753,11 @@ export class CarFollower3D {
     this.lastScrollY = currentY;
   };
 
-  private updateMobileScrollProgress(): void {
+  private updateMobileScrollProgress(dt = REFERENCE_FRAME_TIME): void {
     const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
     const scrollY = window.scrollY;
     const rawProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-    this.mobileProgress += (rawProgress - this.mobileProgress) * 0.22;
+    this.mobileProgress += (rawProgress - this.mobileProgress) * frameBlend(0.22, dt);
 
     if (this.mTrackFill) {
       this.mTrackFill.style.width = (this.mobileProgress * 100).toFixed(1) + '%';
@@ -736,11 +767,12 @@ export class CarFollower3D {
     }
   }
 
-  private updateMobilePhysics(_dt: number): void {
+  private updateMobilePhysics(dt: number): void {
+    const frameScale = dt / REFERENCE_FRAME_TIME;
     // Friction decay on scroll delta
-    this.scrollDeltaY *= 0.86;
+    this.scrollDeltaY *= Math.pow(0.86, frameScale);
 
-    this.updateMobileScrollProgress();
+    this.updateMobileScrollProgress(dt);
 
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -760,7 +792,7 @@ export class CarFollower3D {
     this.carRoot.rotation.y = 0;
 
     // Roll wheels with scroll delta
-    const wheelRoll = this.scrollDeltaY * 0.045;
+    const wheelRoll = this.scrollDeltaY * 0.045 * frameScale;
     this.frontLeftWheelMesh.rotation.z -= wheelRoll;
     this.frontRightWheelMesh.rotation.z -= wheelRoll;
     this.rearLeftWheelMesh.rotation.z -= wheelRoll;
@@ -768,7 +800,7 @@ export class CarFollower3D {
 
     // Suspension pitch forward/backward
     const targetPitch = THREE.MathUtils.clamp(this.scrollDeltaY * 0.002, -0.05, 0.05);
-    this.pitchAngle = THREE.MathUtils.lerp(this.pitchAngle, targetPitch, 0.2);
+    this.pitchAngle = THREE.MathUtils.lerp(this.pitchAngle, targetPitch, frameBlend(0.2, dt));
     this.suspensionGroup.rotation.z = -this.pitchAngle;
 
     // Micro idle engine vibration
@@ -778,11 +810,11 @@ export class CarFollower3D {
     // Micro nitro flames & underglow when flicking / scrolling quickly
     const isFastScroll = Math.abs(this.scrollDeltaY) > 6;
     if (isFastScroll) {
-      this.flameIntensity = THREE.MathUtils.lerp(this.flameIntensity, 0.65, 0.3);
+      this.flameIntensity = THREE.MathUtils.lerp(this.flameIntensity, 0.65, frameBlend(0.3, dt));
       this.underglowLight.intensity = 1.2;
       this.underglowLight.color.setHex(0x00f0ff);
     } else {
-      this.flameIntensity = THREE.MathUtils.lerp(this.flameIntensity, 0, 0.2);
+      this.flameIntensity = THREE.MathUtils.lerp(this.flameIntensity, 0, frameBlend(0.2, dt));
       this.underglowLight.intensity = 0.55;
       this.underglowLight.color.setHex(0xf6b719);
     }
@@ -801,7 +833,35 @@ export class CarFollower3D {
       this.mouseHistory.shift();
     }
 
+    if (this.lockedScreenPos) return;
     this.updateTargetFromScreen(e.clientX, e.clientY);
+  };
+
+  private onTouchStart = (e: TouchEvent): void => {
+    if (!this.forceFreeDrive) return;
+    if (this.lockedScreenPos) return;
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      this.isMouseOnScreen = true;
+      this.lastMouseMoveTime = performance.now();
+      this.updateTargetFromScreen(touch.clientX, touch.clientY);
+    }
+  };
+
+  private onTouchMove = (e: TouchEvent): void => {
+    if (!this.forceFreeDrive) return;
+    if (this.lockedScreenPos) return;
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      this.isMouseOnScreen = true;
+      this.lastMouseMoveTime = performance.now();
+      const now = performance.now();
+      this.mouseHistory.push({ x: touch.clientX, y: touch.clientY, time: now });
+      if (this.mouseHistory.length > 12) {
+        this.mouseHistory.shift();
+      }
+      this.updateTargetFromScreen(touch.clientX, touch.clientY);
+    }
   };
 
   private onMouseLeave = (): void => {
@@ -879,7 +939,7 @@ export class CarFollower3D {
 
   public startAutoDocking(): void {
     this.parkingState = 'AUTODOCKING';
-    this.dockingStartTime = performance.now();
+    this.dockingElapsedTime = 0;
     const slotPos = this.getSlotWorldPos();
     if (slotPos) {
       this.parkingWorldPos.copy(slotPos);
@@ -910,6 +970,7 @@ export class CarFollower3D {
       this.skidQuads[this.skidQuads.length - 1].connectToNext = false;
     }
     this.hasLastTirePos = false;
+    this.driftEffectTime = 0;
     localStorage.setItem('sae_car_parked', 'true');
     this.updateUI('PARKED');
   }
@@ -950,6 +1011,122 @@ export class CarFollower3D {
       this.carVel.set(0, 0, 5.0);
       this.headingAngle = Math.PI / 2;
     }
+  }
+
+  // ===================== RACE TRACK & TELEMETRY API =====================
+
+  public setForceFreeDrive(enabled: boolean): void {
+    this.forceFreeDrive = enabled;
+    if (!enabled) {
+      this.lockedScreenPos = null;
+    }
+  }
+
+  public isParked(): boolean {
+    return this.parkingState === 'PARKED' || this.parkingState === 'AUTODOCKING';
+  }
+
+  public lockToGrid(screenX: number, screenY: number, headingRad = 0): void {
+    this.lockedScreenPos = { x: screenX, y: screenY, heading: headingRad };
+    this.teleportTo(screenX, screenY, headingRad);
+  }
+
+  public unlockFromGrid(): void {
+    this.lockedScreenPos = null;
+  }
+
+  public isLockedToGrid(): boolean {
+    return this.lockedScreenPos !== null;
+  }
+
+  public getCarScreenPos(): { x: number; y: number } {
+    const v = this.carPos.clone();
+    v.project(this.camera);
+    return {
+      x: ((v.x + 1) / 2) * window.innerWidth,
+      y: ((-v.y + 1) / 2) * window.innerHeight,
+    };
+  }
+
+  public teleportTo(screenX: number, screenY: number, headingRad = 0): void {
+    const worldPos = this.screenToWorld(screenX, screenY);
+    if (worldPos) {
+      this.carPos.copy(worldPos);
+      this.targetWorld.copy(worldPos);
+    }
+    this.carVel.set(0, 0, 0);
+    this.speed = 0;
+    this.headingAngle = headingRad;
+    this.angularVelocity = 0;
+    this.steerAngle = 0;
+    this.rollAngle = 0;
+    this.pitchAngle = 0;
+    if (this.carRoot) {
+      this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
+      this.carRoot.rotation.y = -this.headingAngle;
+    }
+    if (this.frontLeftWheelGroup) this.frontLeftWheelGroup.rotation.y = 0;
+    if (this.frontRightWheelGroup) this.frontRightWheelGroup.rotation.y = 0;
+    if (this.suspensionGroup) this.suspensionGroup.rotation.set(0, 0, 0);
+
+    // Disconnect skid marks so teleport doesn't drag across the screen
+    if (this.skidQuads.length > 0) {
+      this.skidQuads[this.skidQuads.length - 1].connectToNext = false;
+    }
+    this.hasLastTirePos = false;
+    this.driftEffectTime = 0;
+  }
+
+  public triggerCrashBurst(): void {
+    // Spawn a burst of billowing crash tire smoke
+    for (let i = 0; i < 18; i++) {
+      const p = this.smokePool.find(item => !item.active);
+      if (!p) break;
+      p.active = true;
+      p.sprite.visible = true;
+      p.sprite.position.set(
+        this.carPos.x + (Math.random() - 0.5) * 6,
+        this.carPos.y + 0.4 + Math.random() * 1.5,
+        this.carPos.z + (Math.random() - 0.5) * 6
+      );
+      p.size = 3.5 + Math.random() * 3.0;
+      p.maxSize = 22.0 + Math.random() * 10.0;
+      p.sprite.scale.set(p.size, p.size, 1);
+      p.velocity.set(
+        (Math.random() - 0.5) * 2.5,
+        0.8 + Math.random() * 1.4,
+        (Math.random() - 0.5) * 2.5
+      );
+      p.alpha = 0.85;
+      p.sprite.material.opacity = p.alpha;
+      p.decay = 0.022 + Math.random() * 0.012;
+      p.sprite.material.rotation = Math.random() * Math.PI * 2;
+      p.rotSpeed = (Math.random() - 0.5) * 0.08;
+    }
+
+    // Flash underglow in emergency red
+    if (this.underglowLight) {
+      if (this.crashFlashTimeout !== null) {
+        window.clearTimeout(this.crashFlashTimeout);
+      }
+      this.underglowLight.color.setHex(0xff1822);
+      this.underglowLight.intensity = 2.8;
+      this.crashFlashTimeout = window.setTimeout(() => {
+        this.crashFlashTimeout = null;
+        if (this.underglowLight) {
+          this.underglowLight.color.setHex(0xf6b719);
+          this.underglowLight.intensity = 0.55;
+        }
+      }, 500);
+    }
+  }
+
+  public getSpeed(): number {
+    return this.speed;
+  }
+
+  public getHeading(): number {
+    return this.headingAngle;
   }
 
   private updateUI(state: 'ACTIVE' | 'AUTODOCKING' | 'PARKED'): void {
@@ -1016,11 +1193,40 @@ export class CarFollower3D {
     return diff;
   }
 
-  private updatePhysics(dt: number): void {
-    if (!this.carRoot) return;
+  private applyDriveForce(acceleration: number, drag: number, dt: number): void {
+    const damping = Math.pow(drag, dt / REFERENCE_FRAME_TIME);
+    // Exponential drag with a matching force integral preserves the original 60-Hz velocity.
+    const driveStep = REFERENCE_FRAME_TIME * drag * (1 - damping) / (1 - drag);
+    this.carVel.multiplyScalar(damping);
+    this.carVel.x += Math.cos(this.headingAngle) * acceleration * driveStep;
+    this.carVel.z += Math.sin(this.headingAngle) * acceleration * driveStep;
+  }
 
-    if (this.isMobile) {
+  private updatePhysics(dt: number): void {
+    if (!this.carRoot || !Number.isFinite(dt) || dt <= 0) return;
+    const frameScale = dt / REFERENCE_FRAME_TIME;
+
+    if (this.isMobile && !this.forceFreeDrive) {
       this.updateMobilePhysics(dt);
+      return;
+    }
+
+    // 0. GRID LOCK STATE: Hold stationary at the start grid on the race track
+    if (this.lockedScreenPos && this.parkingState === 'ACTIVE') {
+      const gridWorld = this.screenToWorld(this.lockedScreenPos.x, this.lockedScreenPos.y);
+      if (gridWorld) {
+        this.carPos.copy(gridWorld);
+        this.targetWorld.copy(gridWorld);
+        this.carRoot.position.set(gridWorld.x, 0, gridWorld.z);
+        this.carRoot.rotation.y = -this.lockedScreenPos.heading;
+        this.headingAngle = this.lockedScreenPos.heading;
+        this.updateCarScale();
+      }
+      this.carVel.set(0, 0, 0);
+      this.speed = 0;
+      this.frontLeftWheelGroup.rotation.y = 0;
+      this.frontRightWheelGroup.rotation.y = 0;
+      this.suspensionGroup.rotation.set(0, 0, 0);
       return;
     }
 
@@ -1077,10 +1283,10 @@ export class CarFollower3D {
       }
       const toSlot = new THREE.Vector3().subVectors(this.parkingWorldPos, this.carPos);
       const distToSlot = toSlot.length();
-      const elapsedSec = (performance.now() - this.dockingStartTime) / 1000;
+      this.dockingElapsedTime += dt;
 
       // Completion check: Close to slot OR low speed near slot OR safeguard timeout (>1.8s)
-      if (distToSlot < 2.5 || (distToSlot < 8.0 && this.speed < 1.0) || elapsedSec > 1.8) {
+      if (distToSlot < 2.5 || (distToSlot < 8.0 && this.speed < 1.0) || this.dockingElapsedTime > 1.8) {
         this.completeParking();
         return;
       }
@@ -1091,42 +1297,40 @@ export class CarFollower3D {
       while (headingDiff < -Math.PI) headingDiff += Math.PI * 2;
 
       this.angularVelocity = headingDiff * 10.0;
-      this.headingAngle += this.angularVelocity * dt;
+      this.headingAngle += headingDiff * frameBlend(10.0 * REFERENCE_FRAME_TIME, dt);
 
       const targetSteer = THREE.MathUtils.clamp(headingDiff * 1.3, -0.48, 0.48);
-      this.steerAngle += (targetSteer - this.steerAngle) * 0.25;
+      this.steerAngle += (targetSteer - this.steerAngle) * frameBlend(0.25, dt);
       this.frontLeftWheelGroup.rotation.y = -this.steerAngle;
       this.frontRightWheelGroup.rotation.y = -this.steerAngle;
 
       if (distToSlot > 18) {
         // Cruise towards bay
         const accel = Math.min(distToSlot * 0.16, 22.0);
-        const forwardVec = new THREE.Vector3(Math.cos(this.headingAngle), 0, Math.sin(this.headingAngle));
-        this.carVel.addScaledVector(forwardVec, accel * dt);
-        this.carVel.multiplyScalar(0.92);
+        this.applyDriveForce(accel, 0.92, dt);
       } else {
         // Continuous smooth deceleration right into the bay (never stalls!)
         const targetGlideSpeed = Math.max(distToSlot * 0.55, 2.0);
         const dir = toSlot.clone().normalize();
-        this.carVel.lerp(dir.multiplyScalar(targetGlideSpeed), 0.22);
-        this.steerAngle *= 0.6;
+        this.carVel.lerp(dir.multiplyScalar(targetGlideSpeed), frameBlend(0.22, dt));
+        this.steerAngle *= Math.pow(0.6, frameScale);
 
         let alignDiff = 0 - this.headingAngle;
         while (alignDiff > Math.PI) alignDiff -= Math.PI * 2;
         while (alignDiff < -Math.PI) alignDiff += Math.PI * 2;
-        this.headingAngle += alignDiff * 0.22;
+        this.headingAngle += alignDiff * frameBlend(0.22, dt);
 
-        this.pitchAngle += (-0.03 - this.pitchAngle) * 0.2;
+        this.pitchAngle += (-0.03 - this.pitchAngle) * frameBlend(0.2, dt);
         this.suspensionGroup.rotation.z = -this.pitchAngle;
       }
 
       this.speed = this.carVel.length();
-      this.carPos.add(this.carVel);
+      this.carPos.addScaledVector(this.carVel, frameScale);
       this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
       this.carRoot.rotation.y = -this.headingAngle;
       this.updateCarScale();
 
-      const wheelRot = this.speed * 0.36;
+      const wheelRot = this.speed * 0.36 * frameScale;
       this.frontLeftWheelMesh.rotation.z -= wheelRot;
       this.frontRightWheelMesh.rotation.z -= wheelRot;
       this.rearLeftWheelMesh.rotation.z -= wheelRot;
@@ -1147,7 +1351,7 @@ export class CarFollower3D {
     const isIdle = idleTime > 4000 || !this.isMouseOnScreen;
 
     const targetOpacity = isIdle ? 0.15 : 1.0;
-    this.opacity += (targetOpacity - this.opacity) * 0.1;
+    this.opacity += (targetOpacity - this.opacity) * frameBlend(0.1, dt);
     this.canvas.style.opacity = this.opacity.toFixed(3);
 
     // Target direction angle
@@ -1159,15 +1363,11 @@ export class CarFollower3D {
 
     // --- TUNED SPEED & ACCELERATION ---
     // Snappier, quicker response ("a little bit fast, not too much")
-    if (distToTarget > 10) {
-      const accelFactor = Math.min(distToTarget * 0.14, 22.0); // Boosted from 16.0
-      const forwardVec = new THREE.Vector3(Math.cos(this.headingAngle), 0, Math.sin(this.headingAngle));
-      this.carVel.addScaledVector(forwardVec, accelFactor * dt);
-    }
+    const accelFactor = distToTarget > 10 ? Math.min(distToTarget * 0.14, 22.0) : 0;
 
     // Drag / friction: slightly reduced drag so it glides faster
     const drag = this.isDrifting ? 0.95 : 0.925;
-    this.carVel.multiplyScalar(drag);
+    this.applyDriveForce(accelFactor, drag, dt);
     this.speed = this.carVel.length();
 
     // Angle difference between current heading and target
@@ -1189,34 +1389,39 @@ export class CarFollower3D {
     if ((isTurningSharp || isSideslipping) && this.speed > 3.0 && distToTarget > 30) {
       this.isDrifting = true;
       const targetIntensity = Math.min(Math.abs(slipAngle) * 2.2 + Math.abs(curvature) * 0.9, 1.0);
-      this.driftIntensity += (targetIntensity - this.driftIntensity) * 0.32;
+      this.driftIntensity += (targetIntensity - this.driftIntensity) * frameBlend(0.32, dt);
     } else {
       this.isDrifting = false;
-      this.driftIntensity += (0 - this.driftIntensity) * 0.18;
+      this.driftIntensity += (0 - this.driftIntensity) * frameBlend(0.18, dt);
     }
 
     // Yaw rotation: agile turning
     const turnRate = this.isDrifting ? 11.2 : 8.6;
     this.angularVelocity = headingDiff * turnRate;
-    this.headingAngle += this.angularVelocity * dt;
+    this.headingAngle += headingDiff * frameBlend(turnRate * REFERENCE_FRAME_TIME, dt);
 
     // Oversteer drift kick
     if (this.isDrifting && this.driftIntensity > 0.12) {
       const oversteer = (headingDiff > 0 ? 1 : -1) * this.driftIntensity * 0.05;
-      this.headingAngle += oversteer;
+      this.headingAngle += oversteer * frameScale;
 
-      // Deposit wide tire skidmarks
-      this.recordTireSkidmarks();
+      // Keep tire effects at the original 60-Hz density regardless of render/physics frequency.
+      this.driftEffectTime += dt;
+      if (this.driftEffectTime >= REFERENCE_FRAME_TIME - 1e-9) {
+        this.driftEffectTime = Math.max(0, this.driftEffectTime - REFERENCE_FRAME_TIME);
+        this.recordTireSkidmarks();
 
-      // Spawn real billowing tire smoke puffs from both rear tires
-      const leftTirePos = new THREE.Vector3();
-      const rightTirePos = new THREE.Vector3();
-      this.rearLeftWheelMesh.getWorldPosition(leftTirePos);
-      this.rearRightWheelMesh.getWorldPosition(rightTirePos);
+        // Spawn real billowing tire smoke puffs from both rear tires
+        const leftTirePos = new THREE.Vector3();
+        const rightTirePos = new THREE.Vector3();
+        this.rearLeftWheelMesh.getWorldPosition(leftTirePos);
+        this.rearRightWheelMesh.getWorldPosition(rightTirePos);
 
-      this.spawnSmokePuff(leftTirePos);
-      this.spawnSmokePuff(rightTirePos);
+        this.spawnSmokePuff(leftTirePos);
+        this.spawnSmokePuff(rightTirePos);
+      }
     } else {
+      this.driftEffectTime = 0;
       if (this.hasLastTirePos && this.skidQuads.length > 0) {
         this.skidQuads[this.skidQuads.length - 1].connectToNext = false;
       }
@@ -1225,12 +1430,12 @@ export class CarFollower3D {
 
     // Front Wheel Steering Angle (Steers left/right around Y axis)
     const targetSteer = THREE.MathUtils.clamp(headingDiff * 1.35, -0.48, 0.48);
-    this.steerAngle += (targetSteer - this.steerAngle) * 0.25;
+    this.steerAngle += (targetSteer - this.steerAngle) * frameBlend(0.25, dt);
     this.frontLeftWheelGroup.rotation.y = -this.steerAngle;
     this.frontRightWheelGroup.rotation.y = -this.steerAngle;
 
     // WHEEL ROLLING FORWARD (Fixed: Rotate around lateral axle Z-axis!)
-    const wheelRot = this.speed * 0.36;
+    const wheelRot = this.speed * 0.36 * frameScale;
     this.frontLeftWheelMesh.rotation.z -= wheelRot;
     this.frontRightWheelMesh.rotation.z -= wheelRot;
     this.rearLeftWheelMesh.rotation.z -= wheelRot;
@@ -1239,16 +1444,16 @@ export class CarFollower3D {
     // SUSPENSION DYNAMICS:
     // 1. Chassis Roll: body leans into corner under lateral G-forces
     const targetRoll = -this.angularVelocity * 0.045 * (1.0 + this.driftIntensity * 1.4);
-    this.rollAngle += (targetRoll - this.rollAngle) * 0.25;
+    this.rollAngle += (targetRoll - this.rollAngle) * frameBlend(0.25, dt);
     this.suspensionGroup.rotation.x = this.rollAngle;
 
     // 2. Chassis Pitch: dips under braking / lifts under acceleration
     const targetPitch = THREE.MathUtils.clamp((distToTarget - 90) * 0.0014, -0.06, 0.09);
-    this.pitchAngle += (targetPitch - this.pitchAngle) * 0.22;
+    this.pitchAngle += (targetPitch - this.pitchAngle) * frameBlend(0.22, dt);
     this.suspensionGroup.rotation.z = -this.pitchAngle;
 
     // Update position
-    this.carPos.add(this.carVel);
+    this.carPos.addScaledVector(this.carVel, frameScale);
 
     // Apply to Three.js object
     this.carRoot.position.set(this.carPos.x, 0, this.carPos.z);
@@ -1302,12 +1507,14 @@ export class CarFollower3D {
     this.hasLastTirePos = true;
   }
 
-  private updateSkidmarks(): void {
+  private updateSkidmarks(dt: number): void {
+    const frameScale = dt / REFERENCE_FRAME_TIME;
+    const fade = Math.pow(0.95, frameScale);
     // 1. Decay alpha for EVERY quad (including the last quad)
     for (let i = 0; i < this.skidQuads.length; i++) {
       const q = this.skidQuads[i];
-      q.age += 1;
-      q.alpha *= 0.95; // Fades out smoothly within ~1.5s
+      q.age += frameScale;
+      q.alpha *= fade; // Fades out smoothly within ~1.5s
     }
 
     // 2. Prune completely faded quads from the front of the list
@@ -1384,32 +1591,65 @@ export class CarFollower3D {
 
   // ===================== ANIMATION LOOP =====================
 
-  private tick = (): void => {
+  private onVisibilityChange = (): void => {
+    this.lastFrameTime = null;
+    this.driftEffectTime = 0;
+  };
+
+  private tick = (timestamp: number): void => {
     if (this.isDestroyed) return;
 
-    const dt = 1 / 60;
-    this.updatePhysics(dt);
-    this.updateSkidmarks();
-    this.updateSmoke();
+    if (document.hidden || !Number.isFinite(timestamp)) {
+      this.onVisibilityChange();
+    } else {
+      const elapsed = this.lastFrameTime === null ? 0 : (timestamp - this.lastFrameTime) / 1000;
+      this.lastFrameTime = timestamp;
+      const dt = THREE.MathUtils.clamp(elapsed, 0, MAX_FRAME_DELTA);
 
-    this.renderer.render(this.scene, this.camera);
+      // Small elapsed-time steps keep steering/force feedback stable at low refresh rates.
+      // The tolerance avoids an extra step from floating-point error at exactly 30/60/120 Hz.
+      const steps = Math.max(1, Math.ceil(dt / MAX_PHYSICS_STEP - 1e-9));
+      const stepDt = dt / steps;
+      for (let i = 0; i < steps; i++) {
+        this.updatePhysics(stepDt);
+        this.updateSmoke(stepDt);
+      }
+      this.updateSkidmarks(dt);
+
+      this.renderer.render(this.scene, this.camera);
+    }
     this.animFrameId = requestAnimationFrame(this.tick);
   };
 
   public destroy(): void {
     this.isDestroyed = true;
+    this.onVisibilityChange();
+    if (this.crashFlashTimeout !== null) {
+      window.clearTimeout(this.crashFlashTimeout);
+      this.crashFlashTimeout = null;
+    }
     if (this.animFrameId !== null) {
       cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = null;
     }
     if (this.navPitBtn) {
       this.navPitBtn.removeEventListener('click', this.onPitBtnClick);
     }
+    window.removeEventListener('touchstart', this.onTouchStart);
+    window.removeEventListener('touchmove', this.onTouchMove);
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseleave', this.onMouseLeave);
     window.removeEventListener('mouseenter', this.onMouseEnter);
     window.removeEventListener('resize', this.onWindowResize);
     window.removeEventListener('scroll', this.onScroll);
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    if (activeCarFollower === this) {
+      activeCarFollower = null;
+    }
+    if ((window as unknown as { __carFollower3D?: CarFollower3D | null }).__carFollower3D === this) {
+      (window as unknown as { __carFollower3D?: CarFollower3D | null }).__carFollower3D = null;
+    }
     if (this.canvas && this.canvas.parentElement) {
       this.canvas.parentElement.removeChild(this.canvas);
     }

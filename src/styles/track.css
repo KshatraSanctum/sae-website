@@ -1,0 +1,1163 @@
+/* ==========================================================================
+   INTERACTIVE RACE TRACK CIRCUIT STYLES
+   Motorsport aesthetic: Dark carbon tarmac, telemetry neon, kerb borders, HUD
+   ========================================================================== */
+
+/* Hide mobile bottom scroll bar when on track page */
+body:has(.track-page) #mobileScrollTrack,
+.track-page ~ #mobileScrollTrack {
+  display: none !important;
+}
+
+/* The race view owns the viewport while its fullscreen/expanded mode is active. */
+html[data-track-fullscreen='true'] .ref-header,
+html[data-track-fullscreen='true'] .ref-footer,
+html[data-track-fullscreen='true'] #mobileScrollTrack {
+  display: none !important;
+}
+
+html[data-track-fullscreen='true'],
+html[data-track-fullscreen='true'] body {
+  overflow: hidden;
+}
+
+/* Keep the shared cursor car above the circuit surface but below track UI. */
+body:has(.track-page) #cursorCarCanvas {
+  z-index: 9 !important;
+}
+
+.track-page {
+  position: relative;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 20%, #151a24 0%, #0a0c10 80%, #050608 100%);
+  color: #f8fafc;
+  padding-top: 72px;
+  padding-bottom: 30px;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Ambient race track background glow */
+.track-bg-glow {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(246, 183, 25, 0.08) 0%, rgba(0, 240, 255, 0.04) 40%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.track-container {
+  position: relative;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 20px;
+  /* Do not create a stacking context: the car canvas must sit between the SVG
+     surface and the HUD overlays. */
+  z-index: auto;
+}
+
+/* Top Circuit Header & Session Bar */
+.track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+.track-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.track-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(246, 183, 25, 0.15);
+  color: #f6b719;
+  border: 1px solid rgba(246, 183, 25, 0.35);
+}
+
+.track-badge-live {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.track-badge-unavailable {
+  background: rgba(239, 68, 68, 0.14);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.track-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulseDot 1.4s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+.track-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.track-subtitle {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Header Controls */
+.track-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.track-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 180ms ease;
+  backdrop-filter: blur(10px);
+}
+
+.track-ctrl-btn:hover {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(246, 183, 25, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.track-ctrl-btn.active {
+  background: rgba(246, 183, 25, 0.2);
+  border-color: #f6b719;
+  color: #f6b719;
+}
+
+.track-ctrl-btn-restart {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.track-fullscreen-status {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.track-fullscreen-status kbd {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.68rem;
+  padding: 1px 5px;
+}
+
+.track-start-help {
+  /* This sibling stays in document flow above the arena, even while hidden. */
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 760px);
+  margin: 0 auto 8px;
+  padding: 8px 14px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.track-start-help.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.track-start-help.is-armed {
+  border-color: rgba(16, 185, 129, 0.55);
+  background: rgba(6, 78, 59, 0.28);
+  color: #a7f3d0;
+}
+
+.track-start-help-icon {
+  flex: 0 0 auto;
+}
+
+.track-start-help kbd {
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
+.track-ctrl-btn:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.track-ctrl-btn:disabled:hover {
+  transform: none;
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+/* ===================== START GRID LAUNCH CARD ===================== */
+.track-grid-launch-card {
+  position: absolute;
+  /* The lower central infield leaves the grid/car at 26.7% / 30% exposed. */
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  width: min(88%, 360px);
+  background: rgba(10, 15, 26, 0.94);
+  border: 2px solid #10b981;
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.45), 0 15px 35px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(18px);
+  z-index: 22;
+  animation: launchCardFloat 2.4s ease-in-out infinite;
+}
+
+.track-grid-launch-card,
+.track-grid-launch-card * {
+  pointer-events: none;
+}
+
+.track-grid-launch-card.is-armed {
+  border-color: #6ee7b7;
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.55), 0 15px 35px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes launchCardFloat {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-4px); }
+}
+
+.track-grid-launch-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+.track-grid-launch-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #10b981;
+  text-transform: uppercase;
+}
+
+.track-grid-launch-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.track-grid-launch-sub {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.track-ctrl-btn-restart:hover {
+  background: rgba(239, 68, 68, 0.28);
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+/* ===================== RACE ARENA ===================== */
+.track-arena-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: min(1360px, calc((100vh - 180px) * 1.5));
+  aspect-ratio: 3 / 2;
+  margin: 0 auto;
+  background: #080a0e;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 240, 255, 0.05);
+  overflow: hidden;
+}
+
+.track-arena-wrapper.is-shaking {
+  animation: arenaShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes arenaShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  15% { transform: translate(-10px, 6px) rotate(-0.5deg); }
+  30% { transform: translate(8px, -7px) rotate(0.4deg); }
+  45% { transform: translate(-7px, 5px) rotate(-0.3deg); }
+  65% { transform: translate(5px, -3px) rotate(0.2deg); }
+  85% { transform: translate(-2px, 2px) rotate(0deg); }
+}
+
+/* Interactive SVG Circuit Area */
+.track-svg-arena {
+  width: 100%;
+  height: auto;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* Start Lights Gantry (F1 / Formula Student 5-Red-Light sequence) */
+.track-lights-gantry {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 14, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 14px;
+  border-radius: 30px;
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.track-light-bulb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #232730;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 150ms ease;
+}
+
+.track-light-bulb.is-red {
+  background: #ef4444;
+  border-color: #ff8585;
+  box-shadow: 0 0 12px #ef4444, inset 0 0 4px #ffffff;
+}
+
+.track-light-bulb.is-green {
+  background: #10b981;
+  border-color: #6ee7b7;
+  box-shadow: 0 0 14px #10b981, inset 0 0 4px #ffffff;
+}
+
+.track-lights-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-left: 6px;
+}
+
+/* ===================== TELEMETRY HUD OVERLAYS ===================== */
+.track-hud-top-left {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-timer-card {
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 4px solid #f6b719;
+  border-radius: 10px;
+  padding: 10px 16px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hud-timer-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+.hud-timer-digits {
+  font-family: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+.hud-timer-digits.is-running {
+  color: #38bdf8;
+  text-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+}
+
+.hud-best-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-family: 'SF Mono', monospace;
+  color: #f6b719;
+  margin-top: 4px;
+}
+
+.hud-best-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: rgba(246, 183, 25, 0.2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Sectors HUD */
+.hud-sectors-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-sector-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  backdrop-filter: blur(10px);
+}
+
+.hud-sector-pill.is-cleared {
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+}
+
+.hud-sector-pill.is-active {
+  border-color: rgba(56, 189, 248, 0.5);
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+}
+
+/* Speedometer & Tachometer HUD (Bottom Right) */
+.track-hud-bottom-right {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-speed-gauge {
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 18px;
+  backdrop-filter: blur(14px);
+  text-align: right;
+  min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hud-speed-value {
+  font-family: 'SF Mono', 'Roboto Mono', monospace;
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #f8fafc;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.hud-speed-unit {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+/* RPM / Nitro indicator bar */
+.hud-rpm-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.hud-rpm-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #f6b719 65%, #ef4444 95%);
+  transition: width 60ms linear;
+}
+
+.hud-telemetry-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+
+.track-start-arm-zone {
+  cursor: crosshair;
+  pointer-events: all;
+}
+
+.track-start-arm-zone-hit {
+  fill: rgba(56, 189, 248, 0.08);
+  stroke: rgba(56, 189, 248, 0.55);
+  stroke-width: 2;
+  stroke-dasharray: 8 6;
+  pointer-events: all;
+  transition: fill 160ms ease, stroke 160ms ease, filter 160ms ease;
+}
+
+.track-start-arm-zone-outline {
+  fill: none;
+  stroke: rgba(246, 183, 25, 0.8);
+  stroke-width: 2;
+  stroke-dasharray: 3 6;
+  pointer-events: none;
+}
+
+.track-start-arm-zone-label {
+  fill: #7dd3fc;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.track-start-arm-zone.is-hovered .track-start-arm-zone-hit,
+.track-start-arm-zone.is-armed .track-start-arm-zone-hit {
+  fill: rgba(16, 185, 129, 0.24);
+  stroke: #34d399;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.8));
+}
+
+.track-start-arm-zone.is-hovered .track-start-arm-zone-label,
+.track-start-arm-zone.is-armed .track-start-arm-zone-label {
+  fill: #a7f3d0;
+}
+
+/* Circuit-only fallback when the shared WebGL car cannot be created. */
+.track-no-car-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 260px;
+  padding: 14px 18px;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #fca5a5;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+  z-index: 24;
+}
+
+.track-no-car-state strong {
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+}
+
+.track-no-car-state span {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+}
+
+/* ===================== CRASH & CELEBRATION BANNERS ===================== */
+.track-crash-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(239, 68, 68, 0.94);
+  color: #ffffff;
+  padding: 16px 28px;
+  border-radius: 14px;
+  border: 2px solid #fecaca;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.8), 0 20px 40px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  z-index: 25;
+  pointer-events: none;
+  animation: crashPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes crashPop {
+  0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.track-crash-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+}
+
+.track-crash-sub {
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.track-crash-instructions {
+  margin: 9px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff7ed;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.track-crash-instructions kbd {
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.35);
+  font-family: inherit;
+}
+
+/* Lap Finish Celebration Modal / Banner */
+.track-celebration-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid #10b981;
+  box-shadow: 0 0 60px rgba(16, 185, 129, 0.6), 0 25px 50px rgba(0, 0, 0, 0.7);
+  padding: 24px 36px;
+  border-radius: 18px;
+  text-align: center;
+  z-index: 30;
+  pointer-events: auto;
+  backdrop-filter: blur(20px);
+  animation: celebratePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes celebratePop {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.celebration-flag {
+  font-size: 2.2rem;
+  margin-bottom: 6px;
+}
+
+.celebration-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #34d399;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+.celebration-time {
+  font-family: 'SF Mono', monospace;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 8px 0;
+  text-shadow: 0 0 20px rgba(52, 211, 153, 0.6);
+}
+
+.celebration-record-tag {
+  display: inline-block;
+  background: rgba(246, 183, 25, 0.25);
+  border: 1px solid #f6b719;
+  color: #f6b719;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+
+.celebration-btn {
+  background: #10b981;
+  color: #064e3b;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 180ms ease;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.celebration-btn:hover {
+  background: #34d399;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+}
+
+/* ===================== CIRCUIT INFO & TRACK SPECS ===================== */
+.track-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+  position: relative;
+  z-index: 10;
+}
+
+.track-spec-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.track-spec-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.track-spec-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.track-spec-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ===================== FULLSCREEN / EXPANDED RACE VIEW ===================== */
+
+/* Keep this mode free of a page/container stacking context so the shared
+   fixed car canvas (z-index 9) stays above the SVG and below race UI (z-index
+   10+). */
+html[data-track-fullscreen='true'] .track-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0;
+  overflow: hidden;
+}
+
+html[data-track-fullscreen='true'] .track-container {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding-top: max(6px, env(safe-area-inset-top));
+  padding-right: max(10px, env(safe-area-inset-right));
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  padding-left: max(10px, env(safe-area-inset-left));
+}
+
+html[data-track-fullscreen='true'] .track-header {
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+}
+
+html[data-track-fullscreen='true'] .track-title-group {
+  min-width: 0;
+  gap: 2px;
+}
+
+html[data-track-fullscreen='true'] .track-badge-row {
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+html[data-track-fullscreen='true'] .track-badge {
+  font-size: 0.6rem;
+  padding: 2px 7px;
+}
+
+html[data-track-fullscreen='true'] .track-badge-fullscreen {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.48);
+  color: #7dd3fc;
+}
+
+html[data-track-fullscreen='true'] .track-title {
+  overflow: hidden;
+  font-size: clamp(0.95rem, 2.1vw, 1.35rem);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-track-fullscreen='true'] .track-subtitle {
+  display: none;
+}
+
+html[data-track-fullscreen='true'] .track-header-actions {
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+html[data-track-fullscreen='true'] .track-ctrl-btn {
+  gap: 5px;
+  padding: 6px 9px;
+  font-size: 0.72rem;
+}
+
+html[data-track-fullscreen='true'] .track-fullscreen-status {
+  flex: 0 0 auto;
+  min-height: 0;
+  margin: -2px 0 5px;
+}
+
+html[data-track-fullscreen='true'] .track-start-help {
+  flex: 0 0 auto;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  font-size: 0.68rem;
+}
+
+html[data-track-fullscreen='true'] .track-arena-wrapper {
+  flex: 1 1 0;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  aspect-ratio: auto;
+  margin: 0 auto;
+  border-radius: 12px;
+}
+
+/* The SVG itself fills the flexible arena; its 3:2 viewBox and
+   preserveAspectRatio="xMidYMid meet" provide the intentional letterbox. */
+html[data-track-fullscreen='true'] .track-svg-arena {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+}
+
+html[data-track-fullscreen='true'] .track-specs-grid {
+  display: none;
+}
+
+html[data-track-fullscreen='true'] .track-grid-launch-card {
+  top: 50%;
+  left: 50%;
+  width: min(90%, 420px);
+  max-height: calc(100% - 20px);
+  overflow: auto;
+  padding: 10px 14px;
+}
+
+html[data-track-fullscreen='true'] .track-crash-banner,
+html[data-track-fullscreen='true'] .track-celebration-banner {
+  box-sizing: border-box;
+  width: min(520px, calc(100% - 16px));
+  max-width: calc(100% - 16px);
+  max-height: calc(100% - 16px);
+  overflow: auto;
+}
+
+@media (max-width: 768px) {
+  html[data-track-fullscreen='true'] .track-header {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  html[data-track-fullscreen='true'] .track-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  html[data-track-fullscreen='true'] .track-fullscreen-status {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  html[data-track-fullscreen='true'] .track-start-help {
+    justify-content: flex-start;
+    margin-bottom: 3px;
+    text-align: left;
+  }
+
+  html[data-track-fullscreen='true'] .track-grid-launch-card {
+    width: min(88%, 330px);
+    flex-direction: column;
+    gap: 8px;
+    padding: 9px 11px;
+    text-align: center;
+  }
+
+  html[data-track-fullscreen='true'] .track-hud-bottom-right {
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  html[data-track-fullscreen='true'] .track-container {
+    padding-top: max(3px, env(safe-area-inset-top));
+    padding-bottom: max(3px, env(safe-area-inset-bottom));
+  }
+
+  html[data-track-fullscreen='true'] .track-header {
+    gap: 4px;
+    margin-bottom: 3px;
+    padding-bottom: 3px;
+  }
+
+  html[data-track-fullscreen='true'] .track-title {
+    font-size: 0.9rem;
+  }
+
+  html[data-track-fullscreen='true'] .track-badge {
+    font-size: 0.54rem;
+    padding: 1px 5px;
+  }
+
+  html[data-track-fullscreen='true'] .track-ctrl-btn {
+    gap: 3px;
+    padding: 4px 7px;
+    font-size: 0.64rem;
+  }
+
+  html[data-track-fullscreen='true'] .track-fullscreen-escape-hint,
+  html[data-track-fullscreen='true'] .track-lights-label {
+    display: none;
+  }
+
+  html[data-track-fullscreen='true'] .track-start-help {
+    gap: 6px;
+    margin-bottom: 3px;
+    padding: 3px 8px;
+    font-size: 0.64rem;
+  }
+
+  html[data-track-fullscreen='true'] .track-grid-launch-card {
+    max-width: 82%;
+    padding: 7px 9px;
+  }
+
+  html[data-track-fullscreen='true'] .track-grid-launch-sub {
+    display: none;
+  }
+
+  html[data-track-fullscreen='true'] .track-grid-launch-title {
+    font-size: 0.8rem;
+  }
+
+  html[data-track-fullscreen='true'] .track-crash-banner,
+  html[data-track-fullscreen='true'] .track-celebration-banner {
+    padding: 10px 12px;
+  }
+
+  html[data-track-fullscreen='true'] .track-crash-title {
+    font-size: 1rem;
+  }
+
+  html[data-track-fullscreen='true'] .celebration-title {
+    font-size: 1.1rem;
+  }
+
+  html[data-track-fullscreen='true'] .celebration-time {
+    font-size: 1.7rem;
+  }
+}
+
+/* ===================== MOBILE & RESPONSIVE RULES ===================== */
+@media (max-width: 1024px) {
+  .track-title {
+    font-size: 1.35rem;
+  }
+  .hud-timer-digits {
+    font-size: 1.5rem;
+  }
+  .hud-speed-value {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .track-page {
+    padding-top: 70px;
+    padding-bottom: 40px;
+  }
+  .track-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .track-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .track-hud-top-left {
+    top: 8px;
+    left: 8px;
+  }
+  .track-hud-bottom-right {
+    bottom: 52px;
+    right: 8px;
+  }
+  .hud-timer-card {
+    padding: 6px 10px;
+  }
+  .hud-timer-digits {
+    font-size: 1.25rem;
+  }
+  .hud-speed-gauge {
+    padding: 8px 12px;
+    min-width: 120px;
+  }
+  .hud-speed-value {
+    font-size: 1.4rem;
+  }
+  .track-lights-gantry {
+    top: 8px;
+    padding: 4px 10px;
+    gap: 6px;
+  }
+  .track-light-bulb {
+    width: 9px;
+    height: 9px;
+  }
+  .track-grid-launch-card {
+    /* A narrow 3:2 arena is too shallow for a card beside the top-left car.
+       Keep it lower and compact; fullscreen retains its centered override. */
+    top: 72%;
+    padding: 8px 10px;
+  }
+  .track-no-car-state {
+    width: min(88%, 300px);
+    min-width: 0;
+    padding: 11px 12px;
+  }
+}

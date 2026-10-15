@@ -2562,6 +2562,33 @@
   box-shadow: 0 0 8px var(--color-signal);
 }
 
+.footer-beta-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(246, 183, 25, 0.16);
+  border: 1px solid rgba(246, 183, 25, 0.45);
+  color: #f6b719;
+  text-transform: uppercase;
+  margin-left: 6px;
+  line-height: 1.35;
+  vertical-align: middle;
+  transition: all 180ms ease;
+}
+
+.ref-footer-nav-link:hover .footer-beta-box {
+  background: rgba(246, 183, 25, 0.3);
+  border-color: #f6b719;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(246, 183, 25, 0.5);
+  transform: translateY(-1px);
+}
+
 /* Right Socials & Contact */
 .ref-footer-right {
   display: flex;

@@ -47,6 +47,10 @@ const ROUTE_META_MAP: Record<string, RouteMeta> = {
     title: 'Join Us · SAE India BIT Sindri',
     description: 'Apply to join SAE India BIT Sindri. Hands-on fabrication, vehicle design, telemetry, avionics, and operations opportunities.',
   },
+  '/track': {
+    title: 'BIT Sindri International Circuit · SAE India BIT Sindri',
+    description: 'Drive the Interlagos-inspired Formula Student circuit and set a personal lap time in the SAE BIT Sindri browser experience.',
+  },
 };
 
 export const RouteMetadata: React.FC = () => {
