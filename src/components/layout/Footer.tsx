@@ -6,7 +6,6 @@ interface FooterNavItem {
   label: string;
   badge?: string;
   highlight?: boolean;
-  external?: boolean;
 }
 
 const FOOTER_NAV_ITEMS: FooterNavItem[] = [
@@ -16,7 +15,6 @@ const FOOTER_NAV_ITEMS: FooterNavItem[] = [
   { path: '/team', label: 'Our Crew' },
   { path: '/sponsors', label: 'Sponsors & Partners' },
   { path: '/track', label: 'Race Track 🏎️', badge: 'BETA' },
-  { path: 'https://github.com/saeindiabit-sindri/sae-website', label: 'Contribute Code', badge: 'GITHUB', external: true },
   { path: '/join', label: 'Join The Society', highlight: true },
 ];
 
@@ -109,28 +107,15 @@ export const Footer: React.FC = () => {
             <ul className="ref-footer-nav-list">
               {FOOTER_NAV_ITEMS.map((item) => (
                 <li key={item.path}>
-                  {item.external ? (
-                    <a
-                      href={item.path}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`ref-footer-nav-link ${item.highlight ? 'is-highlight' : ''}`}
-                    >
-                      <span className="nav-link-chevron" aria-hidden="true">→</span>
-                      <span>{item.label}</span>
-                      {item.badge && <span className="footer-beta-box">{item.badge}</span>}
-                    </a>
-                  ) : (
-                    <Link
-                      to={item.path}
-                      className={`ref-footer-nav-link ${item.highlight ? 'is-highlight' : ''}`}
-                    >
-                      <span className="nav-link-chevron" aria-hidden="true">→</span>
-                      <span>{item.label}</span>
-                      {item.badge && <span className="footer-beta-box">{item.badge}</span>}
-                      {item.highlight && <span className="nav-highlight-beacon" aria-hidden="true" />}
-                    </Link>
-                  )}
+                  <Link
+                    to={item.path}
+                    className={`ref-footer-nav-link ${item.highlight ? 'is-highlight' : ''}`}
+                  >
+                    <span className="nav-link-chevron" aria-hidden="true">→</span>
+                    <span>{item.label}</span>
+                    {item.badge && <span className="footer-beta-box">{item.badge}</span>}
+                    {item.highlight && <span className="nav-highlight-beacon" aria-hidden="true" />}
+                  </Link>
                 </li>
               ))}
             </ul>

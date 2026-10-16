@@ -138,15 +138,6 @@ export const Navbar: React.FC = () => {
               {item.label}
             </Link>
           ))}
-          <a
-            href="https://github.com/saeindiabit-sindri/sae-website"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ref-mobile-nav-link ref-mobile-contribute"
-            onClick={() => setMobileOpen(false)}
-          >
-            <span>Contribute (GitHub) 🐙</span>
-          </a>
           <div className="ref-mobile-nav-cta">
             <Link
               to="/join"
