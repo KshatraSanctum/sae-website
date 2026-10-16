@@ -97,7 +97,7 @@ export const TrackPage: React.FC = () => {
     if (typeof window === 'undefined') return false;
     return window.innerWidth <= 1024 || window.matchMedia('(pointer: coarse)').matches;
   });
-  const [dismissedBetaOverlay, setDismissedBetaOverlay] = useState(false);
+  const [showMobileCircuitMap, setShowMobileCircuitMap] = useState(false);
 
   useEffect(() => {
     const handleDeviceCheck = () => {
@@ -888,136 +888,170 @@ export const TrackPage: React.FC = () => {
         <header className="track-header">
           <div className="track-title-group">
             <div className="track-badge-row">
-              <span className="track-badge">{TRACK.title}</span>
-              {isMobileOrTablet && (
-                <span className="track-badge track-badge-beta">
-                  🧪 BETA • OPEN IN DESKTOP
-                </span>
-              )}
-              {!isCarAvailable ? (
-                <span className="track-badge track-badge-unavailable">
-                  ⚠️ 3D CAR UNAVAILABLE
-                </span>
-              ) : isCarParked ? (
-                <span className="track-badge" style={{ borderColor: '#f6b719', color: '#f6b719' }}>
-                  🅿️ CAR IN PIT STOP
-                </span>
-              ) : raceState === 'RACING' ? (
-                <span className="track-badge track-badge-live">
-                  <span className="track-live-dot" /> RACING ACTIVE
-                </span>
+              {isMobileOrTablet ? (
+                <>
+                  <span className="track-badge track-badge-beta">
+                    🧪 BETA • DESKTOP ONLY
+                  </span>
+                  <span className="track-badge">INTERLAGOS GP</span>
+                </>
               ) : (
-                <span className="track-badge" style={{ borderColor: '#10b981', color: '#10b981' }}>
-                  🏁 READY ON GRID
-                </span>
-              )}
-              {fullscreen.active && (
-                <span
-                  className="track-badge track-badge-fullscreen"
-                  aria-label={`Fullscreen race view active (${fullscreen.mode === 'native' ? 'native' : 'expanded'} mode)`}
-                >
-                  ⛶ {fullscreen.mode === 'native' ? 'FULLSCREEN' : 'EXPANDED'}
-                </span>
+                <>
+                  <span className="track-badge">{TRACK.title}</span>
+                  {!isCarAvailable ? (
+                    <span className="track-badge track-badge-unavailable">
+                      ⚠️ 3D CAR UNAVAILABLE
+                    </span>
+                  ) : isCarParked ? (
+                    <span className="track-badge" style={{ borderColor: '#f6b719', color: '#f6b719' }}>
+                      🅿️ CAR IN PIT STOP
+                    </span>
+                  ) : raceState === 'RACING' ? (
+                    <span className="track-badge track-badge-live">
+                      <span className="track-live-dot" /> RACING ACTIVE
+                    </span>
+                  ) : (
+                    <span className="track-badge" style={{ borderColor: '#10b981', color: '#10b981' }}>
+                      🏁 READY ON GRID
+                    </span>
+                  )}
+                  {fullscreen.active && (
+                    <span
+                      className="track-badge track-badge-fullscreen"
+                      aria-label={`Fullscreen race view active (${fullscreen.mode === 'native' ? 'native' : 'expanded'} mode)`}
+                    >
+                      ⛶ {fullscreen.mode === 'native' ? 'FULLSCREEN' : 'EXPANDED'}
+                    </span>
+                  )}
+                </>
               )}
             </div>
-            <h1 className="track-title">{TRACK.title}</h1>
+            <h1 className="track-title">{isMobileOrTablet ? 'Race Track Simulator' : TRACK.title}</h1>
             <p className="track-subtitle">
-              {TRACK.subtitle}. Drive the 3D Formula Student car with your pointer. Stay inside the track boundaries or respawn!
+              {isMobileOrTablet
+                ? 'Autódromo José Carlos Pace (Interlagos) · 3D Formula Student simulation built by SAE BIT Sindri.'
+                : `${TRACK.subtitle}. Drive the 3D Formula Student car with your pointer. Stay inside the track boundaries or respawn!`}
             </p>
           </div>
 
           <div className="track-header-actions">
-            {/* Difficulty Toggle */}
-            <button
-              type="button"
-              className={`track-ctrl-btn ${difficulty === 'PRO' ? 'active' : ''}`}
-              onClick={() => setDifficulty((d) => (d === 'STANDARD' ? 'PRO' : 'STANDARD'))}
-              disabled={raceState !== 'STANDBY'}
-              title={raceState === 'STANDBY' ? 'Toggle Track Boundary Tolerance' : 'Reset before changing tolerance'}
-            >
-              <span>Tolerance:</span>
-              <strong>{difficulty === 'STANDARD' ? 'Standard (Kerbs allowed)' : 'Pro Sim (Strict)'}</strong>
-            </button>
-
-            {/* Sound Mute Toggle */}
-            <button
-              type="button"
-              className={`track-ctrl-btn ${isMuted ? '' : 'active'}`}
-              onClick={handleToggleSound}
-              title="Toggle procedural race audio"
-            >
-              {isMuted ? (
-                <>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                    <line x1="23" y1="9" x2="17" y2="15" />
-                    <line x1="17" y1="9" x2="23" y2="15" />
+            {isMobileOrTablet ? (
+              <>
+                <a
+                  href="https://github.com/saeindiabit-sindri/sae-website"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="track-ctrl-btn track-ctrl-btn-contribute"
+                  title="Contribute to mobile development on GitHub"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
                   </svg>
-                  <span>Muted</span>
-                </>
-              ) : (
-                <>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  <span>Contribute 🐙</span>
+                </a>
+                <Link
+                  to="/competitions"
+                  className="track-ctrl-btn"
+                  title="Return to Competitions page"
+                >
+                  <span>Exit Circuit ✕</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Difficulty Toggle */}
+                <button
+                  type="button"
+                  className={`track-ctrl-btn ${difficulty === 'PRO' ? 'active' : ''}`}
+                  onClick={() => setDifficulty((d) => (d === 'STANDARD' ? 'PRO' : 'STANDARD'))}
+                  disabled={raceState !== 'STANDBY'}
+                  title={raceState === 'STANDBY' ? 'Toggle Track Boundary Tolerance' : 'Reset before changing tolerance'}
+                >
+                  <span>Tolerance:</span>
+                  <strong>{difficulty === 'STANDARD' ? 'Standard (Kerbs allowed)' : 'Pro Sim (Strict)'}</strong>
+                </button>
+
+                {/* Sound Mute Toggle */}
+                <button
+                  type="button"
+                  className={`track-ctrl-btn ${isMuted ? '' : 'active'}`}
+                  onClick={handleToggleSound}
+                  title="Toggle procedural race audio"
+                >
+                  {isMuted ? (
+                    <>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <line x1="23" y1="9" x2="17" y2="15" />
+                        <line x1="17" y1="9" x2="23" y2="15" />
+                      </svg>
+                      <span>Muted</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                      </svg>
+                      <span>Audio On</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Fullscreen / expanded race view */}
+                <button
+                  type="button"
+                  className={`track-ctrl-btn track-ctrl-btn-fullscreen ${fullscreen.active ? 'active' : ''}`}
+                  onClick={fullscreen.toggle}
+                  disabled={fullscreen.pending}
+                  aria-pressed={fullscreen.active}
+                  aria-label={fullscreen.active ? 'Exit fullscreen race view' : 'Enter fullscreen race view'}
+                  title="Changing fullscreen view resets the current race attempt"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    {fullscreen.active ? (
+                      <>
+                        <path d="M9 3v6H3" />
+                        <path d="M15 21v-6h6" />
+                        <path d="M3 9l6-6" />
+                        <path d="M21 15l-6 6" />
+                      </>
+                    ) : (
+                      <>
+                        <path d="M15 3h6v6" />
+                        <path d="M9 21H3v-6" />
+                        <path d="M21 3l-6 6" />
+                        <path d="M3 21l6-6" />
+                      </>
+                    )}
                   </svg>
-                  <span>Audio On</span>
-                </>
-              )}
-            </button>
+                  <span>{fullscreen.active ? 'Collapse' : 'Expand'}</span>
+                </button>
 
-            {/* Fullscreen / expanded race view */}
-            <button
-              type="button"
-              className={`track-ctrl-btn track-ctrl-btn-fullscreen ${fullscreen.active ? 'active' : ''}`}
-              onClick={fullscreen.toggle}
-              disabled={fullscreen.pending}
-              aria-pressed={fullscreen.active}
-              aria-label={fullscreen.active ? 'Exit fullscreen race view' : 'Enter fullscreen race view'}
-              title="Changing fullscreen view resets the current race attempt"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                {fullscreen.active ? (
-                  <>
-                    <path d="M9 3v6H3" />
-                    <path d="M15 21v-6h6" />
-                    <path d="M3 9l6-6" />
-                    <path d="M21 15l-6 6" />
-                  </>
-                ) : (
-                  <>
-                    <path d="M15 3h6v6" />
-                    <path d="M9 21H3v-6" />
-                    <path d="M21 3l-6 6" />
-                    <path d="M3 21l6-6" />
-                  </>
-                )}
-              </svg>
-              <span>{fullscreen.active ? 'Collapse' : 'Expand'}</span>
-            </button>
+                {/* Restart Button */}
+                <button
+                  type="button"
+                  className="track-ctrl-btn track-ctrl-btn-restart"
+                  onClick={() => resetToGrid('GRID RESTART TRIGGERED')}
+                  title="Reset car to start grid (Hotkey: R)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                  </svg>
+                  <span>Reset (R)</span>
+                </button>
 
-            {/* Restart Button */}
-            <button
-              type="button"
-              className="track-ctrl-btn track-ctrl-btn-restart"
-              onClick={() => resetToGrid('GRID RESTART TRIGGERED')}
-              title="Reset car to start grid (Hotkey: R)"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                <path d="M3 3v5h5" />
-              </svg>
-              <span>Reset (R)</span>
-            </button>
-
-            {/* Exit to Competitions */}
-            <Link
-              to="/competitions"
-              className="track-ctrl-btn"
-              title="Return to Competitions page"
-            >
-              <span>Exit Circuit ✕</span>
-            </Link>
+                {/* Exit to Competitions */}
+                <Link
+                  to="/competitions"
+                  className="track-ctrl-btn"
+                  title="Return to Competitions page"
+                >
+                  <span>Exit Circuit ✕</span>
+                </Link>
+              </>
+            )}
           </div>
         </header>
 
@@ -1035,224 +1069,234 @@ export const TrackPage: React.FC = () => {
           </div>
         )}
 
-        {/* Mobile & Tablet BETA Advisory Banner */}
-        {isMobileOrTablet && (
-          <aside className="track-beta-banner" role="status" aria-label="Device Compatibility Notice">
-            <div className="track-beta-banner-inner">
-              <div className="track-beta-badge-wrap">
-                <span className="track-beta-badge">BETA NOTICE</span>
-              </div>
-              <p className="track-beta-message">
-                <strong>Mobile &amp; Tablet:</strong> Race track is currently in <strong>BETA</strong>. Interactive driving requires physical keyboard controls (<kbd>Space</kbd> / <kbd>R</kbd>) and precision mouse tracking. Open on a <strong>Desktop or Laptop</strong> to race!
-              </p>
+        {/* If Mobile / Tablet and not viewing circuit map, show the clean unclipped Mobile Hub */}
+        {isMobileOrTablet && !showMobileCircuitMap ? (
+          <section className="track-mobile-hub-card" aria-label="Mobile Simulation Advisory">
+            <div className="mobile-hub-badge-wrap">
+              <span className="mobile-hub-badge">
+                <span className="mobile-hub-dot" aria-hidden="true" />
+                SIMULATOR IN BETA
+              </span>
             </div>
-          </aside>
-        )}
+            <div className="mobile-hub-device-row" aria-hidden="true">
+              <span className="m-icon">💻</span>
+              <span className="m-arrow">➔</span>
+              <span className="m-icon">🏎️</span>
+            </div>
+            <h2 className="mobile-hub-title">Desktop Required to Race</h2>
+            <p className="mobile-hub-desc">
+              The 3D Formula Student race track is currently optimized for desktop with physical keyboard launch (<kbd>Space</kbd>) and precision pointer steering.
+            </p>
+            <div className="mobile-hub-points">
+              <div className="mobile-point-item">
+                <span className="p-bullet">⌨️</span>
+                <span><strong>Keyboard Telemetry:</strong> Spacebar launch &amp; reset hotkey (<kbd>R</kbd>).</span>
+              </div>
+              <div className="mobile-point-item">
+                <span className="p-bullet">🖱️</span>
+                <span><strong>Pointer Dynamics:</strong> High-precision apex tracking and drift limits.</span>
+              </div>
+              <div className="mobile-point-item">
+                <span className="p-bullet">📲</span>
+                <span><strong>Touch Controls:</strong> Mobile touch-steering is in active development in our bay!</span>
+              </div>
+            </div>
 
-        <div
-          id="trackStartHelp"
-          className={`track-start-help ${isStartHovered ? 'is-armed' : ''} ${raceState !== 'STANDBY' || isCrashed ? 'is-hidden' : ''}`}
-          role="status"
-          aria-live="polite"
-          aria-hidden={raceState !== 'STANDBY' || isCrashed}
-        >
-          <span className="track-start-help-icon" aria-hidden="true">💡</span>
-          <span>
-            {isMobileOrTablet ? (
-              <>
-                <strong>BETA Notice:</strong> Interactive race simulator requires a desktop browser with keyboard controls (<kbd>Space</kbd> to launch).
-              </>
-            ) : (
-              <>
-                Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
-              </>
+            <div className="mobile-hub-actions">
+              <button
+                type="button"
+                className="mobile-act-btn mobile-act-primary"
+                onClick={() => setShowMobileCircuitMap(true)}
+              >
+                🗺️ View Full Circuit Map &amp; Turns
+              </button>
+              <a
+                href="https://github.com/saeindiabit-sindri/sae-website"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-act-btn mobile-act-contribute"
+              >
+                🛠️ Contribute on GitHub 🐙
+              </a>
+              <Link
+                to="/competitions"
+                className="mobile-act-btn mobile-act-secondary"
+              >
+                🏆 Explore Competitions &amp; Trophies
+              </Link>
+            </div>
+
+            <div className="mobile-hub-specs-grid">
+              <div className="mobile-spec-item">
+                <span className="s-val">4.31 KM</span>
+                <span className="s-label">Circuit Scale</span>
+              </div>
+              <div className="mobile-spec-item">
+                <span className="s-val">15 Turns</span>
+                <span className="s-label">Technical Corners</span>
+              </div>
+              <div className="mobile-spec-item">
+                <span className="s-val">2 Zones</span>
+                <span className="s-label">DRS Straights</span>
+              </div>
+              <div className="mobile-spec-item">
+                <span className="s-val">3 Sectors</span>
+                <span className="s-label">Split Timing</span>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <>
+            {isMobileOrTablet && showMobileCircuitMap && (
+              <div className="track-mobile-circuit-bar">
+                <button
+                  type="button"
+                  className="track-mobile-back-btn"
+                  onClick={() => setShowMobileCircuitMap(false)}
+                >
+                  ← Back to Details
+                </button>
+                <span className="track-mobile-circuit-tag">CIRCUIT PREVIEW ONLY</span>
+                <a
+                  href="https://github.com/saeindiabit-sindri/sae-website"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="track-mobile-circuit-contrib"
+                >
+                  Contribute 🐙
+                </a>
+              </div>
             )}
-          </span>
-        </div>
 
-        {/* ===================== MAIN RACE ARENA ===================== */}
-        <div
-          ref={arenaRef}
-          className={`track-arena-wrapper ${isShaking ? 'is-shaking' : ''}`}
-          id="trackArena"
-          tabIndex={-1}
-          role="region"
-          aria-label="Race circuit"
-          aria-describedby="trackStartHelp"
-        >
-          {/* Start Lights Gantry */}
-          <div className="track-lights-gantry" aria-hidden="true">
-            <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
-            <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
-            <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
-            <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
-            <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
-            <span className="track-lights-label">
-              {raceState === 'RACING' ? 'LIGHTS OUT • GO!' : 'GRID READY'}
-            </span>
-          </div>
+            {!isMobileOrTablet && (
+              <div
+                id="trackStartHelp"
+                className={`track-start-help ${isStartHovered ? 'is-armed' : ''} ${raceState !== 'STANDBY' || isCrashed ? 'is-hidden' : ''}`}
+                role="status"
+                aria-live="polite"
+                aria-hidden={raceState !== 'STANDBY' || isCrashed}
+              >
+                <span className="track-start-help-icon" aria-hidden="true">💡</span>
+                <span>
+                  Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
+                </span>
+              </div>
+            )}
 
-          {/* Telemetry HUD: Top Left Timer & Sectors */}
-          <div className="track-hud-top-left">
-            <div className="hud-timer-card">
-              <div className="hud-timer-label">Lap Time</div>
-              <div className={`hud-timer-digits ${raceState === 'RACING' ? 'is-running' : ''}`}>
-                {lapTimeDisplay}
-              </div>
-              <div className="hud-best-row">
-                <span className="hud-best-badge">PERSONAL BEST</span>
-                <span>{bestLapTime ? formatTime(bestLapTime * 1000) : '--:--.---'}</span>
-              </div>
-            </div>
-
-            {/* Sector split pills */}
-            <div className="hud-sectors-row">
-              <div className={`hud-sector-pill ${s1Cleared ? 'is-cleared' : raceState === 'RACING' ? 'is-active' : ''}`}>
-                <span>S1</span>
-                <strong>{s1Time ? s1Time.slice(3) : '--'}</strong>
-              </div>
-              <div className={`hud-sector-pill ${s2Cleared ? 'is-cleared' : s1Cleared ? 'is-active' : ''}`}>
-                <span>S2</span>
-                <strong>{s2Time ? s2Time.slice(3) : '--'}</strong>
-              </div>
-              <div className={`hud-sector-pill ${s3Cleared ? 'is-cleared' : s2Cleared ? 'is-active' : ''}`}>
-                <span>S3</span>
-                <strong>{s3Time ? s3Time.slice(3) : '--'}</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Telemetry HUD: Bottom Right Speedometer */}
-          <div className="track-hud-bottom-right">
-            <div className="hud-speed-gauge">
-              <div className="hud-speed-value">
-                <span>{speedKmh}</span>
-                <span className="hud-speed-unit">KM/H</span>
-              </div>
-              <div className="hud-rpm-track">
-                <div className="hud-rpm-fill" style={{ width: `${rpmPct}%` }} />
-              </div>
-              <div className="hud-telemetry-meta">
-                <span>GEAR: {speedKmh > 110 ? '4' : speedKmh > 70 ? '3' : speedKmh > 25 ? '2' : '1'}</span>
-                <span>STATUS: {isCrashed ? 'CRASH' : isCarParked ? 'PARKED' : raceState === 'RACING' ? 'DRIVING' : 'STANDBY'}</span>
-              </div>
-            </div>
-          </div>
-
-          {!isCarAvailable && (
-            <div className="track-no-car-state" role="status">
-              <strong>3D CAR UNAVAILABLE</strong>
-              <span>WebGL is unavailable. The circuit view remains available.</span>
-            </div>
-          )}
-
-          {/* Mobile & Tablet BETA Advisory Modal Overlay */}
-          {isMobileOrTablet && !dismissedBetaOverlay && (
-            <div className="track-mobile-beta-backdrop" role="dialog" aria-modal="true" aria-labelledby="mobileBetaTitle">
-              <div className="track-mobile-beta-card">
-                <div className="beta-card-badge">
-                  <span className="beta-card-dot" aria-hidden="true" />
-                  CURRENTLY IN BETA
-                </div>
-                <div className="beta-card-icon-group" aria-hidden="true">
-                  <span className="beta-card-icon">💻</span>
-                  <span className="beta-card-icon-arrow">➔</span>
-                  <span className="beta-card-icon">🏎️</span>
-                </div>
-                <h2 id="mobileBetaTitle" className="beta-card-title">Desktop Required to Race</h2>
-                <p className="beta-card-text">
-                  The interactive Formula Student race simulator is currently in <strong>BETA</strong> and requires physical keyboard controls and precision mouse steering.
-                </p>
-                <div className="beta-card-points">
-                  <div className="beta-point">
-                    <span className="beta-point-bullet" aria-hidden="true">⌨️</span>
-                    <span><strong>Keyboard Controls:</strong> Hold pointer on Start Zone and press <kbd>Space</kbd> to launch; press <kbd>R</kbd> to reset.</span>
-                  </div>
-                  <div className="beta-point">
-                    <span className="beta-point-bullet" aria-hidden="true">🖱️</span>
-                    <span><strong>Precision Steering:</strong> Follow racing lines and hit apexes using fine pointer control.</span>
-                  </div>
-                  <div className="beta-point">
-                    <span className="beta-point-bullet" aria-hidden="true">📱</span>
-                    <span><strong>Mobile Optimization:</strong> Touch-screen steering controls are under active development in our bay!</span>
-                  </div>
-                </div>
-                <div className="beta-card-actions">
-                  <Link to="/competitions" className="beta-action-btn beta-action-primary">
-                    Explore Competitions &amp; Cars 🏆
-                  </Link>
-                  <button
-                    type="button"
-                    className="beta-action-btn beta-action-secondary"
-                    onClick={() => setDismissedBetaOverlay(true)}
-                  >
-                    Preview Circuit Layout Map 🗺️
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Quick toggle to restore the beta advisory dialog when dismissed on mobile */}
-          {isMobileOrTablet && dismissedBetaOverlay && (
-            <button
-              type="button"
-              className="track-beta-restore-btn"
-              onClick={() => setDismissedBetaOverlay(false)}
-              title="View device compatibility details"
+            {/* ===================== MAIN RACE ARENA ===================== */}
+            <div
+              ref={arenaRef}
+              className={`track-arena-wrapper ${isShaking ? 'is-shaking' : ''} ${isMobileOrTablet ? 'is-mobile-preview' : ''}`}
+              id="trackArena"
+              tabIndex={-1}
+              role="region"
+              aria-label="Race circuit"
+              aria-describedby={!isMobileOrTablet ? 'trackStartHelp' : undefined}
             >
-              🧪 BETA • Open in Desktop
-            </button>
-          )}
-
-          {/* Start guidance card */}
-          {raceState !== 'RACING' && !isCrashed && (
-            isMobileOrTablet ? (
-              dismissedBetaOverlay && (
-                <div className="track-grid-launch-card">
-                  <div className="track-grid-launch-meta">
-                    <span className="track-grid-launch-badge">CIRCUIT PREVIEW ONLY</span>
-                    <h3 className="track-grid-launch-title">Desktop Required to Race</h3>
-                    <p className="track-grid-launch-sub">
-                      Interactive racing requires a physical keyboard (<kbd>Space</kbd>) and mouse. Open on desktop or laptop to drive!
-                    </p>
+              {!isMobileOrTablet && (
+                <>
+                  {/* Start Lights Gantry */}
+                  <div className="track-lights-gantry" aria-hidden="true">
+                    <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
+                    <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
+                    <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
+                    <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
+                    <span className={`track-light-bulb ${raceState !== 'RACING' ? 'is-red' : 'is-green'}`} />
+                    <span className="track-lights-label">
+                      {raceState === 'RACING' ? 'LIGHTS OUT • GO!' : 'GRID READY'}
+                    </span>
                   </div>
-                </div>
-              )
-            ) : (
-              <div className="track-grid-launch-card">
-                <div className="track-grid-launch-meta">
-                  <span className="track-grid-launch-badge">
-                    {!isCarAvailable
-                      ? 'CIRCUIT VIEW ONLY'
-                      : raceState === 'STARTING'
-                        ? 'START SEQUENCE'
-                        : isStartHovered
-                          ? 'START ZONE ACTIVE'
-                          : 'HOVER START ZONE • P1'}
-                  </span>
-                  <h3 className="track-grid-launch-title">
-                    {!isCarAvailable
-                      ? '3D Car Unavailable'
-                      : raceState === 'STARTING'
-                        ? 'Starting...'
-                        : isStartHovered
-                          ? <>Press <kbd>Space</kbd> to start</>
-                          : 'Hover to prepare'}
-                  </h3>
-                  <p className="track-grid-launch-sub">
-                    {!isCarAvailable
-                      ? 'WebGL car controls are unavailable; browse the circuit below'
-                      : raceState === 'STARTING'
-                        ? 'Get ready to follow the track with your pointer.'
-                        : isStartHovered
-                          ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
-                          : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
-                  </p>
-                </div>
-              </div>
-            )
-          )}
+
+                  {/* Telemetry HUD: Top Left Timer & Sectors */}
+                  <div className="track-hud-top-left">
+                    <div className="hud-timer-card">
+                      <div className="hud-timer-label">Lap Time</div>
+                      <div className={`hud-timer-digits ${raceState === 'RACING' ? 'is-running' : ''}`}>
+                        {lapTimeDisplay}
+                      </div>
+                      <div className="hud-best-row">
+                        <span className="hud-best-badge">PERSONAL BEST</span>
+                        <span>{bestLapTime ? formatTime(bestLapTime * 1000) : '--:--.---'}</span>
+                      </div>
+                    </div>
+
+                    {/* Sector split pills */}
+                    <div className="hud-sectors-row">
+                      <div className={`hud-sector-pill ${s1Cleared ? 'is-cleared' : raceState === 'RACING' ? 'is-active' : ''}`}>
+                        <span>S1</span>
+                        <strong>{s1Time ? s1Time.slice(3) : '--'}</strong>
+                      </div>
+                      <div className={`hud-sector-pill ${s2Cleared ? 'is-cleared' : s1Cleared ? 'is-active' : ''}`}>
+                        <span>S2</span>
+                        <strong>{s2Time ? s2Time.slice(3) : '--'}</strong>
+                      </div>
+                      <div className={`hud-sector-pill ${s3Cleared ? 'is-cleared' : s2Cleared ? 'is-active' : ''}`}>
+                        <span>S3</span>
+                        <strong>{s3Time ? s3Time.slice(3) : '--'}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Telemetry HUD: Bottom Right Speedometer */}
+                  <div className="track-hud-bottom-right">
+                    <div className="hud-speed-gauge">
+                      <div className="hud-speed-value">
+                        <span>{speedKmh}</span>
+                        <span className="hud-speed-unit">KM/H</span>
+                      </div>
+                      <div className="hud-rpm-track">
+                        <div className="hud-rpm-fill" style={{ width: `${rpmPct}%` }} />
+                      </div>
+                      <div className="hud-telemetry-meta">
+                        <span>GEAR: {speedKmh > 110 ? '4' : speedKmh > 70 ? '3' : speedKmh > 25 ? '2' : '1'}</span>
+                        <span>STATUS: {isCrashed ? 'CRASH' : isCarParked ? 'PARKED' : raceState === 'RACING' ? 'DRIVING' : 'STANDBY'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {!isCarAvailable && (
+                    <div className="track-no-car-state" role="status">
+                      <strong>3D CAR UNAVAILABLE</strong>
+                      <span>WebGL is unavailable. The circuit view remains available.</span>
+                    </div>
+                  )}
+
+                  {/* Start guidance only; the SVG zone and Space are the start controls. */}
+                  {raceState !== 'RACING' && !isCrashed && (
+                    <div className="track-grid-launch-card">
+                      <div className="track-grid-launch-meta">
+                        <span className="track-grid-launch-badge">
+                          {!isCarAvailable
+                            ? 'CIRCUIT VIEW ONLY'
+                            : raceState === 'STARTING'
+                              ? 'START SEQUENCE'
+                              : isStartHovered
+                                ? 'START ZONE ACTIVE'
+                                : 'HOVER START ZONE • P1'}
+                        </span>
+                        <h3 className="track-grid-launch-title">
+                          {!isCarAvailable
+                            ? '3D Car Unavailable'
+                            : raceState === 'STARTING'
+                              ? 'Starting...'
+                              : isStartHovered
+                                ? <>Press <kbd>Space</kbd> to start</>
+                                : 'Hover to prepare'}
+                        </h3>
+                        <p className="track-grid-launch-sub">
+                          {!isCarAvailable
+                            ? 'WebGL car controls are unavailable; browse the circuit below'
+                            : raceState === 'STARTING'
+                              ? 'Get ready to follow the track with your pointer.'
+                              : isStartHovered
+                                ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
+                                : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
 
           {/* Crash Alert Banner */}
           {isCrashed && (
@@ -1542,6 +1586,8 @@ export const TrackPage: React.FC = () => {
             </text>
           </svg>
         </div>
+      </>
+    )}
 
         {/* ===================== TRACK SPECS & GUIDELINES ===================== */}
         <section className="track-specs-grid">
