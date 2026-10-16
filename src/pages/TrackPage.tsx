@@ -92,6 +92,30 @@ export const TrackPage: React.FC = () => {
   const [isStartHovered, setIsStartHovered] = useState(false);
   const isStartHoveredRef = useRef(false);
 
+  // Mobile / Tablet detection for BETA advisory
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth <= 1024 || window.matchMedia('(pointer: coarse)').matches;
+  });
+  const [dismissedBetaOverlay, setDismissedBetaOverlay] = useState(false);
+
+  useEffect(() => {
+    const handleDeviceCheck = () => {
+      const isTouchOrSmall =
+        window.innerWidth <= 1024 || window.matchMedia('(pointer: coarse)').matches;
+      setIsMobileOrTablet(isTouchOrSmall);
+    };
+
+    handleDeviceCheck();
+    window.addEventListener('resize', handleDeviceCheck);
+    window.addEventListener('orientationchange', handleDeviceCheck);
+
+    return () => {
+      window.removeEventListener('resize', handleDeviceCheck);
+      window.removeEventListener('orientationchange', handleDeviceCheck);
+    };
+  }, []);
+
   const setStartZoneHovered = useCallback((hovered: boolean) => {
     if (isStartHoveredRef.current === hovered) return;
     isStartHoveredRef.current = hovered;
@@ -865,6 +889,11 @@ export const TrackPage: React.FC = () => {
           <div className="track-title-group">
             <div className="track-badge-row">
               <span className="track-badge">{TRACK.title}</span>
+              {isMobileOrTablet && (
+                <span className="track-badge track-badge-beta">
+                  🧪 BETA • OPEN IN DESKTOP
+                </span>
+              )}
               {!isCarAvailable ? (
                 <span className="track-badge track-badge-unavailable">
                   ⚠️ 3D CAR UNAVAILABLE
@@ -1006,6 +1035,20 @@ export const TrackPage: React.FC = () => {
           </div>
         )}
 
+        {/* Mobile & Tablet BETA Advisory Banner */}
+        {isMobileOrTablet && (
+          <aside className="track-beta-banner" role="status" aria-label="Device Compatibility Notice">
+            <div className="track-beta-banner-inner">
+              <div className="track-beta-badge-wrap">
+                <span className="track-beta-badge">BETA NOTICE</span>
+              </div>
+              <p className="track-beta-message">
+                <strong>Mobile &amp; Tablet:</strong> Race track is currently in <strong>BETA</strong>. Interactive driving requires physical keyboard controls (<kbd>Space</kbd> / <kbd>R</kbd>) and precision mouse tracking. Open on a <strong>Desktop or Laptop</strong> to race!
+              </p>
+            </div>
+          </aside>
+        )}
+
         <div
           id="trackStartHelp"
           className={`track-start-help ${isStartHovered ? 'is-armed' : ''} ${raceState !== 'STANDBY' || isCrashed ? 'is-hidden' : ''}`}
@@ -1015,7 +1058,15 @@ export const TrackPage: React.FC = () => {
         >
           <span className="track-start-help-icon" aria-hidden="true">💡</span>
           <span>
-            Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
+            {isMobileOrTablet ? (
+              <>
+                <strong>BETA Notice:</strong> Interactive race simulator requires a desktop browser with keyboard controls (<kbd>Space</kbd> to launch).
+              </>
+            ) : (
+              <>
+                Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
+              </>
+            )}
           </span>
         </div>
 
@@ -1095,39 +1146,112 @@ export const TrackPage: React.FC = () => {
             </div>
           )}
 
-          {/* Start guidance only; the SVG zone and Space are the start controls. */}
-          {raceState !== 'RACING' && !isCrashed && (
-            <div className="track-grid-launch-card">
-              <div className="track-grid-launch-meta">
-                <span className="track-grid-launch-badge">
-                  {!isCarAvailable
-                    ? 'CIRCUIT VIEW ONLY'
-                    : raceState === 'STARTING'
-                      ? 'START SEQUENCE'
-                      : isStartHovered
-                        ? 'START ZONE ACTIVE'
-                        : 'HOVER START ZONE • P1'}
-                </span>
-                <h3 className="track-grid-launch-title">
-                  {!isCarAvailable
-                    ? '3D Car Unavailable'
-                    : raceState === 'STARTING'
-                      ? 'Starting...'
-                      : isStartHovered
-                        ? <>Press <kbd>Space</kbd> to start</>
-                        : 'Hover to prepare'}
-                </h3>
-                <p className="track-grid-launch-sub">
-                  {!isCarAvailable
-                    ? 'WebGL car controls are unavailable; browse the circuit below'
-                    : raceState === 'STARTING'
-                      ? 'Get ready to follow the track with your pointer.'
-                      : isStartHovered
-                        ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
-                        : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
+          {/* Mobile & Tablet BETA Advisory Modal Overlay */}
+          {isMobileOrTablet && !dismissedBetaOverlay && (
+            <div className="track-mobile-beta-backdrop" role="dialog" aria-modal="true" aria-labelledby="mobileBetaTitle">
+              <div className="track-mobile-beta-card">
+                <div className="beta-card-badge">
+                  <span className="beta-card-dot" aria-hidden="true" />
+                  CURRENTLY IN BETA
+                </div>
+                <div className="beta-card-icon-group" aria-hidden="true">
+                  <span className="beta-card-icon">💻</span>
+                  <span className="beta-card-icon-arrow">➔</span>
+                  <span className="beta-card-icon">🏎️</span>
+                </div>
+                <h2 id="mobileBetaTitle" className="beta-card-title">Desktop Required to Race</h2>
+                <p className="beta-card-text">
+                  The interactive Formula Student race simulator is currently in <strong>BETA</strong> and requires physical keyboard controls and precision mouse steering.
                 </p>
+                <div className="beta-card-points">
+                  <div className="beta-point">
+                    <span className="beta-point-bullet" aria-hidden="true">⌨️</span>
+                    <span><strong>Keyboard Controls:</strong> Hold pointer on Start Zone and press <kbd>Space</kbd> to launch; press <kbd>R</kbd> to reset.</span>
+                  </div>
+                  <div className="beta-point">
+                    <span className="beta-point-bullet" aria-hidden="true">🖱️</span>
+                    <span><strong>Precision Steering:</strong> Follow racing lines and hit apexes using fine pointer control.</span>
+                  </div>
+                  <div className="beta-point">
+                    <span className="beta-point-bullet" aria-hidden="true">📱</span>
+                    <span><strong>Mobile Optimization:</strong> Touch-screen steering controls are under active development in our bay!</span>
+                  </div>
+                </div>
+                <div className="beta-card-actions">
+                  <Link to="/competitions" className="beta-action-btn beta-action-primary">
+                    Explore Competitions &amp; Cars 🏆
+                  </Link>
+                  <button
+                    type="button"
+                    className="beta-action-btn beta-action-secondary"
+                    onClick={() => setDismissedBetaOverlay(true)}
+                  >
+                    Preview Circuit Layout Map 🗺️
+                  </button>
+                </div>
               </div>
             </div>
+          )}
+
+          {/* Quick toggle to restore the beta advisory dialog when dismissed on mobile */}
+          {isMobileOrTablet && dismissedBetaOverlay && (
+            <button
+              type="button"
+              className="track-beta-restore-btn"
+              onClick={() => setDismissedBetaOverlay(false)}
+              title="View device compatibility details"
+            >
+              🧪 BETA • Open in Desktop
+            </button>
+          )}
+
+          {/* Start guidance card */}
+          {raceState !== 'RACING' && !isCrashed && (
+            isMobileOrTablet ? (
+              dismissedBetaOverlay && (
+                <div className="track-grid-launch-card">
+                  <div className="track-grid-launch-meta">
+                    <span className="track-grid-launch-badge">CIRCUIT PREVIEW ONLY</span>
+                    <h3 className="track-grid-launch-title">Desktop Required to Race</h3>
+                    <p className="track-grid-launch-sub">
+                      Interactive racing requires a physical keyboard (<kbd>Space</kbd>) and mouse. Open on desktop or laptop to drive!
+                    </p>
+                  </div>
+                </div>
+              )
+            ) : (
+              <div className="track-grid-launch-card">
+                <div className="track-grid-launch-meta">
+                  <span className="track-grid-launch-badge">
+                    {!isCarAvailable
+                      ? 'CIRCUIT VIEW ONLY'
+                      : raceState === 'STARTING'
+                        ? 'START SEQUENCE'
+                        : isStartHovered
+                          ? 'START ZONE ACTIVE'
+                          : 'HOVER START ZONE • P1'}
+                  </span>
+                  <h3 className="track-grid-launch-title">
+                    {!isCarAvailable
+                      ? '3D Car Unavailable'
+                      : raceState === 'STARTING'
+                        ? 'Starting...'
+                        : isStartHovered
+                          ? <>Press <kbd>Space</kbd> to start</>
+                          : 'Hover to prepare'}
+                  </h3>
+                  <p className="track-grid-launch-sub">
+                    {!isCarAvailable
+                      ? 'WebGL car controls are unavailable; browse the circuit below'
+                      : raceState === 'STARTING'
+                        ? 'Get ready to follow the track with your pointer.'
+                        : isStartHovered
+                          ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
+                          : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
+                  </p>
+                </div>
+              </div>
+            )
           )}
 
           {/* Crash Alert Banner */}
