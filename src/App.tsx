@@ -6,6 +6,7 @@ import './styles/landing.css';
 import './styles/intro.css';
 import './styles/events.css';
 import './styles/competitions.css';
+import './styles/join.css';
 
 import { IntroOverlay } from './components/intro/IntroOverlay';
 import { Navbar } from './components/layout/Navbar';
