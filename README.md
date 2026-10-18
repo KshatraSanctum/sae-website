@@ -52,6 +52,13 @@ npm install
 npm run dev
 ```
 
+### Optional Environment Configuration
+
+The current static site runs without environment variables. For future API or
+Supabase integrations, copy `.env.example` to `.env` and fill only the public
+`VITE_` values required by the local environment. Never commit `.env` files or
+service-role keys.
+
 ### Production Build
 
 ```bash
@@ -78,21 +85,24 @@ sae-website/
 │   │   ├── common/         # Route metadata, scroll handlers, fallback loaders
 │   │   ├── home/           # Homepage teaser components
 │   │   ├── intro/          # Animated splash / intro overlay
-│   │   └── layout/         # Navbar, Footer, Mobile scroll track
-│   ├── hooks/              # Custom React hooks (e.g., useTrackFullscreen)
+│   │   ├── layout/         # Navbar, Footer, Mobile scroll track
+│   │   └── track/          # Race HUD and responsive track presentation
+│   ├── config/             # Runtime config, routes, and storage keys
+│   ├── data/               # Domain-grouped editorial content and types
+│   ├── hooks/              # Reusable React state/effect logic
 │   ├── pages/              # Primary route pages (Home, Track, Team, etc.)
+│   ├── services/api/       # Typed API client and future leaderboard boundary
 │   ├── styles/             # Modular CSS stylesheets
-│   ├── utils/              # Track physics, audio synthesis, circuit geometry
-│   ├── carFollower3D.ts    # Three.js 3D follower canvas logic
-│   ├── data.ts             # Central data source for milestones, team, and events
-│   ├── App.tsx             # Root router and route configuration
-│   └── main.tsx            # Application entry point
+│   ├── utils/              # Framework-independent helpers and track utilities
+│   ├── carFollower3D.ts    # Isolated Three.js 3D follower integration
+│   ├── App.tsx             # Root router and route composition
+│   └── main.tsx            # Application entry point and error boundary
 ├── vercel.json             # SPA rewrite configuration
 └── vite.config.ts          # Vite build config
 ```
 
 > [!TIP]
-> **Updating Society Content**: To update team members, milestones, sponsors, or competition entries, edit [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts). See [`CONTRIBUTING.md`](file:///Users/rahulkumar/saee/CONTRIBUTING.md) for detailed guidelines.
+> **Updating Society Content**: To update team members, milestones, sponsors, or competition entries, edit the relevant module under [`src/data/`](./src/data/). See [`ARCHITECTURE.md`](./ARCHITECTURE.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md) for structure and workflow guidelines.
 
 ---
 
@@ -116,7 +126,7 @@ We welcome contributions from all society members, especially juniors eager to l
 Please read our [**Contributing Guide (CONTRIBUTING.md)**](file:///Users/rahulkumar/saee/CONTRIBUTING.md) to get started with:
 - Setting up your local environment
 - Git workflow & branch naming conventions
-- How to add your profile, achievements, or events to `src/data.ts`
+- How to add profiles and achievements to `src/data/`, or update event content safely
 - Image compression and asset guidelines
 - Submitting your Pull Request
 

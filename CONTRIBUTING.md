@@ -28,7 +28,7 @@ Whether you are a 1st-year student adding your team member profile, a 2nd/3rd-ye
 Before starting, make sure you have the following installed on your machine:
 
 - **[Git](https://git-scm.com/)**: For version control.
-- **[Node.js](https://nodejs.org/)**: Version 18.0.0 or higher.
+- **[Node.js](https://nodejs.org/)**: Version 20.19+ or 22.12+ for the current Vite toolchain.
 - **[Visual Studio Code](https://code.visualstudio.com/)** (or your favorite code editor).
 
 ---
@@ -85,11 +85,11 @@ Always create a new branch for your work. **Do not commit directly to `main`**.
 
 ## 📝 Common Contributions Guide
 
-Most content updates do **not** require editing complex UI logic. Society data is centralized in [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts).
+Most content updates do **not** require editing complex UI logic. Society data is grouped by domain under [`src/data/`](file:///Users/rahulkumar/saee/src/data/). See [`ARCHITECTURE.md`](file:///Users/rahulkumar/saee/ARCHITECTURE.md) before adding a new feature or service.
 
 ### 1. Adding / Updating Team Members
 
-Open [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts):
+Open [`src/data/team.ts`](file:///Users/rahulkumar/saee/src/data/team.ts):
 
 - **Office Bearers & Core Members:** Locate `CORE_TEAM_MEMBERS` or the corresponding batch array and append an entry:
   ```typescript
@@ -104,14 +104,14 @@ Open [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts):
   }
   ```
 
-- **General Batch Lists:** Add your name under the respective batch array in [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts).
+- **General Batch Lists:** Add your name under the respective batch array in [`src/data/team.ts`](file:///Users/rahulkumar/saee/src/data/team.ts).
 
 ### 2. Adding Achievements or Milestones
 
 To add an achievement to `/competitions`:
 
 1. Place the achievement photo in `public/achievements/` (e.g., `baja-2024.webp`).
-2. In [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts), append an entry to `COMPETITION_MILESTONES`:
+2. In [`src/data/competitions.ts`](file:///Users/rahulkumar/saee/src/data/competitions.ts), append an entry to `COMPETITION_MILESTONES`:
    ```typescript
    {
      id: "baja-2024",
@@ -134,12 +134,12 @@ To add an achievement to `/competitions`:
 To add a workshop or event to `/events`:
 
 1. Place the event banner or poster in `public/events/` (e.g., `solidworks-workshop.webp`).
-2. In [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts), update the `EVENTS` or relevant array with the title, date, venue, description, and registration link.
+2. Update the relevant page-owned event data with the title, date, venue, description, and registration link. Keep reusable content types in `src/data/types.ts`.
 
 ### 4. Adding Sponsors & Partners
 
 1. Place the transparent sponsor logo in `public/sponsors/`.
-2. Add the sponsor details into `SPONSORS` in [`src/data.ts`](file:///Users/rahulkumar/saee/src/data.ts) under the correct tier (`Title`, `Gold`, `Silver`, or `Technical Partner`).
+2. Add the sponsor details into `SPONSORS` in [`src/data/sponsors.ts`](file:///Users/rahulkumar/saee/src/data/sponsors.ts) under the correct tier (`Title`, `Gold`, `Silver`, or `Technical Partner`).
 
 ---
 
@@ -167,6 +167,10 @@ npm run build
 `npm run build` runs `tsc` (TypeScript compiler) and `vite build`.
 - If there are TypeScript type mismatches, missing imports, or syntax errors, the build will fail and tell you the exact line.
 - **Make sure this command passes with 0 errors** before pushing!
+
+For runtime configuration, copy `.env.example` to a local `.env` file when
+needed. Never commit `.env` files or secrets; only explicitly public `VITE_`
+values belong in the browser bundle.
 
 ### Manual QA for Visual Changes
 - Test in both **Desktop** and **Mobile** viewports (using browser DevTools responsive view `Cmd + Option + I` or `F12`).

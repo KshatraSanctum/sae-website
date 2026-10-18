@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 're
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { COMPETITION_MILESTONES, type CompetitionMilestone } from '../data';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 
 interface CompetitionsPageProps {
   isActive?: boolean;
-  onNavigate?: (page: string) => void;
 }
 
 const CATEGORIES = [
@@ -171,63 +171,9 @@ export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive = t
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activePhotoModal]);
 
-  // Lock both html & body scroll and intercept wheel propagation when photo modal is active
-  useEffect(() => {
-    if (!activePhotoModal) return;
-
-    const originalBodyOverflow = document.body.style.overflow;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
-
-    // Apply class and direct styles to lock both html and body
-    document.documentElement.classList.add('modal-open');
-    document.body.classList.add('modal-open');
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-
-    // Intercept non-passive wheel events on PC to prevent background scroll-chaining
-    const backdrop = backdropRef.current;
-    const handleWheel = (e: WheelEvent) => {
-      const target = e.target as HTMLElement | null;
-      const scrollable = target?.closest('.comp-lightbox-details, .comp-lightbox-body') as HTMLElement | null;
-      if (scrollable) {
-        const { scrollTop, scrollHeight, clientHeight } = scrollable;
-        const canScroll = scrollHeight > clientHeight;
-        if (canScroll) {
-          const isAtTop = scrollTop <= 0 && e.deltaY < 0;
-          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0;
-          if (!isAtTop && !isAtBottom) {
-            return; // Allow internal details scrolling
-          }
-        }
-      }
-      e.preventDefault();
-      e.stopPropagation();
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const target = e.target as HTMLElement | null;
-      const scrollable = target?.closest('.comp-lightbox-details, .comp-lightbox-body') as HTMLElement | null;
-      if (!scrollable) {
-        e.preventDefault();
-      }
-    };
-
-    if (backdrop) {
-      backdrop.addEventListener('wheel', handleWheel, { passive: false });
-      backdrop.addEventListener('touchmove', handleTouchMove, { passive: false });
-    }
-
-    return () => {
-      document.documentElement.classList.remove('modal-open');
-      document.body.classList.remove('modal-open');
-      document.documentElement.style.overflow = originalHtmlOverflow;
-      document.body.style.overflow = originalBodyOverflow;
-      if (backdrop) {
-        backdrop.removeEventListener('wheel', handleWheel);
-        backdrop.removeEventListener('touchmove', handleTouchMove);
-      }
-    };
-  }, [activePhotoModal]);
+  useModalScrollLock(Boolean(activePhotoModal), backdropRef, {
+    scrollableSelector: '.comp-lightbox-details, .comp-lightbox-body',
+  });
 
   return (
     <section className={`page ${isActive ? 'active' : ''}`} id="page-competitions">

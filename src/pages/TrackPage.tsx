@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getActiveCarFollower3D, CarFollower3D } from '../carFollower3D';
+import {
+  TrackGridLaunchCard,
+  TrackMobileCircuitBar,
+  TrackMobileHub,
+  TrackTelemetryHud,
+} from '../components/track';
 import { useTrackFullscreen } from '../hooks/useTrackFullscreen';
 import { TrackAudio } from '../utils/trackAudio';
 import {
@@ -12,6 +18,7 @@ import {
   type TrackDifficulty,
 } from '../utils/trackCircuit';
 import { readPersonalBest, savePersonalBest } from '../utils/trackRace';
+import { getBrowserStorage } from '../utils/storage';
 import '../styles/track.css';
 
 const HUD_UPDATE_INTERVAL_MS = 80;
@@ -385,7 +392,7 @@ export const TrackPage: React.FC = () => {
   useEffect(() => {
     let savedBest: number | null = null;
     try {
-      const saved = readPersonalBest(window.localStorage, difficulty);
+      const saved = readPersonalBest(getBrowserStorage(), difficulty);
       savedBest = saved === null ? null : saved / 1000;
     } catch (_) {
       savedBest = null;
@@ -783,7 +790,7 @@ export const TrackPage: React.FC = () => {
                   setBestLapTime(lapTimeSec);
                   setIsNewRecord(true);
                   savePersonalBest(
-                    window.localStorage,
+                    getBrowserStorage(),
                     difficultyRef.current,
                     Math.round(lapTimeSec * 1000),
                     currentBest === null ? null : Math.round(currentBest * 1000),
@@ -1071,101 +1078,11 @@ export const TrackPage: React.FC = () => {
 
         {/* If Mobile / Tablet and not viewing circuit map, show the clean unclipped Mobile Hub */}
         {isMobileOrTablet && !showMobileCircuitMap ? (
-          <section className="track-mobile-hub-card" aria-label="Mobile Simulation Advisory">
-            <div className="mobile-hub-badge-wrap">
-              <span className="mobile-hub-badge">
-                <span className="mobile-hub-dot" aria-hidden="true" />
-                SIMULATOR IN BETA
-              </span>
-            </div>
-            <div className="mobile-hub-device-row" aria-hidden="true">
-              <span className="m-icon">💻</span>
-              <span className="m-arrow">➔</span>
-              <span className="m-icon">🏎️</span>
-            </div>
-            <h2 className="mobile-hub-title">Desktop Required to Race</h2>
-            <p className="mobile-hub-desc">
-              The 3D Formula Student race track is currently optimized for desktop with physical keyboard launch (<kbd>Space</kbd>) and precision pointer steering.
-            </p>
-            <div className="mobile-hub-points">
-              <div className="mobile-point-item">
-                <span className="p-bullet">⌨️</span>
-                <span><strong>Keyboard Telemetry:</strong> Spacebar launch &amp; reset hotkey (<kbd>R</kbd>).</span>
-              </div>
-              <div className="mobile-point-item">
-                <span className="p-bullet">🖱️</span>
-                <span><strong>Pointer Dynamics:</strong> High-precision apex tracking and drift limits.</span>
-              </div>
-              <div className="mobile-point-item">
-                <span className="p-bullet">📲</span>
-                <span><strong>Touch Controls:</strong> Mobile touch-steering is in active development in our bay!</span>
-              </div>
-            </div>
-
-            <div className="mobile-hub-actions">
-              <button
-                type="button"
-                className="mobile-act-btn mobile-act-primary"
-                onClick={() => setShowMobileCircuitMap(true)}
-              >
-                🗺️ View Full Circuit Map &amp; Turns
-              </button>
-              <a
-                href="https://github.com/saeindiabit-sindri/sae-website"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mobile-act-btn mobile-act-contribute"
-              >
-                🛠️ Contribute on GitHub 🐙
-              </a>
-              <Link
-                to="/competitions"
-                className="mobile-act-btn mobile-act-secondary"
-              >
-                🏆 Explore Competitions &amp; Trophies
-              </Link>
-            </div>
-
-            <div className="mobile-hub-specs-grid">
-              <div className="mobile-spec-item">
-                <span className="s-val">4.31 KM</span>
-                <span className="s-label">Circuit Scale</span>
-              </div>
-              <div className="mobile-spec-item">
-                <span className="s-val">15 Turns</span>
-                <span className="s-label">Technical Corners</span>
-              </div>
-              <div className="mobile-spec-item">
-                <span className="s-val">2 Zones</span>
-                <span className="s-label">DRS Straights</span>
-              </div>
-              <div className="mobile-spec-item">
-                <span className="s-val">3 Sectors</span>
-                <span className="s-label">Split Timing</span>
-              </div>
-            </div>
-          </section>
+          <TrackMobileHub onViewCircuitMap={() => setShowMobileCircuitMap(true)} />
         ) : (
           <>
             {isMobileOrTablet && showMobileCircuitMap && (
-              <div className="track-mobile-circuit-bar">
-                <button
-                  type="button"
-                  className="track-mobile-back-btn"
-                  onClick={() => setShowMobileCircuitMap(false)}
-                >
-                  ← Back to Details
-                </button>
-                <span className="track-mobile-circuit-tag">CIRCUIT PREVIEW ONLY</span>
-                <a
-                  href="https://github.com/saeindiabit-sindri/sae-website"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="track-mobile-circuit-contrib"
-                >
-                  Contribute 🐙
-                </a>
-              </div>
+              <TrackMobileCircuitBar onBackToDetails={() => setShowMobileCircuitMap(false)} />
             )}
 
             {!isMobileOrTablet && (
@@ -1207,52 +1124,22 @@ export const TrackPage: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Telemetry HUD: Top Left Timer & Sectors */}
-                  <div className="track-hud-top-left">
-                    <div className="hud-timer-card">
-                      <div className="hud-timer-label">Lap Time</div>
-                      <div className={`hud-timer-digits ${raceState === 'RACING' ? 'is-running' : ''}`}>
-                        {lapTimeDisplay}
-                      </div>
-                      <div className="hud-best-row">
-                        <span className="hud-best-badge">PERSONAL BEST</span>
-                        <span>{bestLapTime ? formatTime(bestLapTime * 1000) : '--:--.---'}</span>
-                      </div>
-                    </div>
-
-                    {/* Sector split pills */}
-                    <div className="hud-sectors-row">
-                      <div className={`hud-sector-pill ${s1Cleared ? 'is-cleared' : raceState === 'RACING' ? 'is-active' : ''}`}>
-                        <span>S1</span>
-                        <strong>{s1Time ? s1Time.slice(3) : '--'}</strong>
-                      </div>
-                      <div className={`hud-sector-pill ${s2Cleared ? 'is-cleared' : s1Cleared ? 'is-active' : ''}`}>
-                        <span>S2</span>
-                        <strong>{s2Time ? s2Time.slice(3) : '--'}</strong>
-                      </div>
-                      <div className={`hud-sector-pill ${s3Cleared ? 'is-cleared' : s2Cleared ? 'is-active' : ''}`}>
-                        <span>S3</span>
-                        <strong>{s3Time ? s3Time.slice(3) : '--'}</strong>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Telemetry HUD: Bottom Right Speedometer */}
-                  <div className="track-hud-bottom-right">
-                    <div className="hud-speed-gauge">
-                      <div className="hud-speed-value">
-                        <span>{speedKmh}</span>
-                        <span className="hud-speed-unit">KM/H</span>
-                      </div>
-                      <div className="hud-rpm-track">
-                        <div className="hud-rpm-fill" style={{ width: `${rpmPct}%` }} />
-                      </div>
-                      <div className="hud-telemetry-meta">
-                        <span>GEAR: {speedKmh > 110 ? '4' : speedKmh > 70 ? '3' : speedKmh > 25 ? '2' : '1'}</span>
-                        <span>STATUS: {isCrashed ? 'CRASH' : isCarParked ? 'PARKED' : raceState === 'RACING' ? 'DRIVING' : 'STANDBY'}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <TrackTelemetryHud
+                    raceState={raceState}
+                    lapTimeDisplay={lapTimeDisplay}
+                    bestLapTime={bestLapTime}
+                    formatTime={formatTime}
+                    s1Cleared={s1Cleared}
+                    s2Cleared={s2Cleared}
+                    s3Cleared={s3Cleared}
+                    s1Time={s1Time}
+                    s2Time={s2Time}
+                    s3Time={s3Time}
+                    speedKmh={speedKmh}
+                    rpmPct={rpmPct}
+                    isCrashed={isCrashed}
+                    isCarParked={isCarParked}
+                  />
 
                   {!isCarAvailable && (
                     <div className="track-no-car-state" role="status">
@@ -1263,37 +1150,12 @@ export const TrackPage: React.FC = () => {
 
                   {/* Start guidance only; the SVG zone and Space are the start controls. */}
                   {raceState !== 'RACING' && !isCrashed && (
-                    <div className="track-grid-launch-card">
-                      <div className="track-grid-launch-meta">
-                        <span className="track-grid-launch-badge">
-                          {!isCarAvailable
-                            ? 'CIRCUIT VIEW ONLY'
-                            : raceState === 'STARTING'
-                              ? 'START SEQUENCE'
-                              : isStartHovered
-                                ? 'START ZONE ACTIVE'
-                                : 'HOVER START ZONE • P1'}
-                        </span>
-                        <h3 className="track-grid-launch-title">
-                          {!isCarAvailable
-                            ? '3D Car Unavailable'
-                            : raceState === 'STARTING'
-                              ? 'Starting...'
-                              : isStartHovered
-                                ? <>Press <kbd>Space</kbd> to start</>
-                                : 'Hover to prepare'}
-                        </h3>
-                        <p className="track-grid-launch-sub">
-                          {!isCarAvailable
-                            ? 'WebGL car controls are unavailable; browse the circuit below'
-                            : raceState === 'STARTING'
-                              ? 'Get ready to follow the track with your pointer.'
-                              : isStartHovered
-                                ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
-                                : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
-                        </p>
-                      </div>
-                    </div>
+                    <TrackGridLaunchCard
+                      isCarAvailable={isCarAvailable}
+                      raceState={raceState}
+                      isStartHovered={isStartHovered}
+                      isCarParked={isCarParked}
+                    />
                   )}
                 </>
               )}

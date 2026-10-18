@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useMobileNavigation } from '../../hooks/useMobileNavigation';
 
 interface NavItem {
   path: string;
@@ -17,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { isOpen: mobileOpen, toggle: toggleMobileMenu, close: closeMobileMenu } = useMobileNavigation(location.pathname);
   const [scrolled, setScrolled] = useState(false);
 
   const isHome = location.pathname === '/';
@@ -30,21 +31,6 @@ export const Navbar: React.FC = () => {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && mobileOpen) {
-        setMobileOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [mobileOpen]);
-
-  // Close mobile menu whenever pathname changes
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [location.pathname]);
 
   const isLinkActive = (item: NavItem) => {
     if (location.pathname === item.path) return true;
@@ -111,7 +97,7 @@ export const Navbar: React.FC = () => {
             id="refMobileToggle"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={toggleMobileMenu}
           >
             <span className="ref-burger-icon" aria-hidden="true">
               <span className="ref-burger-line line-1"></span>
@@ -133,7 +119,7 @@ export const Navbar: React.FC = () => {
               key={`mobile-${item.path}`}
               to={item.path}
               className={isLinkActive(item) ? 'active' : ''}
-              onClick={() => setMobileOpen(false)}
+               onClick={closeMobileMenu}
             >
               {item.label}
             </Link>
@@ -142,7 +128,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/join"
               className="ref-btn ref-btn-primary effect-shine"
-              onClick={() => setMobileOpen(false)}
+               onClick={closeMobileMenu}
             >
               <span>Join the Society</span>
               <svg

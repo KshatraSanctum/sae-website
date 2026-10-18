@@ -8,6 +8,9 @@
 // - Clean lap checkered flag victory fanfare
 // ==========================================================================
 
+import { STORAGE_KEYS } from '../config/storageKeys';
+import { readStoredValue, writeStoredValue } from './storage';
+
 export class TrackAudio {
   private ctx: AudioContext | null = null;
   private muted = false;
@@ -24,7 +27,7 @@ export class TrackAudio {
   private isScreeching = false;
 
   constructor() {
-    const saved = localStorage.getItem('sae_track_muted');
+    const saved = readStoredValue(STORAGE_KEYS.trackMuted);
     if (saved === 'true') {
       this.muted = true;
     }
@@ -56,7 +59,7 @@ export class TrackAudio {
 
   public toggleMute(): boolean {
     this.muted = !this.muted;
-    localStorage.setItem('sae_track_muted', this.muted ? 'true' : 'false');
+    writeStoredValue(STORAGE_KEYS.trackMuted, this.muted ? 'true' : 'false');
 
     if (this.muted) {
       this.stopEngine();

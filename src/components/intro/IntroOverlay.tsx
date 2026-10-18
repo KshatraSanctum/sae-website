@@ -6,7 +6,12 @@ export const IntroOverlay: React.FC = () => {
 
   useEffect(() => {
     if (!isNoIntro) {
-      initIntro();
+      try {
+        initIntro();
+      } catch (error) {
+        // The intro is decorative; a failed animation must not block the site.
+        console.error('Unable to initialize the intro animation.', error);
+      }
     }
   }, [isNoIntro]);
 

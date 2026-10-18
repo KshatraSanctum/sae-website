@@ -15,6 +15,7 @@ import { MobileScrollTrack } from './components/layout/MobileScrollTrack';
 import { RouteMetadata } from './components/common/RouteMetadata';
 import { ScrollToTop } from './components/common/ScrollToTop';
 import { RouteLoadingFallback } from './components/common/RouteLoadingFallback';
+import { LEGACY_HASH_ROUTE_MAP } from './config/routes';
 
 import { initCarFollower3D, CarFollower3D } from './carFollower3D';
 
@@ -104,23 +105,8 @@ const LegacyHashRedirector: React.FC = () => {
   useEffect(() => {
     if (location.pathname === '/' && location.hash) {
       const cleanHash = location.hash.replace('#', '').trim();
-      const legacyRouteMap: Record<string, string> = {
-        about: '/about',
-        competitions: '/competitions',
-        achievements: '/achievements',
-        events: '/events',
-        team: '/team',
-        bearers: '/team',
-        sponsors: '/sponsors',
-        departments: '/departments',
-        join: '/join',
-        track: '/track',
-        circuit: '/track',
-        race: '/track',
-      };
-
-      if (legacyRouteMap[cleanHash]) {
-        navigate(legacyRouteMap[cleanHash], { replace: true });
+      if (LEGACY_HASH_ROUTE_MAP[cleanHash]) {
+        navigate(LEGACY_HASH_ROUTE_MAP[cleanHash], { replace: true });
       }
     }
   }, [location, navigate]);
@@ -134,7 +120,12 @@ const AppLayout: React.FC = () => {
   useEffect(() => {
     let carInstance: CarFollower3D | null = null;
     const timer = setTimeout(() => {
-      carInstance = initCarFollower3D();
+      try {
+        carInstance = initCarFollower3D();
+      } catch (error) {
+        // WebGL/car initialization is optional; the rest of the site remains usable.
+        console.error('Unable to initialize the 3D car follower.', error);
+      }
     }, 120);
 
     return () => {

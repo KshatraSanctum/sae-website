@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { STORAGE_KEYS } from './config/storageKeys';
+import { readStoredValue, writeStoredValue } from './utils/storage';
 
 const REFERENCE_FRAME_TIME = 1 / 60;
 const MAX_FRAME_DELTA = 0.1;
@@ -230,7 +232,7 @@ export class CarFollower3D {
       this.updateMobileScrollProgress();
     } else {
       // Check saved parked state preference for desktop
-      const isSavedParked = localStorage.getItem('sae_car_parked') === 'true';
+      const isSavedParked = readStoredValue(STORAGE_KEYS.carParked) === 'true';
       if (isSavedParked) {
         this.parkingState = 'PARKED';
         const slotPos = this.getSlotWorldPos();
@@ -971,7 +973,7 @@ export class CarFollower3D {
     }
     this.hasLastTirePos = false;
     this.driftEffectTime = 0;
-    localStorage.setItem('sae_car_parked', 'true');
+    writeStoredValue(STORAGE_KEYS.carParked, 'true');
     this.updateUI('PARKED');
   }
 
@@ -979,7 +981,7 @@ export class CarFollower3D {
     this.parkingState = 'ACTIVE';
     this.carRoot.visible = true;
     this.canvas.style.opacity = '1';
-    localStorage.setItem('sae_car_parked', 'false');
+    writeStoredValue(STORAGE_KEYS.carParked, 'false');
     this.updateUI('ACTIVE');
 
     // Turn headlights back up

@@ -1,53 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useJoinApplication } from '../hooks/useJoinApplication';
 
 interface JoinPageProps {
   isActive?: boolean;
 }
 
 export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    roll: '',
-    branch: '',
-    year: '',
-    email: '',
-    phone: '',
-    crew: '',
-    subdomain: '',
-    motivation: '',
-  });
+  const {
+    formData,
+    submitted,
+    submissionTime,
+    updateField,
+    selectCrew,
+    submit,
+    reset,
+  } = useJoinApplication();
 
-  const [submitted, setSubmitted] = useState(false);
-  const [submissionTime, setSubmissionTime] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const now = new Date();
-    setSubmissionTime(
-      now.toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    );
-    setSubmitted(true);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    submit();
   };
 
-  const handleReset = () => {
-    setFormData({
-      name: '',
-      roll: '',
-      branch: '',
-      year: '',
-      email: '',
-      phone: '',
-      crew: '',
-      subdomain: '',
-      motivation: '',
-    });
-    setSubmitted(false);
+  const handleReset = (): void => {
+    reset();
   };
 
   const scrollToApply = (e: React.MouseEvent) => {
@@ -56,11 +31,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
   };
 
   const selectCrewAndScroll = (crewName: string, subdomainDefault: string = '') => {
-    setFormData((prev) => ({
-      ...prev,
-      crew: crewName,
-      subdomain: subdomainDefault || prev.subdomain,
-    }));
+    selectCrew(crewName, subdomainDefault);
     document.getElementById('join-application')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -457,7 +428,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       required
                       placeholder="e.g. Rahul Sharma"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => updateField('name', e.target.value)}
                     />
                     <span className="form-hint">Enter your full official college name</span>
                   </div>
@@ -472,7 +443,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       required
                       placeholder="e.g. 24/ME/045 or 2K24/082"
                       value={formData.roll}
-                      onChange={(e) => setFormData({ ...formData, roll: e.target.value })}
+                      onChange={(e) => updateField('roll', e.target.value)}
                     />
                     <span className="form-hint">Official BIT Sindri roll or registration number</span>
                   </div>
@@ -487,7 +458,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       id="applicantBranch"
                       required
                       value={formData.branch}
-                      onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                      onChange={(e) => updateField('branch', e.target.value)}
                     >
                       <option value="" disabled>Select your branch</option>
                       <option value="Mechanical">Mechanical Engineering</option>
@@ -512,7 +483,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       id="applicantYear"
                       required
                       value={formData.year}
-                      onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                      onChange={(e) => updateField('year', e.target.value)}
                     >
                       <option value="" disabled>Select your academic year</option>
                       <option value="1st Year (Freshers - 2K25)">1st Year (Freshers / Batch 2K25)</option>
@@ -534,7 +505,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       required
                       placeholder="name@bitsindri.ac.in or personal email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => updateField('email', e.target.value)}
                     />
                     <span className="form-hint">We will email you the orientation schedule</span>
                   </div>
@@ -549,7 +520,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       required
                       placeholder="+91 98765 43210"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => updateField('phone', e.target.value)}
                     />
                     <span className="form-hint">Used for official WhatsApp induction group updates</span>
                   </div>
@@ -564,7 +535,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       id="applicantCrew"
                       required
                       value={formData.crew}
-                      onChange={(e) => setFormData({ ...formData, crew: e.target.value })}
+                      onChange={(e) => updateField('crew', e.target.value)}
                     >
                       <option value="" disabled>Select primary preference</option>
                       <option value="Team Wonders (BAJA / EFFICYCLE)">Team Wonders (BAJA / EFFICYCLE - Off-road)</option>
@@ -584,7 +555,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                     <select
                       id="applicantSubdomain"
                       value={formData.subdomain}
-                      onChange={(e) => setFormData({ ...formData, subdomain: e.target.value })}
+                      onChange={(e) => updateField('subdomain', e.target.value)}
                     >
                       <option value="">No preference / Open to all</option>
                       <option value="Chassis & Roll Cage">Chassis &amp; Roll Cage Fabrication</option>
@@ -611,7 +582,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                     required
                     placeholder="Tell us about your interests, past projects or hobbies (if any), and what excites you about motorsports, aerospace, or automotive engineering..."
                     value={formData.motivation}
-                    onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
+                    onChange={(e) => updateField('motivation', e.target.value)}
                   ></textarea>
                   <span className="form-hint">Briefly explain your passion, curiosity, and what you hope to learn</span>
                 </div>
@@ -759,8 +730,8 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
             <p>Reach out to our recruitment coordinators or visit us at the Mechanical Engineering Workshop Bay.</p>
           </div>
           <div className="join-contact-actions">
-            <a href="mailto:saeindia.bitsindri@gmail.com" className="join-contact-link">
-              ✉ Email: saeindia.bitsindri@gmail.com
+            <a href="mailto:saeindia@bitsindri.ac.in" className="join-contact-link">
+              ✉ Email: saeindia@bitsindri.ac.in
             </a>
           </div>
         </div>
