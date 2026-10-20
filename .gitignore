@@ -35,3 +35,4 @@ ref_src/
 # Supabase CLI local state
 supabase/.temp/
 .opencode/
+ss/

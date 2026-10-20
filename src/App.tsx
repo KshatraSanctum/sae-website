@@ -97,12 +97,20 @@ const ScrollRevealObserver: React.FC = () => {
   return null;
 };
 
-// Seamless fallback handler for legacy hash bookmarks (e.g. /#competitions -> /competitions)
+// Seamless fallback handler for legacy hash bookmarks and OAuth callback redirects
 const LegacyHashRedirector: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    // If OAuth callback hash/code lands on root or any other page, route it straight to /track
+    if (location.hash.includes('access_token') || location.search.includes('code=')) {
+      if (location.pathname !== '/track') {
+        navigate('/track' + location.search + location.hash, { replace: true });
+        return;
+      }
+    }
+
     if (location.pathname === '/' && location.hash) {
       const cleanHash = location.hash.replace('#', '').trim();
       if (LEGACY_HASH_ROUTE_MAP[cleanHash]) {
