@@ -16,6 +16,38 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
     reset,
   } = useJoinApplication();
 
+  const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
+    advantages: false,
+    teams: false,
+    process: false,
+    faqs: false,
+  });
+
+  const toggleSection = (sectionKey: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey],
+    }));
+  };
+
+  const expandAllSections = () => {
+    setOpenSections({
+      advantages: true,
+      teams: true,
+      process: true,
+      faqs: true,
+    });
+  };
+
+  const collapseAllSections = () => {
+    setOpenSections({
+      advantages: false,
+      teams: false,
+      process: false,
+      faqs: false,
+    });
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     submit();
@@ -90,308 +122,422 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
           </div>
         </div>
 
-        {/* Section 1: Why Join SAE BIT Sindri */}
-        <div data-reveal className="reveal-up join-section-head">
-          <span className="join-section-tag">// CORE CHAPTER ADVANTAGES</span>
-          <h2>Why Join SAE BIT Sindri?</h2>
-          <span className="team-blurb">What awaits you when you step into our design and fabrication bay</span>
+        {/* Sections Quick Toggle Toolbar */}
+        <div className="join-sections-toolbar">
+          <div className="join-toolbar-hint">
+            <span className="hint-icon" aria-hidden="true">▾</span>
+            <span>Click any section below to expand details, or scroll down to the application form.</span>
+          </div>
+          <div className="join-toolbar-buttons">
+            <button
+              type="button"
+              className="btn-toolbar-toggle"
+              onClick={expandAllSections}
+            >
+              Expand All
+            </button>
+            <button
+              type="button"
+              className="btn-toolbar-toggle"
+              onClick={collapseAllSections}
+            >
+              Collapse All
+            </button>
+          </div>
         </div>
 
-        <div className="join-grid">
-          <div data-reveal className="reveal-up join-card">
-            <div>
-              <div className="join-icon" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+        {/* Section 1: Why Join SAE BIT Sindri */}
+        <div className={`join-accordion-section ${openSections.advantages ? 'is-open' : ''}`}>
+          <button
+            type="button"
+            className="join-accordion-trigger"
+            onClick={() => toggleSection('advantages')}
+            aria-expanded={openSections.advantages}
+            aria-controls="section-advantages-content"
+          >
+            <div className="join-accordion-header-info">
+              <span className="join-section-tag">// CORE CHAPTER ADVANTAGES</span>
+              <h2 className="join-accordion-title">Why Join SAE BIT Sindri?</h2>
+              <span className="team-blurb">What awaits you when you step into our design and fabrication bay</span>
+            </div>
+            <div className="join-accordion-meta">
+              <span className="join-meta-pill">4 Chapter Advantages</span>
+              <span className="join-expand-btn-text">
+                {openSections.advantages ? 'Collapse' : 'Explore'}
+              </span>
+              <span className="join-accordion-chevron" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
-              </div>
-              <h3>Real-World Engineering</h3>
-              <p>
-                Go beyond textbook theory. Work with industry-standard CAD/CAE tools (SolidWorks, ANSYS), machine custom
-                components in the workshop, weld chassis frames, and tune vehicle dynamics.
-              </p>
+              </span>
             </div>
-            <div className="join-card-tags">
-              <span className="join-card-tag">CAD / FEA Design</span>
-              <span className="join-card-tag">TIG Welding &amp; CNC</span>
-              <span className="join-card-tag">Track Telemetry</span>
-            </div>
-          </div>
+          </button>
 
-          <div data-reveal className="reveal-up join-card">
-            <div>
-              <div className="join-icon" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <polygon points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <h3>Tier-1 National Competitions</h3>
-              <p>
-                Represent BIT Sindri on India's premier collegiate motorsports stages — BAJA SAE India, SUPRA Formula
-                Student, EFFICYCLE, and national Aerothon flight challenges against top IITs and NITs.
-              </p>
-            </div>
-            <div className="join-card-tags">
-              <span className="join-card-tag">BAJA SAE India</span>
-              <span className="join-card-tag">SUPRA Formula Student</span>
-              <span className="join-card-tag">EFFICYCLE Hybrid</span>
-            </div>
-          </div>
+          <div
+            id="section-advantages-content"
+            className={`join-collapsible-drawer ${openSections.advantages ? 'is-open' : ''}`}
+            role="region"
+            aria-label="Core Chapter Advantages Content"
+          >
+            <div className="join-collapsible-inner">
+              <div className="join-grid">
+                <div data-reveal className="reveal-up join-card">
+                  <div>
+                    <div className="join-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                      </svg>
+                    </div>
+                    <h3>Real-World Engineering</h3>
+                    <p>
+                      Go beyond textbook theory. Work with industry-standard CAD/CAE tools (SolidWorks, ANSYS), machine custom
+                      components in the workshop, weld chassis frames, and tune vehicle dynamics.
+                    </p>
+                  </div>
+                  <div className="join-card-tags">
+                    <span className="join-card-tag">CAD / FEA Design</span>
+                    <span className="join-card-tag">TIG Welding &amp; CNC</span>
+                    <span className="join-card-tag">Track Telemetry</span>
+                  </div>
+                </div>
 
-          <div data-reveal className="reveal-up join-card">
-            <div>
-              <div className="join-icon" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-              <h3>Cross-Discipline Brotherhood</h3>
-              <p>
-                Join an active fraternity of mechanical, electrical, electronics, computer science, and core engineering
-                students collaborating day and night to build competition-ready machines.
-              </p>
-            </div>
-            <div className="join-card-tags">
-              <span className="join-card-tag">All Branches Welcome</span>
-              <span className="join-card-tag">Hands-on Culture</span>
-              <span className="join-card-tag">Lifelong Brotherhood</span>
-            </div>
-          </div>
+                <div data-reveal className="reveal-up join-card">
+                  <div>
+                    <div className="join-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="12 6 12 12 16 14" />
+                      </svg>
+                    </div>
+                    <h3>Tier-1 National Competitions</h3>
+                    <p>
+                      Represent BIT Sindri on India's premier collegiate motorsports stages — BAJA SAE India, SUPRA Formula
+                      Student, EFFICYCLE, and national Aerothon flight challenges against top IITs and NITs.
+                    </p>
+                  </div>
+                  <div className="join-card-tags">
+                    <span className="join-card-tag">BAJA SAE India</span>
+                    <span className="join-card-tag">SUPRA Formula Student</span>
+                    <span className="join-card-tag">EFFICYCLE Hybrid</span>
+                  </div>
+                </div>
 
-          <div data-reveal className="reveal-up join-card">
-            <div>
-              <div className="join-icon" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
+                <div data-reveal className="reveal-up join-card">
+                  <div>
+                    <div className="join-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    </div>
+                    <h3>Cross-Discipline Brotherhood</h3>
+                    <p>
+                      Join an active fraternity of mechanical, electrical, electronics, computer science, and core engineering
+                      students collaborating day and night to build competition-ready machines.
+                    </p>
+                  </div>
+                  <div className="join-card-tags">
+                    <span className="join-card-tag">All Branches Welcome</span>
+                    <span className="join-card-tag">Hands-on Culture</span>
+                    <span className="join-card-tag">Lifelong Brotherhood</span>
+                  </div>
+                </div>
+
+                <div data-reveal className="reveal-up join-card">
+                  <div>
+                    <div className="join-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                    </div>
+                    <h3>Alumni &amp; Industry Network</h3>
+                    <p>
+                      Direct mentorship and career guidance from chapter alumni leading engineering divisions across top global
+                      automotive, aerospace, and robotics giants.
+                    </p>
+                  </div>
+                  <div className="join-card-tags">
+                    <span className="join-card-tag">Tata Motors</span>
+                    <span className="join-card-tag">Mahindra Racing</span>
+                    <span className="join-card-tag">Boeing &amp; ISRO</span>
+                  </div>
+                </div>
               </div>
-              <h3>Alumni &amp; Industry Network</h3>
-              <p>
-                Direct mentorship and career guidance from chapter alumni leading engineering divisions across top global
-                automotive, aerospace, and robotics giants.
-              </p>
-            </div>
-            <div className="join-card-tags">
-              <span className="join-card-tag">Tata Motors</span>
-              <span className="join-card-tag">Mahindra Racing</span>
-              <span className="join-card-tag">Boeing &amp; ISRO</span>
             </div>
           </div>
         </div>
 
         {/* Section 2: Explore Our Teams & Disciplines */}
-        <div data-reveal className="reveal-up join-section-head">
-          <span className="join-section-tag">// RACING CREWS &amp; WINGS</span>
-          <h2>Explore Our Teams &amp; Domains</h2>
-          <span className="team-blurb">Select the engineering discipline or operational wing where you want to make an impact</span>
-        </div>
+        <div className={`join-accordion-section ${openSections.teams ? 'is-open' : ''}`}>
+          <button
+            type="button"
+            className="join-accordion-trigger"
+            onClick={() => toggleSection('teams')}
+            aria-expanded={openSections.teams}
+            aria-controls="section-teams-content"
+          >
+            <div className="join-accordion-header-info">
+              <span className="join-section-tag">// RACING CREWS &amp; WINGS</span>
+              <h2 className="join-accordion-title">Explore Our Teams &amp; Domains</h2>
+              <span className="team-blurb">Select the engineering discipline or operational wing where you want to make an impact</span>
+            </div>
+            <div className="join-accordion-meta">
+              <span className="join-meta-pill">4 Specialized Crews</span>
+              <span className="join-expand-btn-text">
+                {openSections.teams ? 'Collapse' : 'Explore'}
+              </span>
+              <span className="join-accordion-chevron" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </div>
+          </button>
 
-        <div className="crews-grid">
-          {/* Team Wonders */}
-          <div data-reveal className="reveal-up crew-card">
-            <div>
-              <div className="crew-header-top">
-                <span className="crew-tag">OFF-ROAD &amp; HYBRID</span>
-                <span className="crew-comp-badge">BAJA &amp; EFFICYCLE</span>
-              </div>
-              <h3>Team Wonders</h3>
-              <p className="crew-desc">
-                Constructs rugged all-terrain buggies for BAJA SAE India and eco-friendly hybrid human-electric vehicles
-                for EFFICYCLE, built to tackle steep rocks, deep mud, and brutal endurance tracks.
-              </p>
-              <span className="crew-subdomains-title">// Core Specializations:</span>
-              <div className="crew-subdomains">
-                <span className="domain-pill">Roll Cage &amp; Chassis</span>
-                <span className="domain-pill">Suspension &amp; Steering Dynamics</span>
-                <span className="domain-pill">Powertrain &amp; Gearbox</span>
-                <span className="domain-pill">Hydraulic Braking</span>
-                <span className="domain-pill">Hybrid Electric Drive</span>
+          <div
+            id="section-teams-content"
+            className={`join-collapsible-drawer ${openSections.teams ? 'is-open' : ''}`}
+            role="region"
+            aria-label="Racing Crews and Wings Content"
+          >
+            <div className="join-collapsible-inner">
+              <div className="crews-grid">
+                {/* Team Wonders */}
+                <div data-reveal className="reveal-up crew-card">
+                  <div>
+                    <div className="crew-header-top">
+                      <span className="crew-tag">OFF-ROAD &amp; HYBRID</span>
+                      <span className="crew-comp-badge">BAJA &amp; EFFICYCLE</span>
+                    </div>
+                    <h3>Team Wonders</h3>
+                    <p className="crew-desc">
+                      Constructs rugged all-terrain buggies for BAJA SAE India and eco-friendly hybrid human-electric vehicles
+                      for EFFICYCLE, built to tackle steep rocks, deep mud, and brutal endurance tracks.
+                    </p>
+                    <span className="crew-subdomains-title">// Core Specializations:</span>
+                    <div className="crew-subdomains">
+                      <span className="domain-pill">Roll Cage &amp; Chassis</span>
+                      <span className="domain-pill">Suspension &amp; Steering Dynamics</span>
+                      <span className="domain-pill">Powertrain &amp; Gearbox</span>
+                      <span className="domain-pill">Hydraulic Braking</span>
+                      <span className="domain-pill">Hybrid Electric Drive</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="crew-select-btn"
+                    onClick={() => selectCrewAndScroll('Team Wonders (BAJA / EFFICYCLE)', 'Chassis & Roll Cage')}
+                  >
+                    <span>Select Team Wonders in Form</span>
+                    <span aria-hidden="true">↓</span>
+                  </button>
+                </div>
+
+                {/* Team Spitfire */}
+                <div data-reveal className="reveal-up crew-card">
+                  <div>
+                    <div className="crew-header-top">
+                      <span className="crew-tag">FORMULA STUDENT</span>
+                      <span className="crew-comp-badge">SUPRA SAE INDIA</span>
+                    </div>
+                    <h3>Team Spitfire</h3>
+                    <p className="crew-desc">
+                      Engineers single-seater, high-revving open-wheel race cars designed for circuit cornering, aerodynamic
+                      downforce, electronic telemetry, and explosive straight-line acceleration.
+                    </p>
+                    <span className="crew-subdomains-title">// Core Specializations:</span>
+                    <div className="crew-subdomains">
+                      <span className="domain-pill">Aerodynamics &amp; CFD Wings</span>
+                      <span className="domain-pill">Spaceframe Chassis</span>
+                      <span className="domain-pill">Engine Tuning &amp; ECU</span>
+                      <span className="domain-pill">Telemetry &amp; DAQ Sensors</span>
+                      <span className="domain-pill">Composite Materials</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="crew-select-btn"
+                    onClick={() => selectCrewAndScroll('Team Spitfire (SUPRA)', 'Aerodynamics & CFD')}
+                  >
+                    <span>Select Team Spitfire in Form</span>
+                    <span aria-hidden="true">↓</span>
+                  </button>
+                </div>
+
+                {/* Vayu Wing */}
+                <div data-reveal className="reveal-up crew-card">
+                  <div>
+                    <div className="crew-header-top">
+                      <span className="crew-tag">AEROSPACE &amp; UAV</span>
+                      <span className="crew-comp-badge">AEROTHON &amp; DRONES</span>
+                    </div>
+                    <h3>Vayu Wing</h3>
+                    <p className="crew-desc">
+                      Designs and fabricates fixed-wing RC aircraft, autonomous multirotors, and payload delivery UAVs for
+                      national aerospace challenges, aerial surveying, and flight dynamics testing.
+                    </p>
+                    <span className="crew-subdomains-title">// Core Specializations:</span>
+                    <div className="crew-subdomains">
+                      <span className="domain-pill">Airframe &amp; Aerofoil Design</span>
+                      <span className="domain-pill">Avionics &amp; Flight Controllers</span>
+                      <span className="domain-pill">Autonomous GPS Navigation</span>
+                      <span className="domain-pill">Payload Release Mechanisms</span>
+                      <span className="domain-pill">Radio &amp; FPV Systems</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="crew-select-btn"
+                    onClick={() => selectCrewAndScroll('Vayu (Aero & UAV)', 'Avionics & Drone Control')}
+                  >
+                    <span>Select Vayu Wing in Form</span>
+                    <span aria-hidden="true">↓</span>
+                  </button>
+                </div>
+
+                {/* Management & Media */}
+                <div data-reveal className="reveal-up crew-card">
+                  <div>
+                    <div className="crew-header-top">
+                      <span className="crew-tag">OPERATIONS &amp; CREATIVE</span>
+                      <span className="crew-comp-badge">CHAPTER MANAGEMENT</span>
+                    </div>
+                    <h3>Management &amp; Media</h3>
+                    <p className="crew-desc">
+                      The strategic backbone powering chapter operations — securing corporate sponsorships, orchestrating
+                      nationwide event logistics, curating digital media, and building software infrastructure.
+                    </p>
+                    <span className="crew-subdomains-title">// Core Specializations:</span>
+                    <div className="crew-subdomains">
+                      <span className="domain-pill">Corporate Sponsorship</span>
+                      <span className="domain-pill">Cinematography &amp; Media</span>
+                      <span className="domain-pill">Web Architecture &amp; Tech</span>
+                      <span className="domain-pill">Public Relations &amp; Press</span>
+                      <span className="domain-pill">Event Logistics &amp; Finance</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="crew-select-btn"
+                    onClick={() => selectCrewAndScroll('Operations & Sponsorship', 'Sponsorship & Finance')}
+                  >
+                    <span>Select Management &amp; Media in Form</span>
+                    <span aria-hidden="true">↓</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <button
-              type="button"
-              className="crew-select-btn"
-              onClick={() => selectCrewAndScroll('Team Wonders (BAJA / EFFICYCLE)', 'Chassis & Roll Cage')}
-            >
-              <span>Select Team Wonders in Form</span>
-              <span aria-hidden="true">↓</span>
-            </button>
-          </div>
-
-          {/* Team Spitfire */}
-          <div data-reveal className="reveal-up crew-card">
-            <div>
-              <div className="crew-header-top">
-                <span className="crew-tag">FORMULA STUDENT</span>
-                <span className="crew-comp-badge">SUPRA SAE INDIA</span>
-              </div>
-              <h3>Team Spitfire</h3>
-              <p className="crew-desc">
-                Engineers single-seater, high-revving open-wheel race cars designed for circuit cornering, aerodynamic
-                downforce, electronic telemetry, and explosive straight-line acceleration.
-              </p>
-              <span className="crew-subdomains-title">// Core Specializations:</span>
-              <div className="crew-subdomains">
-                <span className="domain-pill">Aerodynamics &amp; CFD Wings</span>
-                <span className="domain-pill">Spaceframe Chassis</span>
-                <span className="domain-pill">Engine Tuning &amp; ECU</span>
-                <span className="domain-pill">Telemetry &amp; DAQ Sensors</span>
-                <span className="domain-pill">Composite Materials</span>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="crew-select-btn"
-              onClick={() => selectCrewAndScroll('Team Spitfire (SUPRA)', 'Aerodynamics & CFD')}
-            >
-              <span>Select Team Spitfire in Form</span>
-              <span aria-hidden="true">↓</span>
-            </button>
-          </div>
-
-          {/* Vayu Wing */}
-          <div data-reveal className="reveal-up crew-card">
-            <div>
-              <div className="crew-header-top">
-                <span className="crew-tag">AEROSPACE &amp; UAV</span>
-                <span className="crew-comp-badge">AEROTHON &amp; DRONES</span>
-              </div>
-              <h3>Vayu Wing</h3>
-              <p className="crew-desc">
-                Designs and fabricates fixed-wing RC aircraft, autonomous multirotors, and payload delivery UAVs for
-                national aerospace challenges, aerial surveying, and flight dynamics testing.
-              </p>
-              <span className="crew-subdomains-title">// Core Specializations:</span>
-              <div className="crew-subdomains">
-                <span className="domain-pill">Airframe &amp; Aerofoil Design</span>
-                <span className="domain-pill">Avionics &amp; Flight Controllers</span>
-                <span className="domain-pill">Autonomous GPS Navigation</span>
-                <span className="domain-pill">Payload Release Mechanisms</span>
-                <span className="domain-pill">Radio &amp; FPV Systems</span>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="crew-select-btn"
-              onClick={() => selectCrewAndScroll('Vayu (Aero & UAV)', 'Avionics & Drone Control')}
-            >
-              <span>Select Vayu Wing in Form</span>
-              <span aria-hidden="true">↓</span>
-            </button>
-          </div>
-
-          {/* Management & Media */}
-          <div data-reveal className="reveal-up crew-card">
-            <div>
-              <div className="crew-header-top">
-                <span className="crew-tag">OPERATIONS &amp; CREATIVE</span>
-                <span className="crew-comp-badge">CHAPTER MANAGEMENT</span>
-              </div>
-              <h3>Management &amp; Media</h3>
-              <p className="crew-desc">
-                The strategic backbone powering chapter operations — securing corporate sponsorships, orchestrating
-                nationwide event logistics, curating digital media, and building software infrastructure.
-              </p>
-              <span className="crew-subdomains-title">// Core Specializations:</span>
-              <div className="crew-subdomains">
-                <span className="domain-pill">Corporate Sponsorship</span>
-                <span className="domain-pill">Cinematography &amp; Media</span>
-                <span className="domain-pill">Web Architecture &amp; Tech</span>
-                <span className="domain-pill">Public Relations &amp; Press</span>
-                <span className="domain-pill">Event Logistics &amp; Finance</span>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="crew-select-btn"
-              onClick={() => selectCrewAndScroll('Operations & Sponsorship', 'Sponsorship & Finance')}
-            >
-              <span>Select Management &amp; Media in Form</span>
-              <span aria-hidden="true">↓</span>
-            </button>
           </div>
         </div>
 
         {/* Section 3: Induction Process Timeline */}
-        <div data-reveal className="reveal-up join-section-head">
-          <span className="join-section-tag">// SELECTION ROADMAP</span>
-          <h2>The 5-Step Induction Process</h2>
-          <span className="team-blurb">A beginner-friendly roadmap designed to evaluate your curiosity, grit, and passion</span>
-        </div>
+        <div className={`join-accordion-section ${openSections.process ? 'is-open' : ''}`}>
+          <button
+            type="button"
+            className="join-accordion-trigger"
+            onClick={() => toggleSection('process')}
+            aria-expanded={openSections.process}
+            aria-controls="section-process-content"
+          >
+            <div className="join-accordion-header-info">
+              <span className="join-section-tag">// SELECTION ROADMAP</span>
+              <h2 className="join-accordion-title">The 5-Step Induction Process</h2>
+              <span className="team-blurb">A beginner-friendly roadmap designed to evaluate your curiosity, grit, and passion</span>
+            </div>
+            <div className="join-accordion-meta">
+              <span className="join-meta-pill">5 Selection Phases</span>
+              <span className="join-expand-btn-text">
+                {openSections.process ? 'Collapse' : 'Explore'}
+              </span>
+              <span className="join-accordion-chevron" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </div>
+          </button>
 
-        <div className="induction-steps">
-          <div data-reveal className="reveal-up step-card">
-            <div className="step-card-header">
-              <span className="step-num">01</span>
-              <span className="step-phase-badge">Phase 01</span>
-            </div>
-            <div className="step-info">
-              <h4>Online Registration</h4>
-              <p>Fill out the application form below with your branch, batch, and crew preferences.</p>
-            </div>
-            <div className="step-status-chip">
-              <span className="live-beacon-dot" aria-hidden="true" style={{ width: 5, height: 5 }}></span>
-              Open Now
-            </div>
-          </div>
+          <div
+            id="section-process-content"
+            className={`join-collapsible-drawer ${openSections.process ? 'is-open' : ''}`}
+            role="region"
+            aria-label="5-Step Induction Process Content"
+          >
+            <div className="join-collapsible-inner">
+              <div className="induction-steps">
+                <div data-reveal className="reveal-up step-card">
+                  <div className="step-card-header">
+                    <span className="step-num">01</span>
+                    <span className="step-phase-badge">Phase 01</span>
+                  </div>
+                  <div className="step-info">
+                    <h4>Online Registration</h4>
+                    <p>Fill out the application form below with your branch, batch, and crew preferences.</p>
+                  </div>
+                  <div className="step-status-chip">
+                    <span className="live-beacon-dot" aria-hidden="true" style={{ width: 5, height: 5 }}></span>
+                    Open Now
+                  </div>
+                </div>
 
-          <div data-reveal className="reveal-up step-card">
-            <div className="step-card-header">
-              <span className="step-num">02</span>
-              <span className="step-phase-badge">Phase 02</span>
-            </div>
-            <div className="step-info">
-              <h4>Orientation Session</h4>
-              <p>Attend our interactive walkthrough covering vehicle architecture, rulebooks, and season roadmaps.</p>
-            </div>
-            <div className="step-status-chip">
-              <span>✦</span> On-Campus Session
-            </div>
-          </div>
+                <div data-reveal className="reveal-up step-card">
+                  <div className="step-card-header">
+                    <span className="step-num">02</span>
+                    <span className="step-phase-badge">Phase 02</span>
+                  </div>
+                  <div className="step-info">
+                    <h4>Orientation Session</h4>
+                    <p>Attend our interactive walkthrough covering vehicle architecture, rulebooks, and season roadmaps.</p>
+                  </div>
+                  <div className="step-status-chip">
+                    <span>✦</span> On-Campus Session
+                  </div>
+                </div>
 
-          <div data-reveal className="reveal-up step-card">
-            <div className="step-card-header">
-              <span className="step-num">03</span>
-              <span className="step-phase-badge">Phase 03</span>
-            </div>
-            <div className="step-info">
-              <h4>Aptitude &amp; Task</h4>
-              <p>A hands-on, domain-specific challenge testing foundational thinking, creativity, and problem-solving.</p>
-            </div>
-            <div className="step-status-chip">
-              <span>✦</span> Hands-On Mini Task
-            </div>
-          </div>
+                <div data-reveal className="reveal-up step-card">
+                  <div className="step-card-header">
+                    <span className="step-num">03</span>
+                    <span className="step-phase-badge">Phase 03</span>
+                  </div>
+                  <div className="step-info">
+                    <h4>Aptitude &amp; Task</h4>
+                    <p>A hands-on, domain-specific challenge testing foundational thinking, creativity, and problem-solving.</p>
+                  </div>
+                  <div className="step-status-chip">
+                    <span>✦</span> Hands-On Mini Task
+                  </div>
+                </div>
 
-          <div data-reveal className="reveal-up step-card">
-            <div className="step-card-header">
-              <span className="step-num">04</span>
-              <span className="step-phase-badge">Phase 04</span>
-            </div>
-            <div className="step-info">
-              <h4>Personal Interaction</h4>
-              <p>One-on-one conversation with chapter leads to understand your passion, availability, and drive.</p>
-            </div>
-            <div className="step-status-chip">
-              <span>✦</span> Interview &amp; Fit
-            </div>
-          </div>
+                <div data-reveal className="reveal-up step-card">
+                  <div className="step-card-header">
+                    <span className="step-num">04</span>
+                    <span className="step-phase-badge">Phase 04</span>
+                  </div>
+                  <div className="step-info">
+                    <h4>Personal Interaction</h4>
+                    <p>One-on-one conversation with chapter leads to understand your passion, availability, and drive.</p>
+                  </div>
+                  <div className="step-status-chip">
+                    <span>✦</span> Interview &amp; Fit
+                  </div>
+                </div>
 
-          <div data-reveal className="reveal-up step-card">
-            <div className="step-card-header">
-              <span className="step-num">05</span>
-              <span className="step-phase-badge">Phase 05</span>
-            </div>
-            <div className="step-info">
-              <h4>Workshop Onboarding</h4>
-              <p>Join your assigned crew, receive safety gear training, and start building for national competitions!</p>
-            </div>
-            <div className="step-status-chip">
-              <span>✦</span> Welcome to Garage
+                <div data-reveal className="reveal-up step-card">
+                  <div className="step-card-header">
+                    <span className="step-num">05</span>
+                    <span className="step-phase-badge">Phase 05</span>
+                  </div>
+                  <div className="step-info">
+                    <h4>Workshop Onboarding</h4>
+                    <p>Join your assigned crew, receive safety gear training, and start building for national competitions!</p>
+                  </div>
+                  <div className="step-status-chip">
+                    <span>✦</span> Welcome to Garage
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -646,80 +792,110 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
         </div>
 
         {/* Section 5: Frequently Asked Questions */}
-        <div data-reveal className="reveal-up join-section-head">
-          <span className="join-section-tag">// APPLICANT FAQS</span>
-          <h2>Frequently Asked Questions</h2>
-          <span className="team-blurb">Common queries from aspiring collegiate society members</span>
-        </div>
+        <div className={`join-accordion-section ${openSections.faqs ? 'is-open' : ''}`} style={{ marginTop: '32px' }}>
+          <button
+            type="button"
+            className="join-accordion-trigger"
+            onClick={() => toggleSection('faqs')}
+            aria-expanded={openSections.faqs}
+            aria-controls="section-faqs-content"
+          >
+            <div className="join-accordion-header-info">
+              <span className="join-section-tag">// APPLICANT FAQS</span>
+              <h2 className="join-accordion-title">Frequently Asked Questions</h2>
+              <span className="team-blurb">Common queries from aspiring collegiate society members</span>
+            </div>
+            <div className="join-accordion-meta">
+              <span className="join-meta-pill">6 Q&amp;As</span>
+              <span className="join-expand-btn-text">
+                {openSections.faqs ? 'Collapse' : 'Explore'}
+              </span>
+              <span className="join-accordion-chevron" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </div>
+          </button>
 
-        <div className="faq-grid">
-          <div data-reveal className="reveal-up faq-card">
-            <h4>
-              <span className="faq-q-glyph">Q.</span>
-              Do I need prior technical, automotive, or CAD experience?
-            </h4>
-            <p>
-              No prior technical experience is required. What matters most is your curiosity, work ethic, and dedication
-              to learn. Senior leads provide structured training covering SolidWorks CAD, vehicle architecture, workshop
-              tools, and fabrication safety protocols.
-            </p>
-          </div>
+          <div
+            id="section-faqs-content"
+            className={`join-collapsible-drawer ${openSections.faqs ? 'is-open' : ''}`}
+            role="region"
+            aria-label="Frequently Asked Questions Content"
+          >
+            <div className="join-collapsible-inner">
+              <div className="faq-grid">
+                <div data-reveal className="reveal-up faq-card">
+                  <h4>
+                    <span className="faq-q-glyph">Q.</span>
+                    Do I need prior technical, automotive, or CAD experience?
+                  </h4>
+                  <p>
+                    No prior technical experience is required. What matters most is your curiosity, work ethic, and dedication
+                    to learn. Senior leads provide structured training covering SolidWorks CAD, vehicle architecture, workshop
+                    tools, and fabrication safety protocols.
+                  </p>
+                </div>
 
-          <div data-reveal className="reveal-up faq-card">
-            <h4>
-              <span className="faq-q-glyph">Q.</span>
-              Are non-mechanical branches eligible to apply?
-            </h4>
-            <p>
-              Absolutely! Modern race cars and autonomous UAVs rely heavily on electronic DAQ, sensors, battery management
-              systems, microcontrollers, engine tuning maps, and telemetry code — plus our society relies on talented
-              students for media, sponsorship, web systems, and operations.
-            </p>
-          </div>
+                <div data-reveal className="reveal-up faq-card">
+                  <h4>
+                    <span className="faq-q-glyph">Q.</span>
+                    Are non-mechanical branches eligible to apply?
+                  </h4>
+                  <p>
+                    Absolutely! Modern race cars and autonomous UAVs rely heavily on electronic DAQ, sensors, battery management
+                    systems, microcontrollers, engine tuning maps, and telemetry code — plus our society relies on talented
+                    students for media, sponsorship, web systems, and operations.
+                  </p>
+                </div>
 
-          <div data-reveal className="reveal-up faq-card">
-            <h4>
-              <span className="faq-q-glyph">Q.</span>
-              How will society work affect my academic schedule?
-            </h4>
-            <p>
-              Academics are always the primary priority. Workshop sessions are held during post-class evenings and weekends.
-              During semester examinations and mid-terms, society activities are intentionally paused so all members can focus
-              on their studies.
-            </p>
-          </div>
+                <div data-reveal className="reveal-up faq-card">
+                  <h4>
+                    <span className="faq-q-glyph">Q.</span>
+                    How will society work affect my academic schedule?
+                  </h4>
+                  <p>
+                    Academics are always the primary priority. Workshop sessions are held during post-class evenings and weekends.
+                    During semester examinations and mid-terms, society activities are intentionally paused so all members can focus
+                    on their studies.
+                  </p>
+                </div>
 
-          <div data-reveal className="reveal-up faq-card">
-            <h4>
-              <span className="faq-q-glyph">Q.</span>
-              Where is the SAE BIT Sindri workshop located?
-            </h4>
-            <p>
-              Our dedicated design lab, mechanical fabrication bay, and vehicle testing garage are located within the
-              Department of Mechanical Engineering, BIT Sindri campus.
-            </p>
-          </div>
+                <div data-reveal className="reveal-up faq-card">
+                  <h4>
+                    <span className="faq-q-glyph">Q.</span>
+                    Where is the SAE BIT Sindri workshop located?
+                  </h4>
+                  <p>
+                    Our dedicated design lab, mechanical fabrication bay, and vehicle testing garage are located within the
+                    Department of Mechanical Engineering, BIT Sindri campus.
+                  </p>
+                </div>
 
-          <div data-reveal className="reveal-up faq-card">
-            <h4>
-              <span className="faq-q-glyph">Q.</span>
-              Can first-year students represent the college at national competitions?
-            </h4>
-            <p>
-              Yes! Freshers who demonstrate consistency, dedication, and technical competence are actively selected as part
-              of the competition traveling contingent to national tracks (BAJA, SUPRA, and EFFICYCLE).
-            </p>
-          </div>
+                <div data-reveal className="reveal-up faq-card">
+                  <h4>
+                    <span className="faq-q-glyph">Q.</span>
+                    Can first-year students represent the college at national competitions?
+                  </h4>
+                  <p>
+                    Yes! Freshers who demonstrate consistency, dedication, and technical competence are actively selected as part
+                    of the competition traveling contingent to national tracks (BAJA, SUPRA, and EFFICYCLE).
+                  </p>
+                </div>
 
-          <div data-reveal className="reveal-up faq-card">
-            <h4>
-              <span className="faq-q-glyph">Q.</span>
-              What should I prepare for the orientation &amp; aptitude task?
-            </h4>
-            <p>
-              Just bring an inquisitive mindset and passion for problem-solving! The aptitude challenge tests basic logical
-              thinking, visualization, and willingness to learn rather than obscure textbook memorization.
-            </p>
+                <div data-reveal className="reveal-up faq-card">
+                  <h4>
+                    <span className="faq-q-glyph">Q.</span>
+                    What should I prepare for the orientation &amp; aptitude task?
+                  </h4>
+                  <p>
+                    Just bring an inquisitive mindset and passion for problem-solving! The aptitude challenge tests basic logical
+                    thinking, visualization, and willingness to learn rather than obscure textbook memorization.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

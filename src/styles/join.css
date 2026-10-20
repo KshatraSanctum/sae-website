@@ -234,6 +234,255 @@
   transform: translateY(2px);
 }
 
+/* ==========================================================================
+   Sections Toolbar (Expand / Collapse All Controls)
+   ========================================================================== */
+.join-sections-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(18, 23, 34, 0.7);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+}
+
+.join-toolbar-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #94a3b8;
+}
+
+.join-toolbar-hint .hint-icon {
+  color: #f6b719;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.join-toolbar-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-toolbar-toggle {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-toolbar-toggle:hover {
+  background: rgba(246, 183, 25, 0.15);
+  border-color: rgba(246, 183, 25, 0.4);
+  color: #f6b719;
+}
+
+/* ==========================================================================
+   Interactive Collapsible Accordion Sections
+   ========================================================================== */
+.join-accordion-section {
+  background: #101520;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.join-accordion-section:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.join-accordion-section.is-open {
+  border-color: rgba(246, 183, 25, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.join-accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  background: #121722;
+  border: none;
+  padding: 22px 26px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background-color 0.2s ease;
+  gap: 20px;
+}
+
+.join-accordion-trigger:hover {
+  background: #161d2b;
+}
+
+.join-accordion-trigger:focus-visible {
+  outline: 2px solid #f6b719;
+  outline-offset: -2px;
+}
+
+.join-accordion-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.join-accordion-header-info .join-section-tag {
+  margin-bottom: 4px;
+}
+
+.join-accordion-title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  margin: 0 0 4px;
+}
+
+.join-accordion-header-info .team-blurb {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  display: block;
+  line-height: 1.4;
+}
+
+.join-accordion-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.join-meta-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.join-expand-btn-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #f6b719;
+  background: rgba(246, 183, 25, 0.08);
+  border: 1px solid rgba(246, 183, 25, 0.25);
+  padding: 5px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.join-accordion-trigger:hover .join-expand-btn-text {
+  background: #f6b719;
+  color: #0b0f17;
+}
+
+.join-accordion-chevron {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.join-accordion-chevron svg {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.join-accordion-section.is-open .join-accordion-chevron {
+  background: rgba(246, 183, 25, 0.15);
+  border-color: rgba(246, 183, 25, 0.4);
+  color: #f6b719;
+}
+
+.join-accordion-section.is-open .join-accordion-chevron svg {
+  transform: rotate(180deg);
+}
+
+/* Collapsible drawer transition via CSS Grid */
+.join-collapsible-drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.join-collapsible-drawer.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.join-collapsible-inner {
+  min-height: 0;
+  padding: 24px 24px 8px 24px;
+}
+
+/* Ensure child elements inside opened accordion are immediately visible */
+.join-collapsible-drawer.is-open .reveal-up {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Adjust card margins when inside accordion */
+.join-collapsible-inner .join-grid,
+.join-collapsible-inner .crews-grid,
+.join-collapsible-inner .induction-steps,
+.join-collapsible-inner .faq-grid {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 640px) {
+  .join-accordion-trigger {
+    padding: 16px 16px;
+    gap: 12px;
+  }
+
+  .join-collapsible-inner {
+    padding: 16px 14px 4px 14px;
+  }
+
+  .join-expand-btn-text {
+    display: none;
+  }
+
+  .join-meta-pill {
+    display: none;
+  }
+}
+
 /* Section Headings */
 .join-section-head {
   margin-bottom: 28px;
