@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import {
   createTrackFullscreenController,
   type TrackFullscreenController,
@@ -12,7 +12,10 @@ const inactiveState: TrackFullscreenState = {
   message: null,
 };
 
-export function useTrackFullscreen(onBeforeChange: () => void): TrackFullscreenState & { toggle: () => void } {
+export function useTrackFullscreen(
+  targetRef: RefObject<HTMLElement | null>,
+  onBeforeChange: () => void,
+): TrackFullscreenState & { toggle: () => void } {
   const onBeforeChangeRef = useRef(onBeforeChange);
   onBeforeChangeRef.current = onBeforeChange;
 
@@ -22,6 +25,7 @@ export function useTrackFullscreen(onBeforeChange: () => void): TrackFullscreenS
   useEffect(() => {
     let mounted = true;
     const controller = createTrackFullscreenController({
+      target: targetRef.current,
       onStateChange: (nextState) => {
         if (mounted) setState(nextState);
       },

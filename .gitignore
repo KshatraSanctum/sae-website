@@ -31,3 +31,7 @@ events.md
 footer.md
 ref_src/
 .next/
+
+# Supabase CLI local state
+supabase/.temp/
+.opencode/

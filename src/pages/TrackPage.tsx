@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom';
 import { getActiveCarFollower3D, CarFollower3D } from '../carFollower3D';
 import {
   TrackGridLaunchCard,
+  TrackLeaderboard,
   TrackMobileCircuitBar,
   TrackMobileHub,
   TrackTelemetryHud,
 } from '../components/track';
 import { useTrackFullscreen } from '../hooks/useTrackFullscreen';
+import {
+  getTrackLeaderboardIdentity,
+  useTrackLeaderboard,
+} from '../hooks/useTrackLeaderboard';
 import { TrackAudio } from '../utils/trackAudio';
 import {
   TRACK,
@@ -34,6 +39,7 @@ interface SamplePoint extends CircuitPoint {
 
 export const TrackPage: React.FC = () => {
   const arenaRef = useRef<HTMLDivElement>(null);
+  const fullscreenRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const startZoneRef = useRef<SVGGElement>(null);
   const audioRef = useRef<TrackAudio | null>(null);
@@ -54,6 +60,24 @@ export const TrackPage: React.FC = () => {
   const [isCrashed, setIsCrashed] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [crashMessage, setCrashMessage] = useState('💥 OFF TRACK! RETURNING TO GRID...');
+
+  const {
+    session: leaderboardSession,
+    entries: leaderboardEntries,
+    isConfigured: isLeaderboardConfigured,
+    isLoading: isLeaderboardLoading,
+    isAuthLoading: isLeaderboardAuthLoading,
+    error: leaderboardError,
+    authError,
+    remoteSubmissionStatus,
+    remoteSubmissionMessage,
+    signIn: signInToLeaderboard,
+    signOut: signOutFromLeaderboard,
+    refresh: refreshLeaderboard,
+    startRemoteRace,
+    submitRemoteScore,
+  } = useTrackLeaderboard({ trackId: TRACK.id, difficulty });
+  const leaderboardIdentity = getTrackLeaderboardIdentity(leaderboardSession);
 
   // Telemetry & Timing
   const [lapTimeDisplay, setLapTimeDisplay] = useState('00:00.000');
@@ -87,6 +111,11 @@ export const TrackPage: React.FC = () => {
   const reverseTravelRef = useRef(0);
   const lapRouteValidRef = useRef(true);
   const lastCheckpointTimeRef = useRef<number | null>(null);
+  const checkpointElapsedRef = useRef<{ s1: number | null; s2: number | null; s3: number | null }>({
+    s1: null,
+    s2: null,
+    s3: null,
+  });
   const animFrameRef = useRef<number | null>(null);
   const startTimeoutRef = useRef<TrackTimeout | null>(null);
   const initTimerRef = useRef<TrackTimeout | null>(null);
@@ -187,6 +216,7 @@ export const TrackPage: React.FC = () => {
     reverseTravelRef.current = 0;
     lapRouteValidRef.current = true;
     lastCheckpointTimeRef.current = null;
+    checkpointElapsedRef.current = { s1: null, s2: null, s3: null };
   }, []);
 
   const getTrackScreenMatrix = useCallback(() => {
@@ -283,6 +313,7 @@ export const TrackPage: React.FC = () => {
     clearTrackedTimers();
     isCrashedCooldownRef.current = false;
     disarmStartZone();
+    void startRemoteRace();
 
     // If car is parked in navbar pit bay, release it first
     if (car.isParked()) {
@@ -291,8 +322,16 @@ export const TrackPage: React.FC = () => {
 
     setRaceState('STARTING');
     raceStateRef.current = 'STARTING';
+    setLapTimeDisplay('00:00.000');
+    setS1Cleared(false);
+    setS2Cleared(false);
+    setS3Cleared(false);
+    setS1Time(null);
+    setS2Time(null);
+    setS3Time(null);
     setIsCrashed(false);
     setIsShaking(false);
+    setShowCelebration(false);
 
     // Audio rev engine
     audioRef.current?.startEngine();
@@ -336,25 +375,34 @@ export const TrackPage: React.FC = () => {
       raceStateRef.current = 'RACING';
     }, 320);
     return true;
-  }, [clearTrackedTimers, disarmStartZone, getStartGridScreenPos, lockCarToGrid, resetLapTracking]);
+  }, [
+    clearTrackedTimers,
+    disarmStartZone,
+    getStartGridScreenPos,
+    lockCarToGrid,
+    resetLapTracking,
+    startRemoteRace,
+  ]);
 
   // Reset to Standby Grid
   const resetToGrid = useCallback(
-    (reason?: string) => {
+    (reason?: string, preserveLastLapTimes = false) => {
       clearTrackedTimers();
       ++lifecycleTokenRef.current;
       lapStartTimeRef.current = null;
       currentLapElapsedRef.current = 0;
-      setLapTimeDisplay('00:00.000');
+      if (!preserveLastLapTimes) {
+        setLapTimeDisplay('00:00.000');
+        setS1Cleared(false);
+        setS2Cleared(false);
+        setS3Cleared(false);
+        setS1Time(null);
+        setS2Time(null);
+        setS3Time(null);
+      }
       setRaceState('STANDBY');
       raceStateRef.current = 'STANDBY';
       resetLapTracking();
-      setS1Cleared(false);
-      setS2Cleared(false);
-      setS3Cleared(false);
-      setS1Time(null);
-      setS2Time(null);
-      setS3Time(null);
       setIsCrashed(false);
       setIsShaking(false);
       setShowCelebration(false);
@@ -385,7 +433,7 @@ export const TrackPage: React.FC = () => {
     resetToGrid('🏁 FULLSCREEN VIEW CHANGED — RACE RESET');
   }, [resetToGrid]);
 
-  const fullscreen = useTrackFullscreen(handleFullscreenBeforeChange);
+  const fullscreen = useTrackFullscreen(fullscreenRef, handleFullscreenBeforeChange);
   fullscreenPendingRef.current = fullscreen.pending;
 
   // Initialize Best Lap from localStorage
@@ -716,6 +764,7 @@ export const TrackPage: React.FC = () => {
               ) {
                 nextCheckpointRef.current = S2_CHECKPOINT.id;
                 checkpointsRef.current.s1 = true;
+                checkpointElapsedRef.current.s1 = elapsed;
                 lastCheckpointTimeRef.current = elapsed;
                 setS1Cleared(true);
                 setS1Time(formatTime(elapsed));
@@ -736,6 +785,7 @@ export const TrackPage: React.FC = () => {
               ) {
                 nextCheckpointRef.current = S3_CHECKPOINT.id;
                 checkpointsRef.current.s2 = true;
+                checkpointElapsedRef.current.s2 = elapsed;
                 lastCheckpointTimeRef.current = elapsed;
                 setS2Cleared(true);
                 setS2Time(formatTime(elapsed));
@@ -756,6 +806,7 @@ export const TrackPage: React.FC = () => {
               ) {
                 nextCheckpointRef.current = 'finish';
                 checkpointsRef.current.s3 = true;
+                checkpointElapsedRef.current.s3 = elapsed;
                 lastCheckpointTimeRef.current = elapsed;
                 setS3Cleared(true);
                 setS3Time(formatTime(elapsed));
@@ -779,41 +830,43 @@ export const TrackPage: React.FC = () => {
 
                 // CLEAN VALID LAP COMPLETED!
                 const lapTimeSec = elapsed / 1000;
+                const completedLapMs = Math.round(lapTimeSec * 1000);
+                const checkpointTimes = { ...checkpointElapsedRef.current };
                 setLastFinishedTime(formatTime(elapsed));
-                setShowCelebration(true);
                 audioRef.current?.playLapComplete();
+
+                const validCheckpoints =
+                  checkpointTimes.s1 !== null &&
+                  checkpointTimes.s2 !== null &&
+                  checkpointTimes.s3 !== null
+                    ? [
+                        Math.round(checkpointTimes.s1),
+                        Math.round(checkpointTimes.s2),
+                        Math.round(checkpointTimes.s3),
+                      ]
+                    : undefined;
+
+                void submitRemoteScore(completedLapMs, validCheckpoints);
 
                 // Check the locally scoped personal best for this mode.
                 const currentBest = bestLapTimeRef.current;
-                if (!currentBest || lapTimeSec < currentBest) {
+                const isPersonalBest = !currentBest || lapTimeSec < currentBest;
+                if (isPersonalBest) {
                   bestLapTimeRef.current = lapTimeSec;
                   setBestLapTime(lapTimeSec);
-                  setIsNewRecord(true);
                   savePersonalBest(
                     getBrowserStorage(),
                     difficultyRef.current,
-                    Math.round(lapTimeSec * 1000),
+                    completedLapMs,
                     currentBest === null ? null : Math.round(currentBest * 1000),
                   );
-                } else {
-                  setIsNewRecord(false);
                 }
 
-                // Reset checkpoints and roll seamlessly into the next lap.
-                checkpointsRef.current = { s1: false, s2: false, s3: false };
-                nextCheckpointRef.current = 's1';
-                setS1Cleared(false);
-                setS2Cleared(false);
-                setS3Cleared(false);
-                setS1Time(null);
-                setS2Time(null);
-                setS3Time(null);
-                lapProgressRef.current -= 1;
-                reverseTravelRef.current = 0;
-                lastCheckpointTimeRef.current = null;
-                lapStartTimeRef.current = now; // Start next lap immediately!
-                currentLapElapsedRef.current = 0;
-                setLapTimeDisplay('00:00.000');
+                // Finish the attempt at the grid. A new lap requires the existing
+                // hover + Space start flow, while the completed-lap result remains visible.
+                resetToGrid(undefined, true);
+                setIsNewRecord(isPersonalBest);
+                setShowCelebration(true);
               }
             }
           }
@@ -876,7 +929,16 @@ export const TrackPage: React.FC = () => {
         activeCar.setForceFreeDrive(false);
       }
     };
-  }, [clearTrackedTimers, disarmStartZone, getStartGridScreenPos, getTrackScreenMatrix, lockCarToGrid, resetLapTracking, resetToGrid]);
+  }, [
+    clearTrackedTimers,
+    disarmStartZone,
+    getStartGridScreenPos,
+    getTrackScreenMatrix,
+    lockCarToGrid,
+    resetLapTracking,
+    resetToGrid,
+    submitRemoteScore,
+  ]);
 
   // Audio mute toggle
   const handleToggleSound = () => {
@@ -891,6 +953,7 @@ export const TrackPage: React.FC = () => {
       <div className="track-bg-glow" aria-hidden="true" />
 
       <div className="track-container">
+        <div ref={fullscreenRef} className="track-race-view" id="trackRaceView">
         {/* Circuit Session Header */}
         <header className="track-header">
           <div className="track-title-group">
@@ -1449,7 +1512,34 @@ export const TrackPage: React.FC = () => {
           </svg>
         </div>
       </>
-    )}
+        )}
+        </div>
+
+        <TrackLeaderboard
+          session={
+            leaderboardSession
+              ? {
+                  displayName: leaderboardIdentity.displayName,
+                  email: leaderboardIdentity.email,
+                }
+              : null
+          }
+          entries={leaderboardEntries}
+          isLoading={isLeaderboardLoading}
+          error={leaderboardError}
+          authError={authError}
+          isAuthLoading={isLeaderboardAuthLoading}
+          remoteSubmissionStatus={remoteSubmissionStatus}
+          remoteSubmissionMessage={remoteSubmissionMessage}
+          difficulty={difficulty}
+          trackName={TRACK.title}
+          isConfigured={isLeaderboardConfigured}
+          configurationMessage="Add the Supabase public project values and deploy the race functions to enable global scores."
+          formatLapTime={(score) => formatTime(score)}
+          onSignIn={signInToLeaderboard}
+          onSignOut={signOutFromLeaderboard}
+          onRefresh={refreshLeaderboard}
+        />
 
         {/* ===================== TRACK SPECS & GUIDELINES ===================== */}
         <section className="track-specs-grid">

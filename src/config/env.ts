@@ -7,6 +7,8 @@ export interface RuntimeEnvSource {
   readonly VITE_API_BASE_URL?: string;
   readonly VITE_API_TIMEOUT_MS?: string;
   readonly VITE_SUPABASE_URL?: string;
+  readonly VITE_SUPABASE_PUBLISHABLE_KEY?: string;
+  /** @deprecated Use VITE_SUPABASE_PUBLISHABLE_KEY instead. */
   readonly VITE_SUPABASE_ANON_KEY?: string;
 }
 
@@ -15,6 +17,9 @@ export interface RuntimeEnv {
   readonly apiBaseUrl: string;
   readonly apiTimeoutMs: number;
   readonly supabaseUrl?: string;
+  /** The effective browser-safe Supabase key, preferring the publishable key. */
+  readonly supabasePublishableKey?: string;
+  /** @deprecated Kept as an alias for existing consumers. */
   readonly supabaseAnonKey?: string;
   readonly supabaseConfigured: boolean;
 }
@@ -97,11 +102,13 @@ export const readRuntimeEnv = (source: RuntimeEnvSource = getViteEnv()): Runtime
   const apiBaseUrl = readApiBaseUrl(source.VITE_API_BASE_URL);
   const apiTimeoutMs = readTimeout(source.VITE_API_TIMEOUT_MS);
   const supabaseUrl = readSupabaseUrl(source.VITE_SUPABASE_URL);
-  const supabaseAnonKey = readOptionalString(source.VITE_SUPABASE_ANON_KEY);
+  const supabasePublishableKey =
+    readOptionalString(source.VITE_SUPABASE_PUBLISHABLE_KEY) ??
+    readOptionalString(source.VITE_SUPABASE_ANON_KEY);
 
-  if ((supabaseUrl && !supabaseAnonKey) || (!supabaseUrl && supabaseAnonKey)) {
+  if ((supabaseUrl && !supabasePublishableKey) || (!supabaseUrl && supabasePublishableKey)) {
     throw new Error(
-      'VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be provided together when configuring Supabase.',
+      'VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY (or legacy VITE_SUPABASE_ANON_KEY) must be provided together when configuring Supabase.',
     );
   }
 
@@ -109,8 +116,9 @@ export const readRuntimeEnv = (source: RuntimeEnvSource = getViteEnv()): Runtime
     apiBaseUrl,
     apiTimeoutMs,
     supabaseUrl,
-    supabaseAnonKey,
-    supabaseConfigured: Boolean(supabaseUrl && supabaseAnonKey),
+    supabasePublishableKey,
+    supabaseAnonKey: supabasePublishableKey,
+    supabaseConfigured: Boolean(supabaseUrl && supabasePublishableKey),
   });
 };
 

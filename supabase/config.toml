@@ -1,0 +1,16 @@
+# Local Supabase project identifier. `supabase link --project-ref` selects the
+# remote development project separately.
+project_id = "sae-website"
+
+# All functions perform their own authorization. This keeps the Edge Function
+# boundary compatible with both legacy JWT keys and current named publishable /
+# secret keys; start-race and submit-score still require a valid user token in
+# the handler, while get-leaderboard is intentionally public.
+[functions.start-race]
+verify_jwt = false
+
+[functions.submit-score]
+verify_jwt = false
+
+[functions.get-leaderboard]
+verify_jwt = false

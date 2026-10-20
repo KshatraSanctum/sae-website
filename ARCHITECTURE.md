@@ -1,8 +1,8 @@
 # Codebase Architecture
 
 This repository is a React/Vite single-page application. The structure is
-intentionally incremental: content and UI can evolve independently, while the
-future leaderboard backend has a typed boundary before a provider is selected.
+intentionally incremental: content and UI can evolve independently, while
+Supabase auth and race Edge Functions stay behind a typed API boundary.
 
 ## Ownership boundaries
 
@@ -19,7 +19,7 @@ src/
 ├── hooks/            Reusable React state/effect logic
 ├── pages/            Route-level composition; avoid putting generic logic here
 ├── services/         I/O boundaries and provider adapters
-│   └── api/          Typed request client and leaderboard service boundary
+│   └── api/          Typed request, auth, and race/leaderboard boundaries
 ├── styles/           Global and feature stylesheets
 ├── utils/            Framework-independent helpers and track utilities
 └── carFollower3D.ts  Imperative Three.js integration (isolated browser boundary)
@@ -46,16 +46,34 @@ src/
 
 `src/services/api/requestClient.ts` provides typed timeout, query, JSON parsing,
 abort, and error handling. `leaderboardService.ts` defines the application
-contract without selecting Supabase or another backend yet. The default service
-is intentionally inert, so the current static site performs no network calls.
+contract for leaderboard reads. `supabaseService.ts` provides the lazy shared
+Supabase browser client and auth adapter: it supports Google OAuth, session
+reads, sign-out, and auth-state subscriptions without constructing a client or
+making a request until a method is explicitly called. `supabaseRaceService.ts`
+uses that same client for the typed `start-race`, `submit-score`, and
+`get-leaderboard` Edge Functions. Both services remain inert when the optional
+Supabase environment variables are absent.
 
-When the leaderboard is introduced:
+The deployable server boundary lives under `supabase/`: the migration owns
+profiles, track rules, race sessions, score submissions, RLS, and the accepted
+leaderboard view; Edge Functions own authenticated session creation, score
+validation, and public leaderboard reads. The current React track page still
+keeps local personal-best storage as a fallback, renders the leaderboard below
+the race arena, and starts/submits a remote session only when a signed-in user
+has configured the Supabase service.
 
-1. Add the provider adapter under `src/services/api`.
-2. Keep authentication and score validation inside the provider/server boundary.
-3. Inject the adapter into page or feature hooks rather than importing a
+When extending the race UI:
+
+1. Keep authentication and score validation inside the provider/server boundary.
+2. Inject the adapter into page or feature hooks rather than importing a
    provider SDK throughout the UI.
-4. Keep local personal-best behavior as the offline fallback.
+3. Keep local personal-best behavior as the offline fallback.
+
+`VITE_SUPABASE_PUBLISHABLE_KEY` is the preferred browser-public key. The
+runtime parser also accepts `VITE_SUPABASE_ANON_KEY` as a legacy alias and keeps
+the existing `supabaseAnonKey` runtime property for current consumers. A URL
+and public key must be supplied together; missing configuration is reported
+when a Supabase service method is called.
 
 ## State management
 

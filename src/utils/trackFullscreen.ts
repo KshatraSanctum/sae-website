@@ -8,6 +8,7 @@ export interface TrackFullscreenState {
 }
 
 export interface TrackFullscreenControllerOptions {
+  target?: Element | null;
   onStateChange: (state: TrackFullscreenState) => void;
   onBeforeChange: () => void;
 }
@@ -59,6 +60,7 @@ export function createTrackFullscreenController(
 ): TrackFullscreenController {
   const doc = getDocument();
   const root = doc?.documentElement ?? null;
+  const target = options.target ?? root;
   const win = getWindow(doc);
 
   let state = initialState();
@@ -177,7 +179,7 @@ export function createTrackFullscreenController(
   };
 
   const nativeEntrySupported = (): boolean => {
-    if (!doc || !root || typeof root.requestFullscreen !== 'function') return false;
+    if (!doc || !target || typeof target.requestFullscreen !== 'function') return false;
     return doc.fullscreenEnabled !== false;
   };
 
@@ -231,7 +233,7 @@ export function createTrackFullscreenController(
 
     // A host may reject the promise after it has already left fullscreen. The
     // actual element is authoritative, so do not report a stale failure.
-    if (getFullscreenElement() !== root) {
+    if (getFullscreenElement() !== target) {
       leaveActiveState();
       return;
     }
@@ -258,7 +260,7 @@ export function createTrackFullscreenController(
       // established by some other owner while this request was pending.
       if (
         failureMessage === null &&
-        getFullscreenElement() === root &&
+        getFullscreenElement() === target &&
         doc?.exitFullscreen &&
         !destroyedExitRequested
       ) {
@@ -275,7 +277,7 @@ export function createTrackFullscreenController(
     if (nativeEntryAttempt !== attempt) return;
     nativeEntryAttempt = null;
 
-    if (failureMessage === null && getFullscreenElement() === root) {
+    if (failureMessage === null && getFullscreenElement() === target) {
       enterNative();
       return;
     }
@@ -284,7 +286,7 @@ export function createTrackFullscreenController(
   };
 
   const requestNativeEntry = async (): Promise<void> => {
-    if (!root || !doc) {
+    if (!target || !doc) {
       enterExpanded(NATIVE_UNSUPPORTED_MESSAGE);
       return;
     }
@@ -299,7 +301,7 @@ export function createTrackFullscreenController(
 
     let requestResult: Promise<void> | undefined;
     try {
-      requestResult = root.requestFullscreen();
+      requestResult = target.requestFullscreen();
     } catch {
       settleNativeEntry(attempt, NATIVE_REQUEST_FAILED_MESSAGE);
       return completion;
@@ -318,7 +320,7 @@ export function createTrackFullscreenController(
     if (destroyed) return;
 
     const actualFullscreenElement = getFullscreenElement();
-    if (!nativeOwned || actualFullscreenElement !== root) {
+    if (!nativeOwned || actualFullscreenElement !== target) {
       finishNativeExit();
       return;
     }
@@ -350,7 +352,7 @@ export function createTrackFullscreenController(
     void Promise.resolve(exitResult).then(
       () => {
         if (nativeExitAttempt !== attempt || destroyed) return;
-        if (getFullscreenElement() !== root) {
+        if (getFullscreenElement() !== target) {
           finishNativeExit();
         } else {
           failNativeExit(attempt);
@@ -386,8 +388,8 @@ export function createTrackFullscreenController(
       return;
     }
 
-    // Never take ownership of an existing fullscreen session, including one
-    // on documentElement that was started by another feature or controller.
+    // Never take ownership of an existing fullscreen session that was started
+    // by another feature or controller.
     if (actualFullscreenElement !== null) {
       enterExpanded(
         'Browser fullscreen is already in use; using the expanded browser view. Browser chrome may remain visible.',
@@ -403,11 +405,11 @@ export function createTrackFullscreenController(
 
     const actualFullscreenElement = getFullscreenElement();
     if (nativeEntryAttempt !== null) {
-      if (actualFullscreenElement === root) enterNative();
+      if (actualFullscreenElement === target) enterNative();
       return;
     }
 
-    if (state.mode === 'native' && nativeOwned && actualFullscreenElement !== root) {
+    if (state.mode === 'native' && nativeOwned && actualFullscreenElement !== target) {
       if (!expectedNativeExit) notifyBeforeChange();
       if (!destroyed) finishNativeExit();
     }
@@ -433,7 +435,7 @@ export function createTrackFullscreenController(
       doc.removeEventListener('keydown', handleKeyDown);
     }
 
-    const shouldExitOwnedNative = nativeOwned && getFullscreenElement() === root;
+    const shouldExitOwnedNative = nativeOwned && getFullscreenElement() === target;
     if (shouldExitOwnedNative && typeof doc?.exitFullscreen === 'function') {
       destroyedExitRequested = true;
       try {

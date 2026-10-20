@@ -13,6 +13,7 @@ Official web platform of the **SAE India Collegiate Society, BIT Sindri** — fo
 
 - **Interactive 3D Elements & Follower** — Interactive car cursor and custom canvas physics powered by Three.js.
 - **Race Track Challenge (`/track`)** — Autódromo Interlagos-inspired circuit simulation with synthesized Web Audio engine sound, fullscreen mode, and local personal best records.
+- **Global Race Leaderboard (`/track`)** — Optional Google-authenticated submissions with server-validated race sessions and accepted lap rankings below the circuit.
 - **Competitions & Achievements (`/competitions`)** — Complete timeline of milestones across BAJA SAE, SUPRA SAE, Effi-Cycle, Quad Torc, and UAV challenges.
 - **Team Directory (`/team`)** — Dynamic member directory with randomized display for latest batches and executive hierarchy.
 - **Events & Workshops (`/events`)** — CAD workshops, manufacturing masterclasses, and automotive seminars.
@@ -54,10 +55,24 @@ npm run dev
 
 ### Optional Environment Configuration
 
-The current static site runs without environment variables. For future API or
-Supabase integrations, copy `.env.example` to `.env` and fill only the public
-`VITE_` values required by the local environment. Never commit `.env` files or
-service-role keys.
+The current site still runs without environment variables. To enable the lazy
+Supabase browser services locally, copy `.env.example` to `.env` and fill only
+the public project URL and publishable key:
+
+```bash
+cp .env.example .env
+```
+
+```env
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=<public-publishable-key>
+```
+
+`VITE_SUPABASE_ANON_KEY` is still accepted as a legacy alias when the
+publishable key is not present. The services do not create a client or make a
+request until an auth or race method is called. Never commit `.env` files or
+put service-role keys in `VITE_` variables; Vite exposes those variables to the
+browser.
 
 ### Production Build
 
@@ -91,13 +106,14 @@ sae-website/
 │   ├── data/               # Domain-grouped editorial content and types
 │   ├── hooks/              # Reusable React state/effect logic
 │   ├── pages/              # Primary route pages (Home, Track, Team, etc.)
-│   ├── services/api/       # Typed API client and future leaderboard boundary
+│   ├── services/api/       # Typed API client, auth, and race service boundary
 │   ├── styles/             # Modular CSS stylesheets
 │   ├── utils/              # Framework-independent helpers and track utilities
 │   ├── carFollower3D.ts    # Isolated Three.js 3D follower integration
 │   ├── App.tsx             # Root router and route composition
 │   └── main.tsx            # Application entry point and error boundary
-├── vercel.json             # SPA rewrite configuration
+├── supabase/                # Database migration and Edge Functions
+├── vercel.json              # SPA rewrite configuration
 └── vite.config.ts          # Vite build config
 ```
 

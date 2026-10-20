@@ -138,6 +138,7 @@ export class CarFollower3D {
   private animFrameId: number | null = null;
   private lastFrameTime: number | null = null;
   private crashFlashTimeout: ReturnType<typeof window.setTimeout> | null = null;
+  private canvasHostObserver: MutationObserver | null = null;
 
   constructor() {
     this.init();
@@ -156,6 +157,15 @@ export class CarFollower3D {
     this.canvas.style.opacity = '1';
     this.canvas.style.transition = 'opacity 300ms ease';
     document.body.appendChild(this.canvas);
+    this.syncCanvasHost();
+    document.addEventListener('fullscreenchange', this.syncCanvasHost);
+    this.canvasHostObserver = new MutationObserver(() => this.syncCanvasHost());
+    this.canvasHostObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-track-fullscreen'],
+      childList: true,
+      subtree: true,
+    });
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -264,6 +274,21 @@ export class CarFollower3D {
     this.lastFrameTime = null;
     this.animFrameId = requestAnimationFrame(this.tick);
   }
+
+  /** Keep the WebGL canvas inside the fullscreen target when the race view owns the viewport. */
+  private syncCanvasHost = (): void => {
+    if (!this.canvas || !document.body) return;
+
+    const expandedTarget =
+      document.documentElement.getAttribute('data-track-fullscreen') === 'true'
+        ? document.querySelector('.track-race-view')
+        : null;
+    const target = document.fullscreenElement ?? expandedTarget ?? document.body;
+
+    if (this.canvas.parentElement !== target) {
+      target.appendChild(this.canvas);
+    }
+  };
 
   // ===================== 3D CAR MODEL CONSTRUCTION =====================
 
@@ -1646,6 +1671,9 @@ export class CarFollower3D {
     window.removeEventListener('resize', this.onWindowResize);
     window.removeEventListener('scroll', this.onScroll);
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    document.removeEventListener('fullscreenchange', this.syncCanvasHost);
+    this.canvasHostObserver?.disconnect();
+    this.canvasHostObserver = null;
     if (activeCarFollower === this) {
       activeCarFollower = null;
     }
