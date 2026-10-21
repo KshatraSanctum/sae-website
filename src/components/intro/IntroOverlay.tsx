@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react';
-import { initIntro } from '../../intro';
+import React, { useEffect, useState } from 'react';
+import { initIntro, shouldShowIntro } from '../../intro';
 
 export const IntroOverlay: React.FC = () => {
-  const isNoIntro = typeof window !== 'undefined' && window.location.search.includes('no_intro');
+  const [visible, setVisible] = useState(() => shouldShowIntro());
 
   useEffect(() => {
-    if (!isNoIntro) {
+    if (visible) {
       try {
         initIntro();
       } catch (error) {
         // The intro is decorative; a failed animation must not block the site.
         console.error('Unable to initialize the intro animation.', error);
+        setVisible(false);
       }
     }
-  }, [isNoIntro]);
+  }, [visible]);
 
-  if (isNoIntro) return null;
+  if (!visible) return null;
 
   return (
     <div id="introOverlay">

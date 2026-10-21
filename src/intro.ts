@@ -1,6 +1,36 @@
 import { ASCII_LOGO, ASCII_COLORS, LOGO_COLS, LOGO_ROWS } from './asciiLogoData';
+import { STORAGE_KEYS } from './config/storageKeys';
 
 // ===================== ASCII INTRO ANIMATION =====================
+
+export function shouldShowIntro(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const search = window.location.search;
+  if (search.includes('no_intro')) return false;
+  if (search.includes('intro') || search.includes('replay_intro')) return true;
+
+  try {
+    const local = window.localStorage.getItem(STORAGE_KEYS.introSeen);
+    const session = window.sessionStorage.getItem(STORAGE_KEYS.introSeen);
+    if (local === 'true' || session === 'true') {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+
+  return true;
+}
+
+export function markIntroSeen(): void {
+  try {
+    window.localStorage.setItem(STORAGE_KEYS.introSeen, 'true');
+    window.sessionStorage.setItem(STORAGE_KEYS.introSeen, 'true');
+  } catch {
+    // Storage access may be denied in certain private browsing configurations
+  }
+}
 
 interface AsciiParticle {
   char: string;
@@ -35,6 +65,9 @@ function runIntro(): void {
 
   if (!overlay || !canvas) return;
 
+  // Mark intro as seen immediately upon launch so quick refreshes don't re-trigger it
+  markIntroSeen();
+
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
@@ -60,6 +93,7 @@ function runIntro(): void {
   function endIntro(immediate = false): void {
     if (done) return;
     done = true;
+    markIntroSeen();
     cancelAnimationFrame(animId);
     revealNavLogo();
     if (immediate) {
@@ -72,8 +106,17 @@ function runIntro(): void {
     }
   }
 
-  // Expose global skip function
+  // Expose global skip and replay functions
   (window as any).skipIntro = () => endIntro(true);
+  (window as any).replayIntro = () => {
+    try {
+      window.localStorage.removeItem(STORAGE_KEYS.introSeen);
+      window.sessionStorage.removeItem(STORAGE_KEYS.introSeen);
+    } catch {
+      // Ignore
+    }
+    window.location.reload();
+  };
 
   if (skipBtn) {
     skipBtn.addEventListener('click', (e) => {

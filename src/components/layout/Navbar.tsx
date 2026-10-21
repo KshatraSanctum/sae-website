@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useMobileNavigation } from '../../hooks/useMobileNavigation';
+import { shouldShowIntro } from '../../intro';
 
 interface NavItem {
   path: string;
@@ -20,6 +21,7 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const { isOpen: mobileOpen, toggle: toggleMobileMenu, close: closeMobileMenu } = useMobileNavigation(location.pathname);
   const [scrolled, setScrolled] = useState(false);
+  const [isIntroRunning] = useState(() => shouldShowIntro());
 
   const isHome = location.pathname === '/';
 
@@ -49,7 +51,7 @@ export const Navbar: React.FC = () => {
           to="/"
           aria-label="SAE BIT Sindri home"
         >
-          <span className="ref-brand-logo-ring nav-logo-hidden" id="navBrandLogoRing">
+          <span className={`ref-brand-logo-ring ${isIntroRunning ? 'nav-logo-hidden' : ''}`} id="navBrandLogoRing">
             <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Society Logo" />
           </span>
           <span className="ref-brand-text">
