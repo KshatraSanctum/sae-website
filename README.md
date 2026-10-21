@@ -12,7 +12,7 @@ Official web platform of the **SAE India Collegiate Society, BIT Sindri** — fo
 ## 🏎️ Features & Pages
 
 - **Interactive 3D Elements & Follower** — Interactive car cursor and custom canvas physics powered by Three.js.
-- **Race Track Challenge (`/track`)** — Autódromo Interlagos-inspired circuit simulation with synthesized Web Audio engine sound, fullscreen mode, and local personal best records.
+- **Race Track Challenge (`/track`)** — Autódromo Interlagos-inspired circuit simulation with synthesized Web Audio engine sound, keyboard-accessible fullscreen mode, crash recovery, and local personal best records.
 - **Global Race Leaderboard (`/track`)** — Optional Google-authenticated submissions with server-validated race sessions and accepted lap rankings below the circuit.
 - **Competitions & Achievements (`/competitions`)** — Complete timeline of milestones across BAJA SAE, SUPRA SAE, Effi-Cycle, Quad Torc, and UAV challenges.
 - **Team Directory (`/team`)** — Dynamic member directory with randomized display for latest batches and executive hierarchy.
@@ -84,6 +84,18 @@ npm run build
 npm run preview
 ```
 
+### Race Track Usage
+
+The desktop race view requires a mouse or trackpad and a keyboard. Hover over the
+highlighted **START ZONE**, keep the **pointer** there, and press **Space** to
+start. Press **F** to expand or collapse the race view, **R** to reset the car
+to the grid, and **Escape** to leave expanded/native fullscreen mode. If the car
+crashes, use the **Try Again** button in the crash alert before starting the next
+attempt.
+
+The complete control reference and manual verification checklist are in the
+[Track Race Guide](./docs/track-guide.md).
+
 ---
 
 ## 📁 Project Structure
@@ -130,8 +142,11 @@ Automated browser visual tests are not configured. Run `npm run build` to verify
 2. **Hover Invariance:** Leaving the zone before pressing Space must keep the race on standby. After Reset, scrolling, resizing, or switching tabs, move onto the zone again to establish a fresh hover.
 3. **Control Isolation:** Focusing a toolbar button and pressing Space must activate only that control. Moving back onto the start zone restores normal hover-and-Space flow.
 4. **Responsive Layouts:** Verify narrow screens — guidance cards must clear the car/start zone, and the instruction strip must stay above the arena without shifting the circuit.
-5. **Fullscreen Mode:** Expand and collapse the race view (including exiting with `Escape`). Controls and car must remain visible, and changing view mode should safely reset the current attempt.
-6. **Local Persistence:** Complete a lap and refresh: personal best records must persist locally in `localStorage`, slower laps must not overwrite it, and Standard/Pro records must remain separated.
+5. **Fullscreen Mode:** Click **Expand (F)** or press **F**, then collapse the view (including exiting with `Escape`). The top start-help strip should not appear while expanded; controls and car must remain visible, and changing view mode should safely reset the current attempt.
+6. **Crash Recovery:** Drive off track or violate the lap route. The crash alert should remain readable, provide a **Try Again** button, and return the car to the start grid when selected.
+7. **Local Persistence:** Complete a lap and refresh: personal best records must persist locally in `localStorage`, slower laps must not overwrite it, and Standard/Pro records must remain separated.
+
+See [`docs/track-guide.md`](./docs/track-guide.md) for the full keyboard map, expected behavior, and troubleshooting notes.
 
 ---
 

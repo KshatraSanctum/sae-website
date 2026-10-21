@@ -120,7 +120,6 @@ export const TrackPage: React.FC = () => {
   const startTimeoutRef = useRef<TrackTimeout | null>(null);
   const initTimerRef = useRef<TrackTimeout | null>(null);
   const shakeTimeoutRef = useRef<TrackTimeout | null>(null);
-  const crashRecoveryTimeoutRef = useRef<TrackTimeout | null>(null);
   const lifecycleTokenRef = useRef(0);
   const isMountedRef = useRef(true);
   const lastHudUpdateRef = useRef(0);
@@ -168,7 +167,6 @@ export const TrackPage: React.FC = () => {
       (event.pointerType === 'pen' && (event.buttons !== 0 || event.pressure > 0)) ||
       raceStateRef.current !== 'STANDBY' ||
       fullscreenPendingRef.current ||
-      crashRecoveryTimeoutRef.current !== null ||
       document.hidden ||
       !document.hasFocus() ||
       !event.currentTarget.matches(':hover')
@@ -201,10 +199,6 @@ export const TrackPage: React.FC = () => {
     if (shakeTimeoutRef.current !== null) {
       window.clearTimeout(shakeTimeoutRef.current);
       shakeTimeoutRef.current = null;
-    }
-    if (crashRecoveryTimeoutRef.current !== null) {
-      window.clearTimeout(crashRecoveryTimeoutRef.current);
-      crashRecoveryTimeoutRef.current = null;
     }
   }, []);
 
@@ -304,7 +298,6 @@ export const TrackPage: React.FC = () => {
       raceStateRef.current !== 'STANDBY' ||
       startTimeoutRef.current !== null ||
       fullscreenPendingRef.current ||
-      crashRecoveryTimeoutRef.current !== null ||
       isCrashedCooldownRef.current ||
       document.hidden ||
       !document.hasFocus()
@@ -466,7 +459,7 @@ export const TrackPage: React.FC = () => {
     audioRef.current = audio;
     setIsMuted(audio.isAudioMuted);
 
-    // Keyboard shortcuts: a fresh Space press while hovering starts; R resets.
+    // Keyboard shortcuts: F toggles the race view, Space starts, and R resets.
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.defaultPrevented || e.isComposing) return;
       const target = e.target instanceof Element ? e.target : null;
@@ -477,17 +470,29 @@ export const TrackPage: React.FC = () => {
 
       if (isTextEntry) return;
 
-      if (e.key === 'r' || e.key === 'R') {
+      const nativeControlSelector =
+        'button, a[href], input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"]';
+      const isNativeControlFocused = Boolean(
+        target?.closest(nativeControlSelector) || document.activeElement?.closest(nativeControlSelector),
+      );
+
+      if (
+        (e.key === 'f' || e.key === 'F') &&
+        !e.repeat &&
+        !e.altKey &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.shiftKey &&
+        !isMobileOrTablet &&
+        !isNativeControlFocused
+      ) {
+        void fullscreen.toggle();
+        e.preventDefault();
+      } else if (e.key === 'r' || e.key === 'R') {
         resetToGrid('GRID RESET TRIGGERED');
       } else if (e.key === ' ') {
         if (e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-        const nativeControlSelector = 'button, a[href], input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"]';
-        if (
-          target?.closest(nativeControlSelector) ||
-          document.activeElement?.closest(nativeControlSelector)
-        ) {
-          return;
-        }
+        if (isNativeControlFocused) return;
 
         if (startRace()) e.preventDefault();
       }
@@ -498,7 +503,7 @@ export const TrackPage: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
       audio.destroy();
     };
-  }, [resetToGrid, startRace]);
+  }, [fullscreen.toggle, isMobileOrTablet, resetToGrid, startRace]);
 
   // Main Track Physics & Game Loop
   useEffect(() => {
@@ -524,14 +529,6 @@ export const TrackPage: React.FC = () => {
           setIsShaking(false);
         }
       }, 450);
-
-      crashRecoveryTimeoutRef.current = window.setTimeout(() => {
-        crashRecoveryTimeoutRef.current = null;
-        if (isMountedRef.current) {
-          setIsCrashed(false);
-          isCrashedCooldownRef.current = false;
-        }
-      }, 850);
     };
 
     const invalidateLap = (reason: string) => {
@@ -1076,7 +1073,7 @@ export const TrackPage: React.FC = () => {
                   disabled={fullscreen.pending}
                   aria-pressed={fullscreen.active}
                   aria-label={fullscreen.active ? 'Exit fullscreen race view' : 'Enter fullscreen race view'}
-                  title="Changing fullscreen view resets the current race attempt"
+                  title="Changing fullscreen view resets the current race attempt (Hotkey: F)"
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     {fullscreen.active ? (
@@ -1095,7 +1092,7 @@ export const TrackPage: React.FC = () => {
                       </>
                     )}
                   </svg>
-                  <span>{fullscreen.active ? 'Collapse' : 'Expand'}</span>
+                  <span>{fullscreen.active ? 'Collapse (F)' : 'Expand (F)'}</span>
                 </button>
 
                 {/* Restart Button */}
@@ -1148,7 +1145,7 @@ export const TrackPage: React.FC = () => {
               <TrackMobileCircuitBar onBackToDetails={() => setShowMobileCircuitMap(false)} />
             )}
 
-            {!isMobileOrTablet && (
+            {!isMobileOrTablet && !fullscreen.active && (
               <div
                 id="trackStartHelp"
                 className={`track-start-help ${isStartHovered ? 'is-armed' : ''} ${raceState !== 'STANDBY' || isCrashed ? 'is-hidden' : ''}`}
@@ -1158,7 +1155,7 @@ export const TrackPage: React.FC = () => {
               >
                 <span className="track-start-help-icon" aria-hidden="true">💡</span>
                 <span>
-                  Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
+                  Hover over the highlighted <strong>START ZONE</strong> and keep your <strong>pointer</strong> there. Press <kbd>Space</kbd> to start. Mouse/trackpad and keyboard required.
                 </span>
               </div>
             )}
@@ -1171,7 +1168,7 @@ export const TrackPage: React.FC = () => {
               tabIndex={-1}
               role="region"
               aria-label="Race circuit"
-              aria-describedby={!isMobileOrTablet ? 'trackStartHelp' : undefined}
+              aria-describedby={!isMobileOrTablet && !fullscreen.active ? 'trackStartHelp' : undefined}
             >
               {!isMobileOrTablet && (
                 <>
@@ -1229,8 +1226,15 @@ export const TrackPage: React.FC = () => {
               <div className="track-crash-title">{crashMessage}</div>
               <p className="track-crash-sub">Track boundary or lap route violation detected. The car is back on the grid.</p>
               <p className="track-crash-instructions">
-                Hover over the highlighted <strong>START ZONE</strong> and keep your pointer there. Press <kbd>Space</kbd> to try again after recovery.
+                After retrying, hover over the highlighted <strong>START ZONE</strong> and keep your <strong>pointer</strong> there. Press <kbd>Space</kbd> to start again.
               </p>
+              <button
+                type="button"
+                className="track-crash-retry"
+                onClick={() => resetToGrid()}
+              >
+                Try Again ↻
+              </button>
             </div>
           )}
 
@@ -1427,7 +1431,7 @@ export const TrackPage: React.FC = () => {
               onPointerDown={handleStartZoneContact}
               role="group"
               aria-label="START ZONE: keep hovering here and press Space to start"
-              aria-describedby="trackStartHelp"
+              aria-describedby={!fullscreen.active ? 'trackStartHelp' : undefined}
             >
               <rect className="track-start-arm-zone-hit" x="46" y="-42" width="112" height="84" rx="12" />
               <rect className="track-start-arm-zone-outline" x="52" y="-34" width="86" height="68" rx="10" />

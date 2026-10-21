@@ -40,7 +40,7 @@ export const TrackGridLaunchCard: FC<TrackGridLaunchCardProps> = ({
             ? 'Get ready to follow the track with your pointer.'
             : isStartHovered
               ? <>START ZONE ACTIVE — keep hovering and press <kbd>Space</kbd>.</>
-              : <>Hover over the highlighted START ZONE and keep your pointer there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
+              : <>Hover over the highlighted START ZONE and keep your <strong>pointer</strong> there. Press <kbd>Space</kbd> to start{isCarParked ? ' from the pit bay' : ''}.</>}
       </p>
     </div>
   </div>
