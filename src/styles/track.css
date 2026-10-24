@@ -444,11 +444,11 @@ body:has(.track-page) #cursorCarCanvas {
   margin-left: 6px;
 }
 
-/* ===================== TELEMETRY HUD OVERLAYS ===================== */
+/* ===================== TELEMETRY HUD OVERLAYS (Apple Design: Translucent Materials) ===================== */
 .track-hud-top-left {
   position: absolute;
-  top: 16px;
-  left: 18px;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  left: max(18px, env(safe-area-inset-left, 0px));
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -457,13 +457,14 @@ body:has(.track-page) #cursorCarCanvas {
 }
 
 .hud-timer-card {
-  background: rgba(15, 23, 42, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 14, 22, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-left: 4px solid #f6b719;
   border-radius: 10px;
   padding: 10px 16px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 .hud-timer-label {
@@ -519,14 +520,16 @@ body:has(.track-page) #cursorCarCanvas {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: rgba(15, 23, 42, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 14, 22, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.72rem;
   font-weight: 700;
   color: #94a3b8;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .hud-sector-pill.is-cleared {
@@ -545,8 +548,8 @@ body:has(.track-page) #cursorCarCanvas {
 /* Speedometer & Tachometer HUD (Bottom Right) */
 .track-hud-bottom-right {
   position: absolute;
-  bottom: 18px;
-  right: 18px;
+  bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  right: max(18px, env(safe-area-inset-right, 0px));
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -556,14 +559,15 @@ body:has(.track-page) #cursorCarCanvas {
 }
 
 .hud-speed-gauge {
-  background: rgba(15, 23, 42, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 14, 22, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 12px;
   padding: 12px 18px;
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   text-align: right;
   min-width: 160px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 .hud-speed-value {
@@ -1600,7 +1604,18 @@ html[data-track-fullscreen='true'] .track-celebration-banner {
   font-size: 0.78rem;
   font-weight: 750;
   cursor: pointer;
-  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease, opacity 180ms ease;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.track-leaderboard-google-button:active,
+.track-leaderboard-signout:active,
+.track-leaderboard-refresh:active,
+.track-leaderboard-state-action:active {
+  transform: scale(0.96);
+  transition: transform 70ms ease-out;
 }
 
 .track-leaderboard-google-button {
@@ -1612,10 +1627,12 @@ html[data-track-fullscreen='true'] .track-celebration-banner {
   box-shadow: 0 7px 18px rgba(0, 0, 0, 0.25);
 }
 
-.track-leaderboard-google-button:hover {
-  background: #ffffff;
-  border-color: #ffffff;
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .track-leaderboard-google-button:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    transform: translateY(-1px);
+  }
 }
 
 .track-leaderboard-google-icon {
