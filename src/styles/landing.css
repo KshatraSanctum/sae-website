@@ -978,7 +978,7 @@
   margin: 0;
 }
 
-/* Interactive slogan words */
+/* Interactive slogan words (Apple Design: Optical Sizing & Fluid Springs) */
 .slogan {
   display: flex;
   flex-direction: column;
@@ -987,8 +987,9 @@
   font-size: clamp(3rem, 11.5vw, 4.25rem);
   font-weight: 700;
   text-transform: none;
-  line-height: 0.92;
-  letter-spacing: -0.04em;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  font-optical-sizing: auto;
   margin: 0;
   gap: 0.08em;
   width: 100%;
@@ -998,6 +999,7 @@
   .slogan {
     font-size: clamp(5.5rem, 8.5vw, 7.75rem);
     line-height: 0.92;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -1014,9 +1016,20 @@
   letter-spacing: inherit;
   text-transform: none;
   cursor: pointer;
-  transition: all 500ms ease;
+  transition: color 220ms ease,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 240ms ease;
   text-align: left;
   display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+/* Apple Design: Direct manipulation & tactile compression */
+.slogan-word:active {
+  transform: scale(0.96);
+  transition: transform 70ms ease-out;
 }
 
 .slogan-word::after {
@@ -1028,7 +1041,9 @@
   height: 3px;
   content: "";
   background: var(--color-signal);
-  transition: width 400ms ease, opacity 400ms ease;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(246, 183, 25, 0.6);
+  transition: width 280ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease;
   opacity: 0;
   pointer-events: none;
 }
@@ -1036,7 +1051,7 @@
 .slogan-word.is-active {
   transform: translateX(0.08em);
   color: var(--color-signal);
-  text-shadow: 0 0 40px rgba(246, 183, 25, 0.25);
+  text-shadow: 0 0 36px rgba(246, 183, 25, 0.32);
 }
 
 .slogan-word.is-active::after {
@@ -1485,6 +1500,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+/* Event Item (Apple Design: Depth & Tactile Compression) */
 .ref-event-item {
   position: relative;
   overflow: hidden;
@@ -1493,7 +1509,12 @@
   gap: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   padding: 1.75rem 1rem;
-  transition: all 400ms ease;
+  transition: background-color 220ms ease,
+    border-color 220ms ease,
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 @media (min-width: 640px) {
@@ -1511,8 +1532,13 @@
 }
 
 .ref-event-item:hover {
-  border-bottom-color: var(--color-signal);
-  background-color: rgba(255, 255, 255, 0.02);
+  border-bottom-color: rgba(246, 183, 25, 0.65);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.ref-event-item:active {
+  transform: scale(0.995);
+  transition: transform 70ms ease-out;
 }
 
 /* Event Image Half-Division Faded Backdrop (Right 50%) */
@@ -1621,15 +1647,23 @@
   width: 3rem;
   height: 3rem;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background-color: rgba(7, 10, 16, 0.7);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-radius: 2px;
-  transition: all 220ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(14, 18, 26, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
   color: #ffffff;
   text-decoration: none;
   justify-self: end;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .ref-event-item:hover .ref-event-arrow-btn,
@@ -1638,6 +1672,13 @@
   background-color: var(--color-signal);
   color: var(--color-ink);
   transform: translateX(4px);
+  box-shadow: 0 6px 18px rgba(246, 183, 25, 0.35);
+}
+
+.ref-event-arrow-btn:active,
+.ref-event-action-btn:active {
+  transform: scale(0.92) translateX(2px);
+  transition: transform 70ms ease-out;
 }
 
 /* ===================== SPONSORS TEASER SHOWCASE ===================== */
@@ -2015,7 +2056,7 @@
   }
 }
 
-/* Glimpse Card */
+/* Glimpse Card (Apple Design: Depth & Micro-Elevation) */
 .glimpse-card {
   position: relative;
   width: 340px;
@@ -2030,9 +2071,12 @@
   contain: paint;
   transform: translateZ(0);
   backface-visibility: hidden;
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.25s ease,
     box-shadow 0.28s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .glimpse-card:hover {
@@ -2042,6 +2086,12 @@
   z-index: 3;
 }
 
+/* Apple Design: Direct manipulation & tactile compression */
+.glimpse-card:active {
+  transform: scale(0.97) translateY(0);
+  transition: transform 70ms ease-out;
+}
+
 .glimpse-img {
   width: 100%;
   height: 100%;
@@ -2049,7 +2099,7 @@
   display: block;
   transform: translateZ(0);
   backface-visibility: hidden;
-  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glimpse-card:hover .glimpse-img {
@@ -2080,6 +2130,7 @@
   pointer-events: none;
 }
 
+/* Apple Design: Vibrant Translucent Glass Chip */
 .glimpse-badge {
   display: inline-block;
   align-self: flex-start;
@@ -2087,10 +2138,13 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--color-signal);
-  background: rgba(246, 183, 25, 0.12);
-  border: 1px solid rgba(246, 183, 25, 0.3);
-  padding: 0.2rem 0.5rem;
+  background: rgba(246, 183, 25, 0.15);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(246, 183, 25, 0.35);
+  padding: 0.22rem 0.55rem;
   border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .glimpse-title {

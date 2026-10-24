@@ -257,12 +257,24 @@
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .featured-event-card:hover {
+  transform: translateY(-2px);
   border-color: var(--ev-line-gold);
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 24px var(--ev-gold-glow);
+}
+
+/* Apple Design: Tactile response on press */
+.featured-event-card:active {
+  transform: scale(0.995) translateY(0);
+  transition: transform 70ms ease-out;
 }
 
 .featured-card-visual {
@@ -646,13 +658,24 @@
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .event-roster-card:hover {
   transform: translateY(-4px);
   border-color: var(--ev-line-gold);
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(246, 183, 25, 0.12);
+}
+
+/* Apple Design: Tactile response on press */
+.event-roster-card:active {
+  transform: scale(0.985) translateY(0);
+  transition: transform 70ms ease-out;
 }
 
 /* Visual Photo Header on Event Cards */
@@ -687,6 +710,7 @@
   z-index: 2;
 }
 
+/* Apple Design: Translucent Glass Chips with Specular Rim */
 .roster-category-chip {
   font-family: var(--ev-mono);
   font-size: 0.64rem;
@@ -694,10 +718,13 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ev-gold);
-  background: rgba(7, 10, 17, 0.85);
-  padding: 3px 8px;
-  border: 1px solid var(--ev-line);
-  border-radius: 2px;
+  background: rgba(14, 20, 34, 0.75);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .roster-status-chip {
@@ -706,8 +733,11 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 2px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .status-open,
@@ -1260,3 +1290,26 @@
 .events-hub-page .event-roster-card.reveal-up.is-visible:hover {
   transform: translateY(-4px);
 }
+
+/* ===================== APPLE DESIGN: ACCESSIBILITY & ENVIRONMENTAL ADAPTATIONS ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .featured-event-card,
+  .event-roster-card,
+  .roster-card-image,
+  .roster-card-overlay,
+  .events-hub-page .reveal-up {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .roster-category-chip,
+  .roster-status-chip {
+    background: #070a11 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
