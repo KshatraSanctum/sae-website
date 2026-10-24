@@ -20,6 +20,12 @@ export type SupabaseOAuthResponse = Awaited<
 export type SupabaseSessionResponse = Awaited<
   ReturnType<SupabaseClient['auth']['getSession']>
 >;
+export type SupabaseExchangeCodeResponse = Awaited<
+  ReturnType<SupabaseClient['auth']['exchangeCodeForSession']>
+>;
+export type SupabaseSetSessionResponse = Awaited<
+  ReturnType<SupabaseClient['auth']['setSession']>
+>;
 export type SupabaseSignOutOptions = Parameters<SupabaseClient['auth']['signOut']>[0];
 export type SupabaseSignOutResponse = Awaited<
   ReturnType<SupabaseClient['auth']['signOut']>
@@ -38,6 +44,11 @@ export interface SupabaseBrowserClientProvider {
 
 export interface SupabaseAuthService {
   signInWithGoogle(options?: GoogleOAuthOptions): Promise<SupabaseOAuthResponse>;
+  exchangeCodeForSession(code: string): Promise<SupabaseExchangeCodeResponse>;
+  setSession(session: {
+    access_token: string;
+    refresh_token: string;
+  }): Promise<SupabaseSetSessionResponse>;
   getSession(): Promise<SupabaseSessionResponse>;
   signOut(options?: SupabaseSignOutOptions): Promise<SupabaseSignOutResponse>;
   onAuthStateChange(callback: SupabaseAuthStateChangeCallback): SupabaseAuthStateSubscription;
@@ -75,7 +86,14 @@ export const createSupabaseBrowserClientProvider = (
         throw new SupabaseConfigurationError();
       }
 
-      client = createClient(runtimeEnv.supabaseUrl, publicKey);
+      client = createClient(runtimeEnv.supabaseUrl, publicKey, {
+        auth: {
+          autoRefreshToken: true,
+          detectSessionInUrl: false,
+          flowType: 'pkce',
+          persistSession: true,
+        },
+      });
       return client;
     },
   };
@@ -118,6 +136,8 @@ export const createSupabaseAuthService = (
             }
           : undefined,
       }),
+    exchangeCodeForSession: (code) => provider.getClient().auth.exchangeCodeForSession(code),
+    setSession: (session) => provider.getClient().auth.setSession(session),
     getSession: async () => provider.getClient().auth.getSession(),
     signOut: async (options) => provider.getClient().auth.signOut(options),
     onAuthStateChange: (callback) =>
@@ -130,6 +150,27 @@ export const supabaseAuthService = createSupabaseAuthService(env, supabaseBrowse
 
 export const signInWithGoogle = (options?: GoogleOAuthOptions): Promise<SupabaseOAuthResponse> =>
   supabaseAuthService.signInWithGoogle(options);
+
+export const exchangeCodeForSession = (code: string): Promise<SupabaseExchangeCodeResponse> =>
+  supabaseAuthService.exchangeCodeForSession(code);
+
+export const setSession = (session: {
+  access_token: string;
+  refresh_token: string;
+}): Promise<SupabaseSetSessionResponse> => supabaseAuthService.setSession(session);
+
+export const getGoogleAuthRedirectUrl = (nextPath: string): string => {
+  const fallbackPath = '/track';
+  const safePath = nextPath.startsWith('/') && !nextPath.startsWith('//') ? nextPath : fallbackPath;
+
+  if (typeof window === 'undefined') {
+    return `/auth/callback?next=${encodeURIComponent(safePath)}`;
+  }
+
+  const callbackUrl = new URL('/auth/callback', window.location.origin);
+  callbackUrl.searchParams.set('next', safePath);
+  return callbackUrl.toString();
+};
 
 export const getSession = (): Promise<SupabaseSessionResponse> =>
   supabaseAuthService.getSession();

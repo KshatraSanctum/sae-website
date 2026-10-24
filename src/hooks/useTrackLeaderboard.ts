@@ -6,6 +6,7 @@ import {
   signOut,
   supabaseAuthService,
   supabaseRaceService,
+  getGoogleAuthRedirectUrl,
   type GetLeaderboardResponse,
   type StartRaceResponse,
 } from '../services/api';
@@ -163,7 +164,7 @@ export const useTrackLeaderboard = ({
     setAuthError(null);
     try {
       const { error: signInError } = await signInWithGoogle({
-        redirectTo: typeof window === 'undefined' ? undefined : window.location.href,
+        redirectTo: getGoogleAuthRedirectUrl('/track'),
       });
       if (signInError) throw signInError;
     } catch (signInError) {

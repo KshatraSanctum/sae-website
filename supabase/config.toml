@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.get-leaderboard]
 verify_jwt = false
+
+[functions.submit-join-application]
+verify_jwt = false

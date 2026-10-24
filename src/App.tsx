@@ -31,6 +31,7 @@ const SponsorsPage = React.lazy(() => import('./pages/SponsorsPage').then((m) =>
 const DepartmentsPage = React.lazy(() => import('./pages/DepartmentsPage').then((m) => ({ default: m.DepartmentsPage })));
 const JoinPage = React.lazy(() => import('./pages/JoinPage').then((m) => ({ default: m.JoinPage })));
 const TrackPage = React.lazy(() => import('./pages/TrackPage').then((m) => ({ default: m.TrackPage })));
+const AuthCallbackPage = React.lazy(() => import('./pages/AuthCallbackPage').then((m) => ({ default: m.AuthCallbackPage })));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
 // Observer for triggering reveal animations across client-side route changes
@@ -105,7 +106,7 @@ const LegacyHashRedirector: React.FC = () => {
   useEffect(() => {
     // If OAuth callback hash/code lands on root or any other page, route it straight to /track
     if (location.hash.includes('access_token') || location.search.includes('code=')) {
-      if (location.pathname !== '/track') {
+      if (location.pathname !== '/track' && location.pathname !== '/auth/callback') {
         navigate('/track' + location.search + location.hash, { replace: true });
         return;
       }
@@ -168,6 +169,7 @@ const AppLayout: React.FC = () => {
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/join" element={<JoinPage />} />
             <Route path="/track" element={<TrackPage />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/circuit" element={<Navigate to="/track" replace />} />
             <Route path="/race" element={<Navigate to="/track" replace />} />
             <Route path="*" element={<NotFoundPage />} />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useJoinApplication } from '../hooks/useJoinApplication';
+import { useGoogleAuth } from '../hooks/useGoogleAuth';
 
 interface JoinPageProps {
   isActive?: boolean;
@@ -7,14 +8,22 @@ interface JoinPageProps {
 
 export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
   const {
+    session,
+    isLoading: isAuthLoading,
+    error: authError,
+    signIn,
+  } = useGoogleAuth({ redirectPath: '/join' });
+  const {
     formData,
     submitted,
     submissionTime,
+    isSubmitting,
+    submissionError,
     updateField,
     selectCrew,
     submit,
     reset,
-  } = useJoinApplication();
+  } = useJoinApplication({ isAuthenticated: Boolean(session) });
 
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     advantages: false,
@@ -48,9 +57,9 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    submit();
+    await submit();
   };
 
   const handleReset = (): void => {
@@ -559,10 +568,51 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                   technical prerequisites required.
                 </span>
               </div>
+
+              <div className={`join-google-gate ${session ? 'is-authenticated' : ''}`}>
+                <span className="join-google-gate-icon" aria-hidden="true">{session ? '✓' : 'G'}</span>
+                <div className="join-google-gate-copy">
+                  <strong>
+                    {isAuthLoading
+                      ? 'Checking Google sign-in…'
+                      : session
+                        ? 'Google account connected'
+                        : 'Connect Google before submitting'}
+                  </strong>
+                  <span>
+                    {session
+                      ? `Application will be linked to ${session.user.email || 'your Google account'}.`
+                      : 'Sign in with Google to unlock the application submission.'}
+                  </span>
+                </div>
+                {!session && (
+                  <button
+                    type="button"
+                    className="join-google-signin"
+                    onClick={() => void signIn()}
+                    disabled={isAuthLoading}
+                  >
+                    {isAuthLoading ? 'Checking…' : 'Sign in with Google'}
+                  </button>
+                )}
+              </div>
+
+              {authError && (
+                <div className="join-form-error" role="alert" aria-live="polite">
+                  {authError}
+                </div>
+              )}
+
+              {submissionError && (
+                <div className="join-form-error" role="alert" aria-live="polite">
+                  {submissionError}
+                </div>
+              )}
             </div>
 
             {!submitted ? (
               <form id="joinForm" className="join-form" onSubmit={handleSubmit}>
+                <fieldset disabled={!session || isSubmitting}>
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="applicantName">
@@ -572,7 +622,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       type="text"
                       id="applicantName"
                       required
-                      placeholder="e.g. Rahul Sharma"
+                      placeholder="e.g. Alex Johnson"
                       value={formData.name}
                       onChange={(e) => updateField('name', e.target.value)}
                     />
@@ -587,7 +637,6 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       type="text"
                       id="applicantRoll"
                       required
-                      placeholder="e.g. 24/ME/045 or 2K24/082"
                       value={formData.roll}
                       onChange={(e) => updateField('roll', e.target.value)}
                     />
@@ -640,22 +689,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="applicantEmail">
-                      <span>Email Address <span className="required-star">*</span></span>
-                    </label>
-                    <input
-                      type="email"
-                      id="applicantEmail"
-                      required
-                      placeholder="name@bitsindri.ac.in or personal email"
-                      value={formData.email}
-                      onChange={(e) => updateField('email', e.target.value)}
-                    />
-                    <span className="form-hint">We will email you the orientation schedule</span>
-                  </div>
-
+                <div className="form-row form-row-single">
                   <div className="form-group">
                     <label htmlFor="applicantPhone">
                       <span>WhatsApp / Contact Number <span className="required-star">*</span></span>
@@ -664,11 +698,31 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       type="tel"
                       id="applicantPhone"
                       required
-                      placeholder="+91 98765 43210"
                       value={formData.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
                     />
                     <span className="form-hint">Used for official WhatsApp induction group updates</span>
+                  </div>
+                </div>
+
+                <div className="form-row form-row-single">
+                  <div className="form-group">
+                    <label htmlFor="applicantAvailability">
+                      <span>Weekly Availability <span className="required-star">*</span></span>
+                    </label>
+                    <select
+                      id="applicantAvailability"
+                      required
+                      value={formData.availability}
+                      onChange={(e) => updateField('availability', e.target.value)}
+                    >
+                      <option value="" disabled>Select your weekly commitment</option>
+                      <option value="2-4 hours per week">2–4 hours per week</option>
+                      <option value="5-8 hours per week">5–8 hours per week</option>
+                      <option value="8+ hours per week">8+ hours per week</option>
+                      <option value="Depends on academic schedule">Depends on academic schedule</option>
+                    </select>
+                    <span className="form-hint">This helps us plan team work and induction schedules</span>
                   </div>
                 </div>
 
@@ -719,6 +773,20 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                 </div>
 
                 <div className="form-group">
+                  <label htmlFor="applicantSkills">
+                    <span>Relevant Skills, Projects or Experience</span>
+                  </label>
+                  <textarea
+                    id="applicantSkills"
+                    rows={3}
+                    placeholder="e.g. CAD, Arduino, welding, photography, or a college project"
+                    value={formData.skills}
+                    onChange={(e) => updateField('skills', e.target.value)}
+                  ></textarea>
+                  <span className="form-hint">Optional — beginners are welcome and do not need prior experience</span>
+                </div>
+
+                <div className="form-group">
                   <label htmlFor="applicantMotivation">
                     <span>Why do you want to join SAE BIT Sindri? <span className="required-star">*</span></span>
                   </label>
@@ -726,17 +794,34 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                     id="applicantMotivation"
                     rows={4}
                     required
-                    placeholder="Tell us about your interests, past projects or hobbies (if any), and what excites you about motorsports, aerospace, or automotive engineering..."
+                    placeholder="e.g. I want to learn hands-on engineering and contribute to a racing team..."
                     value={formData.motivation}
                     onChange={(e) => updateField('motivation', e.target.value)}
                   ></textarea>
                   <span className="form-hint">Briefly explain your passion, curiosity, and what you hope to learn</span>
                 </div>
 
+                <div className="join-form-consent">
+                  <label className="join-consent-label" htmlFor="whatsappConsent">
+                    <input
+                      type="checkbox"
+                      id="whatsappConsent"
+                      required
+                      checked={formData.whatsappConsent}
+                      onChange={(e) => updateField('whatsappConsent', e.target.checked)}
+                    />
+                    <span>
+                      I agree to be contacted on WhatsApp regarding SAE BIT Sindri activities and induction updates.
+                      <span className="required-star"> *</span>
+                    </span>
+                  </label>
+                </div>
+
                 <button type="submit" className="btn-join-primary join-submit-btn">
-                  <span>Submit Application for Review</span>
+                  <span>{isSubmitting ? 'Submitting Application…' : 'Submit Application for Review'}</span>
                   <span className="btn-arrow" aria-hidden="true">→</span>
                 </button>
+                </fieldset>
               </form>
             ) : (
               <div id="joinSuccessMsg" className="join-success">
@@ -767,6 +852,10 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                       <dd>{formData.crew || 'General Society Induction'}</dd>
                     </div>
                     <div className="receipt-item">
+                      <dt>Weekly Availability</dt>
+                      <dd>{formData.availability}</dd>
+                    </div>
+                    <div className="receipt-item">
                       <dt>Submission Time</dt>
                       <dd>{submissionTime || 'Just now'}</dd>
                     </div>
@@ -777,8 +866,8 @@ export const JoinPage: React.FC<JoinPageProps> = ({ isActive = true }) => {
                   </dl>
 
                   <div className="receipt-instructions">
-                    <strong>Next Steps:</strong> Check your WhatsApp (<code>{formData.phone}</code>) and Email (
-                    <code>{formData.email}</code>) within 48 hours for the on-campus orientation venue and timing details.
+                    <strong>Next Steps:</strong> Check your WhatsApp (<code>{formData.phone}</code>) and the Google account email (
+                    <code>{session?.user.email || 'your signed-in account'}</code>) within 48 hours for the on-campus orientation venue and timing details.
                   </div>
                 </div>
 
