@@ -630,12 +630,31 @@
       color: var(--ink-muted);
       text-transform: uppercase;
       background: transparent;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .chip:active {
+      transform: scale(0.95);
+      transition: transform 70ms ease-out;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .chip:hover {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+      }
     }
 
     .chip.active {
-      background: var(--green);
-      border-color: var(--green);
-      color: #fff;
+      background: var(--gold, #f6b719);
+      border-color: var(--gold, #f6b719);
+      color: var(--ink, #030712);
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(246, 183, 25, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.45);
     }
 
     .timeline {

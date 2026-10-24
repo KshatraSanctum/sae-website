@@ -71,66 +71,24 @@ export const AboutPage: React.FC = () => {
 
             {/* Visual Feature / Stat highlight */}
             <div data-reveal className="reveal-up reveal-delay about-story-visual">
-              {/* Professors In-Charge Photo Placeholders */}
+              {/* Faculty & Institutional Mentorship Card */}
               <div className="about-prof-card">
-                <div className="about-card-badge mono">// PROFESSORS IN-CHARGE</div>
-                <div className="about-prof-grid">
-                  {/* Prof 1 Placeholder */}
-                  <div className="prof-item">
-                    <div className="prof-photo-box">
-                      <svg
-                        className="prof-avatar-icon"
-                        width="38"
-                        height="38"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                      <span className="prof-photo-label mono">Photo Placeholder</span>
-                    </div>
-                    <div className="prof-info">
-                      <span className="prof-tag mono">PROFESSOR IN-CHARGE</span>
-                      <h4 className="prof-name">Prof. In-Charge</h4>
-                      <p className="prof-sub">
-                        Dept. of Mechanical Engineering<br />BIT Sindri
-                      </p>
+                <div className="about-card-badge mono">// FACULTY &amp; INSTITUTIONAL MENTORSHIP</div>
+                <div className="about-mentorship-box">
+                  <div className="about-dept-seal">
+                    <span className="about-seal-pill mono">BIT SINDRI</span>
+                    <div>
+                      <h4 className="prof-name">Department of Mechanical Engineering</h4>
+                      <p className="prof-sub">Birsa Institute of Technology, Sindri</p>
                     </div>
                   </div>
-
-                  {/* Prof 2 Placeholder */}
-                  <div className="prof-item">
-                    <div className="prof-photo-box">
-                      <svg
-                        className="prof-avatar-icon"
-                        width="38"
-                        height="38"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                      <span className="prof-photo-label mono">Photo Placeholder</span>
-                    </div>
-                    <div className="prof-info">
-                      <span className="prof-tag mono">PROFESSOR IN-CHARGE</span>
-                      <h4 className="prof-name">Prof. In-Charge</h4>
-                      <p className="prof-sub">
-                        Dept. of Mechanical Engineering<br />BIT Sindri
-                      </p>
-                    </div>
+                  <p className="about-mentorship-desc">
+                    Guided by senior faculty mentors across Vehicle Dynamics, Internal Combustion &amp; Electric Powertrains, and CAD/CAM fabrication bays.
+                  </p>
+                  <div className="about-advisory-tags mono">
+                    <span>// ACADEMIC OVERSIGHT</span>
+                    <span>// SAFETY AUDITS</span>
+                    <span>// WORKSHOP LABS</span>
                   </div>
                 </div>
               </div>

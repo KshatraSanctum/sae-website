@@ -70,7 +70,7 @@ export const HeroSection: React.FC = () => {
           {/* 1. Header Tagline Row */}
           <div className="hero-enter hero-delay-1 hero-tag-row">
             <span className="hero-tag-line"></span>
-            <p className="hero-tag-text">BIT SINDRI · FORMULA STUDENT &amp; BAJA SAE CHAPTER #642</p>
+            <p className="hero-tag-text">Engineering the future of mobility</p>
           </div>
 
           {/* 2. Slogan: Design. Build. Compete. */}
