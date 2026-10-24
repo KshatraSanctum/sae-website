@@ -137,7 +137,7 @@
   transform: translateX(120%);
 }
 
-/* Button link */
+/* Button link (Apple Design: Fluid tactile response) */
 .ref-btn {
   display: inline-flex;
   min-height: 3rem;
@@ -150,13 +150,26 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  transition: all 300ms ease;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    color 200ms ease;
   cursor: pointer;
   text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .ref-btn:hover {
   transform: translateY(-2px);
+}
+
+/* Apple Design: Instant feedback on press (pointer-down) */
+.ref-btn:active {
+  transform: scale(0.96) translateY(0);
+  transition: transform 80ms ease-out;
 }
 
 .ref-btn-primary {
@@ -194,33 +207,35 @@
   color: var(--color-ink);
 }
 
-/* ===================== HEADER & BRAND ===================== */
+/* ===================== HEADER & BRAND (Apple Design: Translucent Materials) ===================== */
 
 .ref-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(5, 5, 5, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(6, 8, 12, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Landing page transparent frosted overlay floating over the full-screen hero */
 .ref-header.ref-header-home {
-  background-color: rgba(5, 5, 5, 0.35);
+  background-color: rgba(6, 8, 12, 0.38);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .ref-header.ref-header-home.is-scrolled {
-  background-color: rgba(5, 5, 5, 0.95);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  background-color: rgba(6, 8, 12, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 .ref-header.ref-header-home.menu-open {
-  background-color: rgba(8, 8, 8, 0.98);
+  background-color: rgba(6, 8, 12, 0.98);
 }
 
 .ref-header-inner {
@@ -311,14 +326,23 @@
 
 .ref-nav-link {
   position: relative;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: rgba(255, 255, 255, 0.65);
-  transition: color 200ms ease;
+  transition: color 200ms ease, transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
   white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ref-nav-link:active {
+  transform: scale(0.95);
+  transition: transform 60ms ease-out;
 }
 
 .ref-nav-link.is-loading {
@@ -386,22 +410,25 @@
   }
 }
 
-/* Mobile menu toggle button */
+/* Mobile menu toggle button (Apple Design: Fluid touch response) */
 .ref-mobile-btn {
   display: grid;
   width: 2.75rem;
   height: 2.75rem;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   color: #ffffff;
   cursor: pointer;
   padding: 0;
   position: relative;
   z-index: 60;
-  transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .ref-mobile-btn:hover {
@@ -411,7 +438,8 @@
 }
 
 .ref-mobile-btn:active {
-  transform: scale(0.94);
+  transform: scale(0.92);
+  transition: transform 80ms ease-out;
 }
 
 .ref-mobile-btn.is-open {
@@ -439,7 +467,7 @@
   background-color: #ffffff;
   border-radius: 2px;
   transform-origin: center;
-  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.2, 1),
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.25s ease,
     background-color 0.3s ease,
     box-shadow 0.3s ease;
@@ -469,25 +497,25 @@
   }
 }
 
-/* Mobile drawer panel */
+/* Mobile drawer panel (Apple Design: Translucent Layer with Spring Deceleration) */
 .ref-mobile-menu {
   position: relative;
   max-height: 0;
   opacity: 0;
   overflow: hidden;
   border-top: 1px solid transparent;
-  background: linear-gradient(180deg, rgba(14, 14, 14, 0.98) 0%, rgba(8, 8, 8, 0.99) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(10, 12, 16, 0.88);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
   padding: 0 1.25rem;
-  box-shadow: 0 24px 38px -10px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 28px 48px -10px rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
   visibility: hidden;
   pointer-events: none;
-  transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.3s ease,
-    visibility 0.38s;
+  transition: max-height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease,
+    visibility 0.36s;
 }
 
 .ref-mobile-menu.is-open {
@@ -496,7 +524,8 @@
   visibility: visible;
   pointer-events: auto;
   padding: 0.75rem 1.25rem 1.75rem 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @media (min-width: 1024px) {
@@ -541,6 +570,13 @@
 .ref-mobile-nav-list a.active {
   color: var(--color-signal);
   padding-left: 0.5rem;
+}
+
+/* Apple Design: Instant touch-down feedback */
+.ref-mobile-nav-list a:active {
+  transform: scale(0.98) translateX(3px);
+  opacity: 0.75;
+  transition: transform 60ms ease-out, opacity 60ms ease-out;
 }
 
 .ref-mobile-nav-cta {
@@ -3274,7 +3310,7 @@
   margin-bottom: 0;
 }
 
-/* ===================== NAVBAR PIT STOP / RELEASE BUTTON ===================== */
+/* ===================== NAVBAR PIT STOP / RELEASE BUTTON (Apple Design: Response) ===================== */
 .nav-pit-btn {
   display: inline-flex;
   min-height: 3rem;
@@ -3294,8 +3330,13 @@
   cursor: pointer;
   outline: none;
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   box-sizing: border-box;
-  transition: all 300ms ease;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease;
   flex-shrink: 0;
 }
 
@@ -3303,6 +3344,11 @@
   border-color: rgba(255, 255, 255, 0.5);
   background: rgba(22, 28, 36, 0.95);
   transform: translateY(-2px);
+}
+
+.nav-pit-btn:active {
+  transform: scale(0.96) translateY(0);
+  transition: transform 80ms ease-out;
 }
 
 .nav-pit-dot {
@@ -4781,3 +4827,32 @@
     font-size: 0.46rem;
   }
 }
+
+/* ===================== APPLE DESIGN: ACCESSIBILITY & ENVIRONMENTAL ADAPTATIONS ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .ref-btn,
+  .ref-header,
+  .ref-mobile-btn,
+  .ref-burger-line,
+  .ref-mobile-menu,
+  .ref-mobile-nav-list a,
+  .ref-brand-logo-ring,
+  .ref-brand-logo-ring img,
+  .nav-pit-btn {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ref-header,
+  .ref-header.ref-header-home,
+  .ref-header.ref-header-home.is-scrolled,
+  .ref-mobile-menu {
+    background-color: #06080c !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
