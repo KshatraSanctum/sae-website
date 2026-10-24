@@ -23,13 +23,17 @@
   --ev-line: rgba(244, 241, 230, 0.08);
   --ev-line-light: rgba(244, 241, 230, 0.14);
   --ev-line-gold: rgba(246, 183, 25, 0.35);
-  --ev-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-  --ev-display: 'Oswald', 'Barlow Condensed', sans-serif;
+  --ev-mono: 'IBM Plex Mono', 'SF Mono', SFMono-Regular, Consolas, monospace;
+  --ev-display: 'Oswald', 'Barlow Condensed', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --ev-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   --ev-serif: 'Playfair Display', Georgia, serif;
   --ev-maxw: 1260px;
 }
 
 #page-events {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 0 5rem 0 !important;

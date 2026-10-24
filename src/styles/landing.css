@@ -10,8 +10,16 @@
   --color-blue-deep: #211b08;
   --color-signal: #f6b719;
   --color-signal-dark: #d99a00;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Barlow Condensed', sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', SFMono-Regular, Menlo, monospace;
+}
+
+/* Apple Design: Subpixel Font Smoothing & Antialiasing */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* ===================== TYPOGRAPHY & UTILITIES ===================== */
@@ -33,6 +41,21 @@
 
 .font-sans {
   font-family: var(--font-sans);
+}
+
+.font-mono,
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Apple Design: Rock-solid non-jittering tabular numerals */
+.tabular-nums,
+.ref-event-date-num,
+.dbc-metric-value {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 .text-signal {
