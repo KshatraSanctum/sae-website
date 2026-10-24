@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 import './styles/main.css';
@@ -123,8 +123,62 @@ const LegacyHashRedirector: React.FC = () => {
   return null;
 };
 
+interface RouteReadySignalProps {
+  readonly onReady: (path: string) => void;
+}
+
+const RouteReadySignal: React.FC<RouteReadySignalProps> = ({ onReady }) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    onReady(location.pathname);
+  }, [location.pathname, onReady]);
+
+  return null;
+};
+
 // App layout wrapper containing shared navigation, 3D cursor car, and page routes
 const AppLayout: React.FC = () => {
+  const location = useLocation();
+  const [routeLoading, setRouteLoading] = useState<{ path: string | null; progress: number }>({
+    path: null,
+    progress: 0,
+  });
+
+  const startRouteLoad = useCallback((path: string): void => {
+    if (location.pathname === path) return;
+
+    setRouteLoading({ path, progress: 12 });
+  }, [location.pathname]);
+
+  const completeRouteLoad = useCallback((path: string): void => {
+    setRouteLoading((current) => {
+      if (current.path !== path) return current;
+      return { path, progress: 100 };
+    });
+
+    window.setTimeout(() => {
+      setRouteLoading((current) => current.path === path ? { path: null, progress: 0 } : current);
+    }, 280);
+  }, []);
+
+  useEffect(() => {
+    if (!routeLoading.path) return undefined;
+
+    const timer = window.setInterval(() => {
+      setRouteLoading((current) => {
+        if (!current.path || current.progress >= 88) return current;
+
+        return {
+          path: current.path,
+          progress: Math.min(88, current.progress + 7),
+        };
+      });
+    }, 140);
+
+    return () => window.clearInterval(timer);
+  }, [routeLoading.path]);
+
   // Initialize 3D Car Follower
   useEffect(() => {
     let carInstance: CarFollower3D | null = null;
@@ -153,7 +207,11 @@ const AppLayout: React.FC = () => {
       <LegacyHashRedirector />
 
       <IntroOverlay />
-      <Navbar />
+      <Navbar
+         loadingPath={routeLoading.path}
+         loadingProgress={routeLoading.progress}
+         onNavigationStart={startRouteLoad}
+       />
 
       <main id="mainContent">
         <Suspense fallback={<RouteLoadingFallback />}>
@@ -174,6 +232,7 @@ const AppLayout: React.FC = () => {
             <Route path="/race" element={<Navigate to="/track" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          <RouteReadySignal onReady={completeRouteLoad} />
         </Suspense>
       </main>
 

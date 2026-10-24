@@ -75,7 +75,7 @@ export const EventsPage: React.FC = () => {
           1. ARCHIVE TELEMETRY STRIP (FLAGSHIP FEST RECAP)
           ===================================================================== */}
       <section className="events-ticker-wrapper" aria-label="Flagship Event Ticker">
-        <div className="events-hub-container events-ticker-inner">
+        <div data-reveal className="events-hub-container events-ticker-inner reveal-up">
           <div className="events-ticker-badge">
             <span className="live-beacon-dot" aria-hidden="true" />
             Flagship Festival Recap
@@ -100,7 +100,7 @@ export const EventsPage: React.FC = () => {
       {/* =====================================================================
           2. PURPOSEFUL EVENT PAGE HEADER (ARCHIVE & RECAP)
           ===================================================================== */}
-      <header className="events-page-header">
+      <header data-reveal className="events-page-header reveal-up">
         <div className="events-hub-container">
           <div className="events-header-eyebrow">
             <span className="eyebrow-line" aria-hidden="true" />
@@ -127,7 +127,7 @@ export const EventsPage: React.FC = () => {
             <span className="featured-date-chip">Conducted Successfully</span>
           </div>
 
-          <article className="featured-event-card">
+          <article data-reveal className="featured-event-card reveal-up">
             {/* Visual Photo Layer */}
             <div
               className="featured-card-visual"
@@ -206,7 +206,7 @@ export const EventsPage: React.FC = () => {
           ===================================================================== */}
       <section className="events-controls-section" aria-label="Event Filter and View Controls">
         <div className="events-hub-container">
-          <div className="events-controls-bar">
+          <div data-reveal className="events-controls-bar reveal-up">
             {/* Discipline Filter Tabs */}
             <div className="events-filter-group" role="group" aria-label="Filter events by category">
               <button
@@ -281,8 +281,13 @@ export const EventsPage: React.FC = () => {
         {viewMode === 'grid' ? (
           /* Grid View of Event Cards */
           <div className="events-grid-layout" aria-live="polite">
-            {filteredEvents.map((item) => (
-              <article key={item.id} className="event-roster-card">
+            {filteredEvents.map((item, index) => (
+              <article
+                key={item.id}
+                data-reveal
+                className="event-roster-card reveal-up"
+                style={{ transitionDelay: `${Math.min(index, 5) * 70}ms` }}
+              >
                 {/* Photo Header */}
                 <div
                   className="roster-card-image"
@@ -336,8 +341,13 @@ export const EventsPage: React.FC = () => {
         ) : (
           /* Timeline / Chronological Season Roadmap View */
           <div className="events-timeline-layout" aria-live="polite">
-            {filteredEvents.map((item) => (
-              <div key={`timeline-${item.id}`} className="timeline-milestone-item">
+            {filteredEvents.map((item, index) => (
+              <div
+                key={`timeline-${item.id}`}
+                data-reveal
+                className="timeline-milestone-item reveal-up"
+                style={{ transitionDelay: `${Math.min(index, 5) * 70}ms` }}
+              >
                 <div className="timeline-milestone-dot" aria-hidden="true" />
                 <div className="timeline-milestone-card">
                   <div className="timeline-card-info">
@@ -376,7 +386,7 @@ export const EventsPage: React.FC = () => {
         {/* =====================================================================
             6. CHAPTER NEXT MILESTONE CTA (MATCHING HOME & ACHIEVEMENTS)
             ===================================================================== */}
-        <section className="events-bottom-cta" aria-label="Join SAE BIT Sindri">
+        <section data-reveal className="events-bottom-cta reveal-up" aria-label="Join SAE BIT Sindri">
           <div className="events-cta-inner">
             <div className="events-cta-copy">
               <p className="events-cta-eyebrow">// PASSION FUELS THE DRIVE · PRECISION WINS THE RACE</p>

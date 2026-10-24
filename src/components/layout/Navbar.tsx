@@ -9,6 +9,12 @@ interface NavItem {
   altPaths?: string[];
 }
 
+interface NavbarProps {
+  readonly loadingPath?: string | null;
+  readonly loadingProgress?: number;
+  readonly onNavigationStart?: (path: string) => void;
+}
+
 const NAV_ITEMS: NavItem[] = [
   { path: '/about', label: 'About' },
   { path: '/achievements', label: 'Achievements', altPaths: ['/competitions'] },
@@ -17,7 +23,11 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/sponsors', label: 'Sponsors' },
 ];
 
-export const Navbar: React.FC = () => {
+export const Navbar: React.FC<NavbarProps> = ({
+  loadingPath = null,
+  loadingProgress = 0,
+  onNavigationStart,
+}) => {
   const location = useLocation();
   const { isOpen: mobileOpen, toggle: toggleMobileMenu, close: closeMobileMenu } = useMobileNavigation(location.pathname);
   const [scrolled, setScrolled] = useState(false);
@@ -38,6 +48,33 @@ export const Navbar: React.FC = () => {
     if (location.pathname === item.path) return true;
     if (item.altPaths && item.altPaths.includes(location.pathname)) return true;
     return false;
+  };
+
+  const handleNavigationStart = (event: React.MouseEvent<HTMLAnchorElement>, path: string): void => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      location.pathname === path
+    ) {
+      return;
+    }
+
+    onNavigationStart?.(path);
+  };
+
+  const renderLoadingProgress = (path: string): React.ReactNode => {
+    if (loadingPath !== path) return null;
+
+    const progress = Math.max(0, Math.min(100, Math.round(loadingProgress)));
+    return (
+      <span className="ref-nav-loading-track" aria-hidden="true">
+        <span className="ref-nav-loading-bar" style={{ width: `${progress}%` }} />
+      </span>
+    );
   };
 
   return (
@@ -66,9 +103,13 @@ export const Navbar: React.FC = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`ref-nav-link ${isLinkActive(item) ? 'active' : ''}`}
+              className={`ref-nav-link ${isLinkActive(item) ? 'active' : ''} ${loadingPath === item.path ? 'is-loading' : ''}`}
+              aria-busy={loadingPath === item.path}
+              aria-label={loadingPath === item.path ? `${item.label}, loading` : item.label}
+              onClick={(event) => handleNavigationStart(event, item.path)}
             >
               {item.label}
+              {renderLoadingProgress(item.path)}
             </Link>
           ))}
         </nav>
@@ -89,9 +130,12 @@ export const Navbar: React.FC = () => {
 
           <Link
             to="/join"
-            className="ref-btn ref-btn-primary effect-shine nav-desktop-only"
+            className={`ref-btn ref-btn-primary effect-shine nav-desktop-only ${loadingPath === '/join' ? 'nav-cta-loading' : ''}`}
+            aria-busy={loadingPath === '/join'}
+            onClick={(event) => handleNavigationStart(event, '/join')}
           >
             Join the Society
+            {renderLoadingProgress('/join')}
           </Link>
 
           <button
@@ -120,17 +164,27 @@ export const Navbar: React.FC = () => {
             <Link
               key={`mobile-${item.path}`}
               to={item.path}
-              className={isLinkActive(item) ? 'active' : ''}
-               onClick={closeMobileMenu}
+              className={`${isLinkActive(item) ? 'active' : ''} ${loadingPath === item.path ? 'is-loading' : ''}`}
+              aria-busy={loadingPath === item.path}
+              aria-label={loadingPath === item.path ? `${item.label}, loading` : item.label}
+              onClick={(event) => {
+                handleNavigationStart(event, item.path);
+                closeMobileMenu();
+              }}
             >
-              {item.label}
+              <span>{item.label}</span>
+              {renderLoadingProgress(item.path)}
             </Link>
           ))}
           <div className="ref-mobile-nav-cta">
             <Link
               to="/join"
-              className="ref-btn ref-btn-primary effect-shine"
-               onClick={closeMobileMenu}
+              className={`ref-btn ref-btn-primary effect-shine ${loadingPath === '/join' ? 'nav-cta-loading' : ''}`}
+              aria-busy={loadingPath === '/join'}
+              onClick={(event) => {
+                handleNavigationStart(event, '/join');
+                closeMobileMenu();
+              }}
             >
               <span>Join the Society</span>
               <svg
