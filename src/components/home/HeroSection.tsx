@@ -49,20 +49,6 @@ export const HeroSection: React.FC = () => {
         data-scene="compete"
       />
       <div className="hero-gradient-overlay"></div>
-      <div
-        className="ambient-glow"
-        style={{
-          position: 'absolute',
-          right: '8rem',
-          top: '4rem',
-          width: '38rem',
-          height: '38rem',
-          borderRadius: '9999px',
-          backgroundColor: 'rgba(246, 183, 25, 0.18)',
-          filter: 'blur(56px)',
-          pointerEvents: 'none',
-        }}
-      ></div>
 
       <div className="ref-container hero-content-wrap">
         {/* Mobile Background Crest (watermark behind the copy with reduced opacity) */}
@@ -84,7 +70,7 @@ export const HeroSection: React.FC = () => {
           {/* 1. Header Tagline Row */}
           <div className="hero-enter hero-delay-1 hero-tag-row">
             <span className="hero-tag-line"></span>
-            <p className="hero-tag-text">Engineering the future of mobility</p>
+            <p className="hero-tag-text">BIT SINDRI · FORMULA STUDENT &amp; BAJA SAE CHAPTER #642</p>
           </div>
 
           {/* 2. Slogan: Design. Build. Compete. */}
@@ -129,8 +115,8 @@ export const HeroSection: React.FC = () => {
 
           {/* 4. Short Description */}
           <p className="hero-enter hero-delay-3 hero-sub hero-subtext">
-            The official collegiate mobility chapter of BIT Sindri. Designing and engineering national-tier
-            championship racecars, aerodynamic drones, electric powertrains, and the engineering leaders of tomorrow.
+            Designing, building, and racing national-tier Formula Bharat and BAJA SAE prototypes.
+            Student-engineered spaceframe chassis, electric powertrains, custom suspension geometry, and real-time telemetry from the ground up.
           </p>
 
           {/* 5. CTA Row */}

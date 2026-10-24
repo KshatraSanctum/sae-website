@@ -140,24 +140,30 @@ html {
   }
 }
 
-/* Shine effect on buttons */
+/* ===================== CRAFT BUTTONS: SPECULAR BEVEL & ELEVATION ===================== */
 .effect-shine {
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 .effect-shine::after {
-  position: absolute;
-  inset: 0;
   content: "";
-  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
-  transform: translateX(-120%);
-  transition: transform 600ms ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
   pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 200ms ease;
 }
 
-.effect-shine:hover::after {
-  transform: translateX(120%);
+@media (hover: hover) and (pointer: fine) {
+  .effect-shine:hover::after {
+    opacity: 1;
+  }
 }
 
 /* Button link (Apple Design: Fluid tactile response) */
@@ -194,20 +200,27 @@ html {
 .ref-btn-primary {
   background-color: var(--color-signal);
   color: var(--color-ink, #030712);
-  border-color: var(--color-signal);
+  border-color: rgba(246, 183, 25, 0.9);
   font-weight: 800;
+  box-shadow: 0 4px 16px rgba(246, 183, 25, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .ref-btn-outline {
-  border-color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: #ffffff;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .ref-btn-light {
-  border-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   color: #ffffff;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 /* Mobile Native: Gate hover effects so touch devices don't get stuck hover states */
