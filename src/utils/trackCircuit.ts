@@ -5,7 +5,7 @@ export const TRACK = {
   id: 'interlagos-inspired',
   version: 'v2',
   physicsVersion: 'timed-v1',
-  title: 'BIT Sindri International Circuit',
+  title: 'Autódromo José Carlos Pace',
   subtitle: 'Interlagos-inspired Formula Student layout',
   width: 1350,
   height: 900,

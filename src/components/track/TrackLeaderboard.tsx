@@ -45,7 +45,7 @@ export interface TrackLeaderboardProps {
   readonly onRefresh: () => void | Promise<void>;
 }
 
-const DEFAULT_TRACK_NAME = 'BIT Sindri International Circuit';
+const DEFAULT_TRACK_NAME = 'Autódromo José Carlos Pace';
 
 /** Format a millisecond lap score as MM:SS.mmm. */
 export const formatTrackLeaderboardLapTime = (score: number): string => {

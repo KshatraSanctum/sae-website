@@ -964,7 +964,7 @@ export const TrackPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span className="track-badge">{TRACK.title}</span>
+                  <span className="track-badge">INTERLAGOS GP</span>
                   {!isCarAvailable ? (
                     <span className="track-badge track-badge-unavailable">
                       ⚠️ 3D CAR UNAVAILABLE
