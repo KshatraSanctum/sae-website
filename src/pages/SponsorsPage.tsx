@@ -58,7 +58,7 @@ export const SponsorsPage: React.FC<SponsorsPageProps> = ({ isActive = true }) =
         {filteredSponsors.map((s, idx) => (
           <div className="sponsor-card" key={`sponsor-${s.name}-${idx}`}>
             <div className="sponsor-logo-box">
-              <img src={s.logo} alt={`${s.name} Logo`} loading="lazy" className="sponsor-logo-img" />
+              <img src={s.logo} alt={`${s.name} Logo`} loading="lazy" decoding="async" width="120" height="60" className="sponsor-logo-img" />
             </div>
             <div className="sponsor-body">
               <span className="sponsor-tier mono">{s.tierLabel}</span>

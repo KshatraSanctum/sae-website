@@ -17,7 +17,7 @@ import { ScrollToTop } from './components/common/ScrollToTop';
 import { RouteLoadingFallback } from './components/common/RouteLoadingFallback';
 import { LEGACY_HASH_ROUTE_MAP } from './config/routes';
 
-import { initCarFollower3D, CarFollower3D } from './carFollower3D';
+import type { CarFollower3D } from './carFollower3D';
 
 // Synchronously import HomePage for instant first-paint without lazy-loading lag
 import { HomePage } from './pages/HomePage';
@@ -179,20 +179,34 @@ const AppLayout: React.FC = () => {
     return () => window.clearInterval(timer);
   }, [routeLoading.path]);
 
-  // Initialize 3D Car Follower
+  // Initialize 3D Car Follower (deferred & dynamically loaded to prevent blocking initial paint)
   useEffect(() => {
     let carInstance: CarFollower3D | null = null;
-    const timer = setTimeout(() => {
+    let isCancelled = false;
+
+    // Use requestIdleCallback when available, otherwise defer with setTimeout
+    const idleCallback = typeof window !== 'undefined' && 'requestIdleCallback' in window
+      ? (cb: () => void) => (window as unknown as { requestIdleCallback: (fn: () => void, opts: { timeout: number }) => number }).requestIdleCallback(cb, { timeout: 1500 })
+      : (cb: () => void) => window.setTimeout(cb, 300);
+
+    const idleHandle = idleCallback(async () => {
+      if (isCancelled) return;
       try {
-        carInstance = initCarFollower3D();
+        const { initCarFollower3D } = await import('./carFollower3D');
+        if (!isCancelled) {
+          carInstance = initCarFollower3D();
+        }
       } catch (error) {
         // WebGL/car initialization is optional; the rest of the site remains usable.
         console.error('Unable to initialize the 3D car follower.', error);
       }
-    }, 120);
+    });
 
     return () => {
-      clearTimeout(timer);
+      isCancelled = true;
+      if (typeof window !== 'undefined' && 'cancelIdleCallback' in window && typeof idleHandle === 'number') {
+        (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleHandle);
+      }
       if (carInstance) {
         carInstance.destroy();
       }

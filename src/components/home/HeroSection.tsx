@@ -31,22 +31,33 @@ export const HeroSection: React.FC = () => {
   return (
     <section className="ref-hero">
       <img
-        src="https://images.unsplash.com/photo-1595008382755-48b0d68865f6?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+        src="https://images.unsplash.com/photo-1595008382755-48b0d68865f6?auto=format&fit=crop&w=1400&q=75"
         alt="Automotive design displayed on an engineering workstation"
         className={`hero-scene ${activeScene === 'design' ? 'is-active' : ''}`}
         data-scene="design"
+        width="1400"
+        height="933"
+        decoding="async"
       />
       <img
-        src="https://images.unsplash.com/photo-1700770956485-87150c75ad65?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+        src="https://images.unsplash.com/photo-1700770956485-87150c75ad65?auto=format&fit=crop&w=1400&q=75"
         alt="Student engineers working together around a car in a garage"
         className={`hero-scene ${activeScene === 'build' ? 'is-active' : ''}`}
         data-scene="build"
+        width="1400"
+        height="933"
+        loading="lazy"
+        decoding="async"
       />
       <img
-        src="https://images.unsplash.com/photo-1690984651796-6bbb102fbf30?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+        src="https://images.unsplash.com/photo-1690984651796-6bbb102fbf30?auto=format&fit=crop&w=1400&q=75"
         alt="Race car moving at speed during a track competition"
         className={`hero-scene ${activeScene === 'compete' ? 'is-active' : ''}`}
         data-scene="compete"
+        width="1400"
+        height="933"
+        loading="lazy"
+        decoding="async"
       />
       <div className="hero-gradient-overlay"></div>
 
@@ -84,6 +95,7 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 className={`slogan-word ${activeScene === 'design' ? 'is-active' : ''}`}
                 data-scene="design"
+                aria-label="Toggle Design engineering phase visual"
                 onClick={() => setActiveScene(prev => prev === 'design' ? null : 'design')}
                 onMouseEnter={() => setActiveScene('design')}
                 onFocus={() => setActiveScene('design')}
@@ -94,6 +106,7 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 className={`slogan-word ${activeScene === 'build' ? 'is-active' : ''}`}
                 data-scene="build"
+                aria-label="Toggle Build fabrication phase visual"
                 onClick={() => setActiveScene(prev => prev === 'build' ? null : 'build')}
                 onMouseEnter={() => setActiveScene('build')}
                 onFocus={() => setActiveScene('build')}
@@ -104,6 +117,7 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 className={`slogan-word ${activeScene === 'compete' ? 'is-active' : ''}`}
                 data-scene="compete"
+                aria-label="Toggle Compete track racing phase visual"
                 onClick={() => setActiveScene(prev => prev === 'compete' ? null : 'compete')}
                 onMouseEnter={() => setActiveScene('compete')}
                 onFocus={() => setActiveScene('compete')}

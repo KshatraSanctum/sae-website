@@ -56,6 +56,9 @@ export const TeamPage: React.FC = () => {
                     className="team-card-img"
                     style={member.objectPosition ? { objectPosition: member.objectPosition } : undefined}
                     loading="lazy"
+                    decoding="async"
+                    width="400"
+                    height="400"
                   />
                   <div className="team-card-overlay"></div>
                   <div className="team-card-socials">
@@ -63,7 +66,7 @@ export const TeamPage: React.FC = () => {
                       <a
                         href={member.linkedin}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="team-social-btn"
                         aria-label={`${member.name} on LinkedIn`}
                         title="LinkedIn"
@@ -134,6 +137,9 @@ export const TeamPage: React.FC = () => {
                     className="team-card-img"
                     style={member.objectPosition ? { objectPosition: member.objectPosition } : undefined}
                     loading="lazy"
+                    decoding="async"
+                    width="400"
+                    height="400"
                   />
                   <div className="team-card-overlay"></div>
                   <div className="team-card-socials">
@@ -141,7 +147,7 @@ export const TeamPage: React.FC = () => {
                       <a
                         href={member.linkedin}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="team-social-btn"
                         aria-label={`${member.name} on LinkedIn`}
                         title="LinkedIn"

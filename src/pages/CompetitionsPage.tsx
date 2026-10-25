@@ -386,6 +386,9 @@ export const CompetitionsPage: React.FC<CompetitionsPageProps> = ({ isActive = t
                           alt={m.imageAlt}
                           className="comp-photo-img"
                           loading="lazy"
+                          decoding="async"
+                          width="600"
+                          height="400"
                         />
                         <div className="comp-photo-overlay" />
                         <div className="comp-photo-caption">

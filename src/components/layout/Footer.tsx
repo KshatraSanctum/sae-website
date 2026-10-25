@@ -73,7 +73,7 @@ export const Footer: React.FC = () => {
               aria-label="SAE BIT Sindri home"
             >
               <span className="ref-brand-logo-ring">
-                <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Society Logo" />
+                <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Society Logo" width="44" height="44" loading="lazy" decoding="async" />
               </span>
               <span className="ref-brand-text">
                 <span className="ref-brand-title">SAE BIT Sindri</span>

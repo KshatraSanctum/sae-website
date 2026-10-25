@@ -73,7 +73,7 @@ export const SponsorsTeaser: React.FC = () => {
                     {ROW_1_SPONSORS.map((s, idx) => (
                       <div className="sponsor-mini-card" key={`s1-${idx}`}>
                         <div className="sponsor-mini-logo-wrap">
-                          <img src={s.logo} alt={s.name} loading="lazy" className="sponsor-mini-img" />
+                          <img src={s.logo} alt={s.name} loading="lazy" decoding="async" width="48" height="48" className="sponsor-mini-img" />
                         </div>
                         <div className="sponsor-mini-info">
                           <span className="sponsor-mini-name">{s.name}</span>
@@ -87,7 +87,7 @@ export const SponsorsTeaser: React.FC = () => {
                     {ROW_1_SPONSORS.map((s, idx) => (
                       <div className="sponsor-mini-card" key={`s1-dup-${idx}`}>
                         <div className="sponsor-mini-logo-wrap">
-                          <img src={s.logo} alt={s.name} loading="lazy" className="sponsor-mini-img" />
+                          <img src={s.logo} alt={s.name} loading="lazy" decoding="async" width="48" height="48" className="sponsor-mini-img" />
                         </div>
                         <div className="sponsor-mini-info">
                           <span className="sponsor-mini-name">{s.name}</span>
@@ -107,7 +107,7 @@ export const SponsorsTeaser: React.FC = () => {
                     {ROW_2_SPONSORS.map((s, idx) => (
                       <div className="sponsor-mini-card" key={`s2-${idx}`}>
                         <div className="sponsor-mini-logo-wrap">
-                          <img src={s.logo} alt={s.name} loading="lazy" className="sponsor-mini-img" />
+                          <img src={s.logo} alt={s.name} loading="lazy" decoding="async" width="48" height="48" className="sponsor-mini-img" />
                         </div>
                         <div className="sponsor-mini-info">
                           <span className="sponsor-mini-name">{s.name}</span>
@@ -121,7 +121,7 @@ export const SponsorsTeaser: React.FC = () => {
                     {ROW_2_SPONSORS.map((s, idx) => (
                       <div className="sponsor-mini-card" key={`s2-dup-${idx}`}>
                         <div className="sponsor-mini-logo-wrap">
-                          <img src={s.logo} alt={s.name} loading="lazy" className="sponsor-mini-img" />
+                          <img src={s.logo} alt={s.name} loading="lazy" decoding="async" width="48" height="48" className="sponsor-mini-img" />
                         </div>
                         <div className="sponsor-mini-info">
                           <span className="sponsor-mini-name">{s.name}</span>

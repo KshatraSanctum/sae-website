@@ -27,13 +27,16 @@ export const IntroOverlay: React.FC = () => {
           className="intro-real-logo"
           src="/bit-sindri-sae-logo.png"
           alt="SAE India BIT Sindri Logo"
+          width="160"
+          height="160"
+          decoding="async"
         />
       </div>
       <div id="introSubtitle" className="intro-sub">
         <div className="intro-title">SAE INDIA · BIT SINDRI</div>
         <div className="intro-tag">COLLEGIATE CHAPTER</div>
       </div>
-      <button id="introSkipBtn" className="intro-skip-btn" type="button">
+      <button id="introSkipBtn" className="intro-skip-btn" type="button" aria-label="Skip intro animation">
         SKIP [ESC] ❯
       </button>
     </div>

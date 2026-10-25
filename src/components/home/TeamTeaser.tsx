@@ -10,6 +10,10 @@ export const TeamTeaser: React.FC = () => {
             <img
               src="/extra/IMG_1458.webp"
               alt="SAE BIT Sindri collegiate team members"
+              loading="lazy"
+              decoding="async"
+              width="600"
+              height="400"
               style={{ objectPosition: 'center 62%' }}
             />
             <div className="image-frame-overlay"></div>

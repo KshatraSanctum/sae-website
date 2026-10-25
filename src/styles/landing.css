@@ -93,7 +93,7 @@ html {
   font-weight: 800;
   letter-spacing: 0.23em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.48);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .ref-container {
@@ -1159,7 +1159,7 @@ html {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.25em;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
   margin: 0;
 }
 
@@ -1333,7 +1333,7 @@ html {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.17em;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* ===================== WHAT WE DO ===================== */
@@ -1675,7 +1675,7 @@ html {
 .ref-event-meta {
   margin-top: 0.5rem;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
   margin-bottom: 0;
 }
 
@@ -2672,7 +2672,7 @@ html {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.48);
+  color: rgba(255, 255, 255, 0.65);
   margin: 0 0 1.1rem;
   display: flex;
   align-items: center;
@@ -3585,7 +3585,7 @@ html {
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
   line-height: 1;
 }
 
@@ -4121,7 +4121,7 @@ html {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
   margin-bottom: 0.4rem;
 }
 
@@ -4339,7 +4339,7 @@ html {
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
   font-family: var(--font-heading, inherit);
   font-size: 0.76rem;
   font-weight: 800;
@@ -4435,7 +4435,7 @@ html {
   font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* Right Side: Card Deck Viewport */
