@@ -73,23 +73,59 @@ export const AboutPage: React.FC = () => {
             <div data-reveal className="reveal-up reveal-delay about-story-visual">
               {/* Faculty & Institutional Mentorship Card */}
               <div className="about-prof-card">
-                <div className="about-card-badge mono">// FACULTY &amp; INSTITUTIONAL MENTORSHIP</div>
-                <div className="about-mentorship-box">
-                  <div className="about-dept-seal">
-                    <span className="about-seal-pill mono">BIT SINDRI</span>
-                    <div>
-                      <h4 className="prof-name">Department of Mechanical Engineering</h4>
-                      <p className="prof-sub">Birsa Institute of Technology, Sindri</p>
+                <div className="about-card-badge mono">// FACULTY ADVISORS · MECHANICAL BRANCH</div>
+                <div className="about-prof-grid">
+                  {/* Prof 1: Dr Manoj Kumar */}
+                  <article className="prof-item">
+                    <div className="prof-photo-box">
+                      <picture>
+                        <source srcSet="/about_items/DrManoj_enhanced.webp" type="image/webp" />
+                        <img
+                          src="/about_items/DrManoj_enhanced.png"
+                          alt="Dr Manoj Kumar, Faculty Advisor - Mechanical Branch"
+                          className="prof-photo-img"
+                          loading="lazy"
+                          decoding="async"
+                          width="400"
+                          height="500"
+                        />
+                      </picture>
+                      <div className="prof-photo-overlay" />
                     </div>
-                  </div>
-                  <p className="about-mentorship-desc">
-                    Guided by senior faculty mentors across Vehicle Dynamics, Internal Combustion &amp; Electric Powertrains, and CAD/CAM fabrication bays.
-                  </p>
-                  <div className="about-advisory-tags mono">
-                    <span>// ACADEMIC OVERSIGHT</span>
-                    <span>// SAFETY AUDITS</span>
-                    <span>// WORKSHOP LABS</span>
-                  </div>
+                    <div className="prof-info">
+                      <span className="prof-tag mono">FACULTY ADVISOR</span>
+                      <h4 className="prof-name">Dr Manoj Kumar</h4>
+                      <p className="prof-sub">
+                        Mechanical Engineering Branch<br />BIT Sindri
+                      </p>
+                    </div>
+                  </article>
+
+                  {/* Prof 2: Dr Rajan Kumar */}
+                  <article className="prof-item">
+                    <div className="prof-photo-box">
+                      <picture>
+                        <source srcSet="/about_items/DrRajan_enhanced.webp" type="image/webp" />
+                        <img
+                          src="/about_items/DrRajan_enhanced.png"
+                          alt="Dr Rajan Kumar, Faculty Advisor - Mechanical Branch"
+                          className="prof-photo-img"
+                          loading="lazy"
+                          decoding="async"
+                          width="400"
+                          height="500"
+                        />
+                      </picture>
+                      <div className="prof-photo-overlay" />
+                    </div>
+                    <div className="prof-info">
+                      <span className="prof-tag mono">FACULTY ADVISOR</span>
+                      <h4 className="prof-name">Dr Rajan Kumar</h4>
+                      <p className="prof-sub">
+                        Mechanical Engineering Branch<br />BIT Sindri
+                      </p>
+                    </div>
+                  </article>
                 </div>
               </div>
 
