@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { WinterFooterTheme } from './winter/WinterFooterTheme';
+import { WinterSnowman } from './winter/WinterSnowman';
 
 interface FooterNavItem {
   path: string;
@@ -25,6 +27,9 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="ref-footer" id="main-footer">
+      {/* Winter Theme Overlay: Snowfall, Wind, and Left-Corner Snowman */}
+      <WinterFooterTheme />
+
       {/* Top Telemetry & Live Bay Status Strip */}
       <div className="ref-footer-telemetry-bar">
         <div className="ref-container ref-footer-telemetry-inner">
@@ -205,6 +210,11 @@ export const Footer: React.FC = () => {
 
         {/* Sub-Footer Strip */}
         <div className="ref-footer-bottom">
+          {/* Winter Snowman Mascot anchored precisely on the sub-footer border on the left corner */}
+          <div className="winter-snowman-anchor">
+            <WinterSnowman />
+          </div>
+
           <div className="ref-container ref-footer-bottom-inner">
             <p className="ref-footer-copy">
               © {new Date().getFullYear()} SAE INDIA BIT Sindri · Made to Move Forward

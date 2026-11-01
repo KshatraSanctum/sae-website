@@ -1,0 +1,357 @@
+/* ==========================================================================
+   WINTER THEME - EXCLUSIVE TO FOOTER
+   Optimized for all mobile sizes (320px to 4K), touch, and high-DPR screens
+   ========================================================================== */
+
+/* Prevent iOS tap highlight gray/blue flash */
+.winter-snowman-wrapper,
+.ref-footer a,
+.ref-footer button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Overall container spanning the entire footer */
+.winter-footer-root {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Ensure all interactive links and buttons in footer stay cleanly above canvas */
+.ref-footer a,
+.ref-footer button {
+  position: relative;
+  z-index: 3;
+}
+
+/* 1. Snowfall & Wind Canvas */
+.winter-footer-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.92;
+}
+
+/* 2. Frosted Ambient Winter Glows */
+.winter-frost-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(ellipse at 10% 90%, rgba(186, 230, 253, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 88% 12%, rgba(147, 197, 253, 0.04) 0%, transparent 32%);
+}
+
+/* 3. Frosted Snow Top Edge */
+.winter-snow-top-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(224, 242, 254, 0.35) 10%,
+    rgba(255, 255, 255, 0.75) 30%,
+    rgba(186, 230, 253, 0.6) 60%,
+    rgba(255, 255, 255, 0.2) 85%,
+    transparent 100%
+  );
+  box-shadow: 0 1px 6px rgba(186, 230, 253, 0.35);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 4. Snowman Left Corner Anchor - Positioned precisely on top of sub-footer border */
+.winter-snowman-anchor {
+  position: absolute;
+  left: max(1.5rem, calc((100% - 80rem) / 2 + 1.25rem));
+  bottom: calc(100% - 6px);
+  z-index: 4;
+  pointer-events: auto;
+}
+
+.winter-snowman-wrapper {
+  position: relative;
+  width: clamp(95px, 9.5vw, 125px);
+  height: auto;
+  cursor: pointer;
+  transform-origin: bottom center;
+  animation: snowmanIdleSway 6s ease-in-out infinite;
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.winter-snowman-wrapper:focus-visible {
+  outline: 2px solid var(--color-signal, #f6b719);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* Press feedback for touch / mobile */
+.winter-snowman-wrapper:active {
+  transform: translateY(2px) scale(0.96);
+}
+
+/* Desktop hover effects (only active when precise mouse pointer is available) */
+@media (hover: hover) and (pointer: fine) {
+  .winter-snowman-wrapper:hover {
+    transform: translateY(-4px) scale(1.04);
+  }
+
+  .winter-snowman-wrapper:hover .winter-top-hat {
+    animation: hatTip 600ms ease-in-out forwards;
+  }
+
+  .winter-snowman-wrapper:hover .winter-snowman-bubble {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
+/* Mobile / Tap / Keyboard Active State */
+.winter-snowman-wrapper.is-active .winter-snowman-bubble {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.winter-snowman-wrapper.is-wiggling .winter-top-hat {
+  animation: hatTip 600ms ease-in-out forwards;
+}
+
+.winter-snowman-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+/* Arm wave animation */
+.winter-arm-left {
+  transform-origin: 112px 116px;
+  animation: snowmanWaveArm 4.2s ease-in-out infinite;
+}
+
+/* Fluttering scarf tail in wind */
+.winter-scarf-tail {
+  transform-origin: 87px 78px;
+  animation: scarfFlutter 2.2s ease-in-out infinite;
+}
+
+/* Speech Bubble - Desktop Default */
+.winter-snowman-bubble {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px) scale(0.92);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(246, 183, 25, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(246, 183, 25, 0.2);
+  color: #ffffff;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease, transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10;
+}
+
+.winter-snowman-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 7px;
+  height: 7px;
+  background: rgba(15, 23, 42, 0.94);
+  border-right: 1px solid rgba(246, 183, 25, 0.5);
+  border-bottom: 1px solid rgba(246, 183, 25, 0.5);
+}
+
+/* KEYFRAME ANIMATIONS */
+@keyframes snowmanIdleSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(1deg) translateY(-1px);
+  }
+  75% {
+    transform: rotate(-1.2deg) translateY(0);
+  }
+}
+
+@keyframes snowmanWaveArm {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-16deg);
+  }
+  30% {
+    transform: rotate(-4deg);
+  }
+  40% {
+    transform: rotate(-18deg);
+  }
+  55% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes scarfFlutter {
+  0%, 100% {
+    transform: rotate(0deg) skewX(0deg);
+  }
+  25% {
+    transform: rotate(5.5deg) skewX(-4deg);
+  }
+  50% {
+    transform: rotate(1.5deg) skewX(-1.5deg);
+  }
+  75% {
+    transform: rotate(7deg) skewX(-5deg);
+  }
+}
+
+@keyframes hatTip {
+  0% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(-14deg) translateY(-3px);
+  }
+  80% {
+    transform: rotate(3deg) translateY(0);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE TUNING FOR ALL VIEWPORT SIZES
+   ========================================================================== */
+
+/* Tablets & Small Laptops (769px - 1024px) */
+@media (max-width: 1024px) {
+  .winter-snowman-anchor {
+    left: max(1.25rem, calc((100% - 80rem) / 2 + 1rem));
+  }
+  .winter-snowman-wrapper {
+    width: 96px;
+  }
+}
+
+/* Large Mobile & Tablets Portrait (481px - 768px) */
+@media (max-width: 768px) {
+  .winter-snowman-anchor {
+    left: max(1.15rem, env(safe-area-inset-left));
+    bottom: calc(100% - 5px);
+  }
+  .winter-snowman-wrapper {
+    width: 82px;
+  }
+  .ref-footer-inner {
+    padding-bottom: 4.5rem !important;
+  }
+  /* Speech bubble aligns left on mobile so it never overflows off left edge */
+  .winter-snowman-bubble {
+    left: 0;
+    transform: translateX(0) translateY(5px) scale(0.92);
+    font-size: 0.6rem;
+    padding: 4px 9px;
+  }
+  .winter-snowman-bubble::after {
+    left: 22px;
+    transform: translateX(0) rotate(45deg);
+  }
+  .winter-snowman-wrapper.is-active .winter-snowman-bubble {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+/* Standard Mobile Phones (360px - 480px, e.g. iPhone 13-16, Pixel, Galaxy S) */
+@media (max-width: 480px) {
+  .winter-snowman-anchor {
+    left: max(0.9rem, env(safe-area-inset-left));
+    bottom: calc(100% - 4px);
+  }
+  .winter-snowman-wrapper {
+    width: 68px;
+    opacity: 0.95;
+  }
+  .ref-footer-inner {
+    padding-bottom: 5rem !important;
+  }
+  .ref-footer-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+  .winter-snowman-bubble {
+    font-size: 0.56rem;
+    padding: 3px 8px;
+    top: -22px;
+  }
+  .winter-snowman-bubble::after {
+    left: 18px;
+  }
+}
+
+/* Extra-Narrow Mobile Phones (< 360px, e.g. iPhone SE 1st gen, Galaxy Z Fold cover 320px) */
+@media (max-width: 359px) {
+  .winter-snowman-anchor {
+    left: max(0.65rem, env(safe-area-inset-left));
+    bottom: calc(100% - 4px);
+  }
+  .winter-snowman-wrapper {
+    width: 56px;
+  }
+  .ref-footer-inner {
+    padding-bottom: 4.8rem !important;
+  }
+  .winter-snowman-bubble {
+    font-size: 0.52rem;
+    padding: 2.5px 7px;
+    top: -20px;
+  }
+  .winter-snowman-bubble::after {
+    left: 15px;
+  }
+}
+
+/* ACCESSIBILITY: PREFERS REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .winter-snowman-wrapper,
+  .winter-arm-left,
+  .winter-scarf-tail,
+  .winter-top-hat {
+    animation: none !important;
+    transition: none !important;
+  }
+  .winter-snowman-wrapper:hover,
+  .winter-snowman-wrapper:active {
+    transform: none !important;
+  }
+}

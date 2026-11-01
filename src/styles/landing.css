@@ -2559,17 +2559,6 @@ html {
     linear-gradient(180deg, rgba(8, 12, 20, 0.72), rgba(5, 7, 12, 0.98));
 }
 
-.ref-footer-main-wrapper::before {
-  position: absolute;
-  top: 0;
-  left: max(1.25rem, calc((100% - 80rem) / 2));
-  width: min(18rem, 42vw);
-  height: 2px;
-  content: "";
-  background: linear-gradient(90deg, var(--color-signal), transparent);
-  opacity: 0.8;
-}
-
 /* Watermark Text */
 .footer-watermark-text {
   position: absolute;
