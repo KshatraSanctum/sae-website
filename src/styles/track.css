@@ -1993,13 +1993,41 @@ html[data-track-fullscreen='true'] .track-celebration-banner {
   min-width: 36px;
   justify-content: center;
   padding: 4px 7px;
-  border: 1px solid rgba(246, 183, 25, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
-  background: rgba(246, 183, 25, 0.12);
-  color: #f6b719;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
   font-family: 'SF Mono', 'Roboto Mono', monospace;
   font-size: 0.72rem;
   font-weight: 800;
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.track-leaderboard-rank-badge-gold {
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(217, 119, 6, 0.14) 100%);
+  color: #fbbf24;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.22);
+}
+
+.track-leaderboard-rank-badge-silver {
+  border: 1px solid rgba(226, 232, 240, 0.45);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.2) 0%, rgba(148, 163, 184, 0.12) 100%);
+  color: #f1f5f9;
+  box-shadow: 0 0 10px rgba(226, 232, 240, 0.18);
+}
+
+.track-leaderboard-rank-badge-bronze {
+  border: 1px solid rgba(249, 115, 22, 0.5);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.22) 0%, rgba(180, 83, 9, 0.14) 100%);
+  color: #fb923c;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.2);
+}
+
+.track-leaderboard-rank-badge-default {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
 }
 
 .track-leaderboard-player,

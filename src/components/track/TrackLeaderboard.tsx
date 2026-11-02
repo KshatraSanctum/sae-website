@@ -101,6 +101,20 @@ const getInitials = (value: string): string => {
   return initials || 'G';
 };
 
+const getRankBadgeClass = (rank?: number): string => {
+  if (rank === 1) return 'track-leaderboard-rank-badge track-leaderboard-rank-badge-gold';
+  if (rank === 2) return 'track-leaderboard-rank-badge track-leaderboard-rank-badge-silver';
+  if (rank === 3) return 'track-leaderboard-rank-badge track-leaderboard-rank-badge-bronze';
+  return 'track-leaderboard-rank-badge track-leaderboard-rank-badge-default';
+};
+
+const getRankRowClass = (rank?: number): string => {
+  if (rank === 1) return 'track-leaderboard-row track-leaderboard-row-rank-1';
+  if (rank === 2) return 'track-leaderboard-row track-leaderboard-row-rank-2';
+  if (rank === 3) return 'track-leaderboard-row track-leaderboard-row-rank-3';
+  return 'track-leaderboard-row';
+};
+
 const getSubmissionStatusView = (
   status: TrackLeaderboardSubmissionStatus | null | undefined,
   message: string | null | undefined,
@@ -319,14 +333,16 @@ export const TrackLeaderboard: FC<TrackLeaderboardProps> = ({
                   const submittedDate = formatSubmissionDate(entry.createdAt);
                   const playerName = entry.playerName.trim() || 'Anonymous driver';
                   const rank = Number.isFinite(entry.rank) ? `#${entry.rank}` : '—';
+                  const rankBadgeClass = getRankBadgeClass(entry.rank);
+                  const rowClass = getRankRowClass(entry.rank);
                   const lapTime = formatLapTime
                     ? formatLapTime(entry.score, entry)
                     : formatTrackLeaderboardLapTime(entry.score);
 
                   return (
-                    <tr key={entry.id} className="track-leaderboard-row">
+                    <tr key={entry.id} className={rowClass}>
                       <td className="track-leaderboard-cell track-leaderboard-cell-rank" data-label="Rank">
-                        <span className="track-leaderboard-rank-badge">{rank}</span>
+                        <span className={rankBadgeClass}>{rank}</span>
                       </td>
                       <td className="track-leaderboard-cell track-leaderboard-cell-player" data-label="Player">
                         <div className="track-leaderboard-player">

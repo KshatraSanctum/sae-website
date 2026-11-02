@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 export const JoinTeaser: React.FC = () => {
   return (
     <section id="home-join-cta" className="ref-join-cta-section">
-      <div className="tech-grid" style={{ position: 'absolute', inset: 0, opacity: 0.1 }}></div>
       <div data-reveal className="reveal-up ref-container ref-join-cta-inner">
         <div>
           <p className="ref-join-cta-tag">Ready to get started?</p>

@@ -37,6 +37,7 @@ export const HeroSection: React.FC = () => {
         data-scene="design"
         width="1400"
         height="933"
+        loading="lazy"
         decoding="async"
       />
       <img

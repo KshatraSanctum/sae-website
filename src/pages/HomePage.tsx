@@ -1,6 +1,6 @@
 import React from 'react';
 import { HeroSection } from '../components/home/HeroSection';
-import { DbcScrollShowcase } from '../components/common/DbcScrollShowcase';
+import { SubsystemExplorer } from '../components/home/SubsystemExplorer';
 import { AboutTeaser } from '../components/home/AboutTeaser';
 import { EventsTeaser } from '../components/home/EventsTeaser';
 import { SponsorsTeaser } from '../components/home/SponsorsTeaser';
@@ -16,7 +16,7 @@ export const HomePage: React.FC<HomePageProps> = ({ isActive = true }) => {
   return (
     <section className={`page ${isActive ? 'active' : ''}`} id="page-home">
       <HeroSection />
-      <DbcScrollShowcase />
+      <SubsystemExplorer />
       <AboutTeaser />
       <EventsTeaser />
       <SponsorsTeaser />
