@@ -16,6 +16,7 @@ Whether you are a 1st-year student adding your team member profile, a 2nd/3rd-ye
    - [2. Adding Achievements or Milestones](#2-adding-achievements-or-milestones)
    - [3. Adding Upcoming or Past Events](#3-adding-upcoming-or-past-events)
    - [4. Adding Sponsors & Partners](#4-adding-sponsors--partners)
+   - [5. Adding New Sections or Components (Swarm Build Registration)](#5-adding-new-sections-or-components-swarm-build-registration)
 5. [Asset & Image Guidelines](#-asset--image-guidelines)
 6. [Code Style & Verification](#-code-style--verification)
 7. [Submitting a Pull Request (PR)](#-submitting-a-pull-request-pr)
@@ -140,6 +141,56 @@ To add a workshop or event to `/events`:
 
 1. Place the transparent sponsor logo in `public/sponsors/`.
 2. Add the sponsor details into `SPONSORS` in [`src/data/sponsors.ts`](file:///Users/rahulkumar/saee/src/data/sponsors.ts) under the correct tier (`Title`, `Gold`, `Silver`, or `Technical Partner`).
+
+### 5. Adding New Sections or Components (Swarm Build Registration)
+
+The web platform features an interactive **Figma Multiplayer Swarm Build intro overlay** (`src/components/common/SwarmBuildOverlay.tsx`). It simulates developer cursors (`Isihin`, `Priya`, `Saurav`, `UI_Bot`, etc.) live-assembling headers, cards, and toolbars with dashed wireframes and W × H dimension badges.
+
+> [!WARNING]
+> **Why Registration is Mandatory**:
+> When a visitor loads a page or navigates via React Router, the page starts with a clean, blank slate. The cursors then frame and reveal each element.
+> - If you **forget to register** a new card or filter toolbar, it will **flash on screen before the animation** or remain permanently invisible at `opacity: 0`.
+
+Whenever you add a new major section, card, banner, or filter toolbar, follow this **4-step registration checklist**:
+
+1. **Add to Work Queue Selector:**
+   Open [`src/components/common/SwarmBuildOverlay.tsx`](file:///Users/rahulkumar/saee/src/components/common/SwarmBuildOverlay.tsx) and add your element's class or ID into `STRUCTURAL_SELECTORS`:
+   ```typescript
+   // Example:
+   '.my-new-feature-card',
+   '.my-new-filter-bar',
+   ```
+
+2. **Add to Route Transition Blanking:**
+   Open [`src/styles/swarm-build-overlay.css`](file:///Users/rahulkumar/saee/src/styles/swarm-build-overlay.css) and append your selector under `html.swarm-page-blank #mainContent`:
+   ```css
+   html.swarm-page-blank #mainContent .my-new-feature-card,
+   html.swarm-page-blank #mainContent .my-new-filter-bar,
+   ```
+
+3. **Add to Initial Frame-Zero Blanking:**
+   Open [`index.html`](file:///Users/rahulkumar/saee/index.html) and [`src/styles/swarm-build-overlay.css`](file:///Users/rahulkumar/saee/src/styles/swarm-build-overlay.css), and append your selector under `html.swarm-initial-blank`:
+   ```css
+   html.swarm-initial-blank .my-new-feature-card,
+   html.swarm-initial-blank .my-new-filter-bar,
+   ```
+
+4. **Verify Reveal Styling:**
+   In [`src/styles/swarm-build-overlay.css`](file:///Users/rahulkumar/saee/src/styles/swarm-build-overlay.css), ensure `.swarm-built` applies `opacity: 1 !important`:
+   ```css
+   .swarm-built.my-new-feature-card,
+   .swarm-built .my-new-feature-card {
+     opacity: 1 !important;
+     transform: translate(0) !important;
+   }
+   ```
+
+#### Testing Your New Component
+- Start the dev server (`npm run dev`) and visit your page.
+- Test **Hard Reload** (`Cmd + Shift + R` or `Ctrl + F5`): Confirm the page starts completely blank from frame zero, cursors draw dashed bounding boxes with W × H badges around your element, and it smoothly fades in.
+- Test **Client-Side Navigation**: Click between nav links; ensure there is no flash of unhidden content (FOUC).
+- Test **Scroll Build**: Scroll down slowly; elements below the fold should animate into view as they intersect the viewport.
+- Test **Replay**: Click `Replay Build` in the footer telemetry strip to verify that the element re-animates cleanly.
 
 ---
 

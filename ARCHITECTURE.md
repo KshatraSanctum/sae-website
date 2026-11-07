@@ -9,10 +9,10 @@ Supabase auth and race Edge Functions stay behind a typed API boundary.
 ```text
 src/
 ├── components/       Reusable presentation components
-│   ├── common/       Cross-page UI, metadata, error and loading states
-│   ├── home/         Homepage sections
-│   ├── intro/        Intro overlay presentation
-│   ├── layout/       Navbar, footer and shared layout chrome
+│   ├── common/       Cross-page UI, metadata, SwarmBuildOverlay, error & loading states
+│   ├── home/         Homepage sections (Hero, Subsystems, Teasers, Glimpses)
+│   ├── intro/        Legacy intro overlay presentation (inactive, preserved)
+│   ├── layout/       Navbar, footer, and shared layout chrome
 │   └── track/        Race HUD and responsive track presentation
 ├── config/           Runtime-safe configuration, routes and storage keys
 ├── data/             Static editorial content grouped by domain
@@ -20,7 +20,7 @@ src/
 ├── pages/            Route-level composition; avoid putting generic logic here
 ├── services/         I/O boundaries and provider adapters
 │   └── api/          Typed request, auth, and race/leaderboard boundaries
-├── styles/           Global and feature stylesheets
+├── styles/           Global and feature stylesheets (main, landing, swarm-build-overlay)
 ├── utils/            Framework-independent helpers and track utilities
 └── carFollower3D.ts  Imperative Three.js integration (isolated browser boundary)
 ```
@@ -41,6 +41,38 @@ src/
    versions when adding persistent leaderboard records.
 7. Prefer small named components and hooks over more conditional branches in a
    large page. Keep user-visible behavior stable while moving code.
+8. When creating new route pages or adding major structural elements (cards,
+   filter toolbars, headers, hero banners), register their selectors with the
+   Swarm Build system (see below) to ensure zero-flash blanking and smooth
+   assembly.
+
+## Swarm Build Overlay & DOM Synchronization Architecture
+
+The Swarm Build overlay (`src/components/common/SwarmBuildOverlay.tsx`) simulates a team of multiplayer Figma designers assembling the website live. To maintain pristine visual polish, prevent layout shift, and avoid any Flash of Unstyled/Unhidden Content (FOUC), the system follows a strict 3-phase synchronization lifecycle:
+
+### 1. Frame-Zero Blanking Phase
+- **Initial Hard Reloads:** An inline `<script>` in `index.html` attaches `html.swarm-initial-blank` before DOM nodes parse. CSS in `index.html` forces target elements to `opacity: 0 !important` while keeping layout dimensions intact (`getBoundingClientRect()` returns exact pixel sizes).
+- **Client-Side Route Changes:** `SwarmBuildOverlay` attaches `html.swarm-page-blank` to `<html>` on pathname transitions. Stylesheet rules in `src/styles/swarm-build-overlay.css` blanket-hide all structural elements under `#mainContent`.
+- **Fail-Safe Release:** A 2200ms timeout automatically removes blanking classes to guarantee no content remains trapped if an unexpected error occurs.
+
+### 2. Work Queue & Construction Choreography Phase
+- `scanPageElements()` queries the DOM using `STRUCTURAL_SELECTORS`.
+- **Viewport Elements:** Found elements inside the viewport are queued into a rhythmic 110ms staggered wave. Available Figma cursors (`Isihin`, `Priya`, `Saurav`, `UI_Bot`, etc.) are assigned to targets.
+- **Below-the-Fold Elements:** Observed via `IntersectionObserver`. When scrolled into view, an agent cursor glides over and constructs them on demand.
+- **Wireframe Simulation:** An active cursor interpolates to the target's top-left origin, drags a temporary 1.5px dashed bounding box in the cursor's signature color to the bottom-right corner, and displays a dynamic `width × height` badge.
+
+### 3. Reveal & Visibility Contract Phase
+- Once the drag completes (480ms for cards, 580ms for headings), `revealElementSafely()` is invoked:
+  - Removes `.swarm-build-hidden`.
+  - Attaches `.swarm-built`, which smoothly transitions `opacity: 1 !important` over 350ms using Apple-style cubic-bezier curves.
+  - Automatically activates ancestor and descendant `[data-reveal]` and `.reveal-up` elements with `.is-visible` so child content is never hidden by parent scroll-reveal wrappers.
+
+### Developer Protocol: Registering New UI Elements
+When you introduce a new card, header, filter toolbar, or section:
+1. **`SwarmBuildOverlay.tsx`:** Add the element's class or ID selector to `STRUCTURAL_SELECTORS`.
+2. **`swarm-build-overlay.css`:** Add the selector under both `html.swarm-initial-blank` and `html.swarm-page-blank #mainContent`.
+3. **`index.html`:** Add the selector to the `<style>` block under `html.swarm-initial-blank`.
+4. **Reveal Rules:** In `swarm-build-overlay.css`, ensure `.swarm-built <your-selector>` has `opacity: 1 !important` and `transform: translate(0) !important`.
 
 ## API boundary
 

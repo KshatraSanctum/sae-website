@@ -11,6 +11,8 @@ Official web platform of the **SAE India Collegiate Society, BIT Sindri** — fo
 
 ## 🏎️ Features & Pages
 
+- **Interactive Figma Multiplayer Swarm Build Intro** — Simulated real-time collaborative reconstruction inspired by Figma multiplayer canvas. 8 branded developer cursors (`Isihin`, `Priya`, `Saurav`, `UI_Bot`, `Elena`, `Marcus`, `Kiran`, `Liam`) dynamically traverse the live DOM, drawing temporary 1.5px dashed wireframe bounding boxes with live `W × H` dimension badges and typewriting/revealing page elements smoothly in sequence.
+- **Scroll & Route-Aware Assembly** — Viewport elements assemble in a rhythmic 110ms staggered wave on page mount; below-the-fold elements are lazily tracked via `IntersectionObserver` and constructed live as the visitor scrolls down.
 - **Interactive 3D Elements & Follower** — Interactive car cursor and custom canvas physics powered by Three.js.
 - **Race Track Challenge (`/track`)** — Autódromo Interlagos-inspired circuit simulation with synthesized Web Audio engine sound, keyboard-accessible fullscreen mode, crash recovery, and local personal best records.
 - **Global Race Leaderboard (`/track`)** — Optional Google-authenticated submissions with server-validated race sessions and accepted lap rankings below the circuit.
@@ -28,6 +30,7 @@ Official web platform of the **SAE India Collegiate Society, BIT Sindri** — fo
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Build Tool:** [Vite](https://vitejs.dev/)
 - **Graphics & Audio:** [Three.js](https://threejs.org/), HTML5 Canvas, Web Audio API
+- **Choreography & Motion:** Custom 60 FPS requestAnimationFrame physics loop, Figma-style SVG multiplayer cursor overlays, zero-layout-shift CSS transitions
 - **Styling:** Modular CSS3 with custom responsive layouts
 
 ---
@@ -109,9 +112,9 @@ sae-website/
 │   └── team/               # Team member portrait images
 ├── src/
 │   ├── components/         # Reusable layout and page section components
-│   │   ├── common/         # Route metadata, scroll handlers, fallback loaders
+│   │   ├── common/         # Route metadata, SwarmBuildOverlay, scroll handlers, fallbacks
 │   │   ├── home/           # Homepage teaser components
-│   │   ├── intro/          # Animated splash / intro overlay
+│   │   ├── intro/          # Legacy animated splash (inactive, preserved)
 │   │   ├── layout/         # Navbar, Footer, Mobile scroll track
 │   │   └── track/          # Race HUD and responsive track presentation
 │   ├── config/             # Runtime config, routes, and storage keys
@@ -119,7 +122,7 @@ sae-website/
 │   ├── hooks/              # Reusable React state/effect logic
 │   ├── pages/              # Primary route pages (Home, Track, Team, etc.)
 │   ├── services/api/       # Typed API client, auth, and race service boundary
-│   ├── styles/             # Modular CSS stylesheets
+│   ├── styles/             # Modular CSS stylesheets (landing, track, swarm-build-overlay)
 │   ├── utils/              # Framework-independent helpers and track utilities
 │   ├── carFollower3D.ts    # Isolated Three.js 3D follower integration
 │   ├── App.tsx             # Root router and route composition
@@ -131,6 +134,31 @@ sae-website/
 
 > [!TIP]
 > **Updating Society Content**: To update team members, milestones, sponsors, or competition entries, edit the relevant module under [`src/data/`](./src/data/). See [`ARCHITECTURE.md`](./ARCHITECTURE.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md) for structure and workflow guidelines.
+
+---
+
+## 🎨 Interactive Figma Multiplayer Swarm Build Overlay
+
+The website includes a live intro experience inspired by multiplayer canvas tools like Figma (`src/components/common/SwarmBuildOverlay.tsx`).
+
+### How It Operates
+1. **Zero-Flash Blank Canvas:** On initial page visit, an inline script in `index.html` marks `<html>` with `.swarm-initial-blank`. On route changes, `.swarm-page-blank` is dynamically applied. This guarantees that targets (headers, cards, filters, and grids) start at `opacity: 0 !important` from frame zero with **zero layout shift**.
+2. **Multiplayer Cursors:** 8 named SVG cursors (`Isihin`, `Priya`, `Saurav`, `UI_Bot`, `Elena`, `Marcus`, `Kiran`, `Liam`) with custom color pills and physics glide across the screen to assigned DOM target coordinates.
+3. **Wireframe Construction:** Each cursor drags a temporary `1.5px` dashed bounding box across the element's actual bounding rect (`getBoundingClientRect()`) displaying a live `width × height` px dimension tag.
+4. **Reveal Cadence:** Viewport elements assemble in a rhythmic `110ms` staggered wave. Once built, `.swarm-built` applies a smooth `350ms` cubic-bezier opacity transition.
+5. **Scroll & Route-Aware:** Incoming elements below the fold are watched via `IntersectionObserver` and constructed live as the user scrolls down.
+6. **Skip & Replay Controls:** Pressing `Escape` or clicking `Skip ✕` immediately reveals all elements. Clicking `Replay Build` in the footer telemetry strip re-triggers the assembly on any page.
+7. **Accessibility:** Automatically bypassed if `prefers-reduced-motion` is detected.
+
+> [!IMPORTANT]
+> **Developer Protocol for Adding New Components or Pages**:
+> Whenever you add a new major section, card, banner, or filter bar:
+> 1. **Register Selector:** Add its class/ID to `STRUCTURAL_SELECTORS` in [`src/components/common/SwarmBuildOverlay.tsx`](./src/components/common/SwarmBuildOverlay.tsx).
+> 2. **Add to Route Blanking:** Add the selector under `html.swarm-page-blank #mainContent` in [`src/styles/swarm-build-overlay.css`](./src/styles/swarm-build-overlay.css).
+> 3. **Add to Initial Blanking:** Add the selector under `html.swarm-initial-blank` in [`index.html`](./index.html).
+> 4. **Verify Reveal:** Ensure the element displays properly with `.swarm-built`.
+>
+> *If you omit these steps, your new element may flash before the cursors arrive or remain stuck at `opacity: 0`.* See [`ARCHITECTURE.md`](./ARCHITECTURE.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md) for full details.
 
 ---
 
