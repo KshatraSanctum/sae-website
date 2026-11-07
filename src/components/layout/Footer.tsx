@@ -36,6 +36,16 @@ export const Footer: React.FC = () => {
           <div className="footer-telemetry-left">
             <span className="telemetry-beacon-dot" aria-hidden="true" />
             <span className="telemetry-label">WORKSHOP &amp; FABRICATION BAY ACTIVE</span>
+            <button
+              type="button"
+              className="footer-replay-build-btn"
+              onClick={() => window.dispatchEvent(new CustomEvent('sae:replay-swarm-build'))}
+              title="Replay multiplayer Figma build animation"
+              aria-label="Replay multiplayer build animation"
+            >
+              <span className="footer-replay-icon" aria-hidden="true">⚡</span>
+              <span>Replay Build</span>
+            </button>
           </div>
           <a
             href="https://maps.app.goo.gl/HvS35hDbBtfP6R9b6"

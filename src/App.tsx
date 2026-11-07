@@ -8,7 +8,7 @@ import './styles/events.css';
 import './styles/competitions.css';
 import './styles/join.css';
 
-import { IntroOverlay } from './components/intro/IntroOverlay';
+import { SwarmBuildOverlay } from './components/common/SwarmBuildOverlay';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { MobileScrollTrack } from './components/layout/MobileScrollTrack';
@@ -220,7 +220,8 @@ const AppLayout: React.FC = () => {
       <ScrollRevealObserver />
       <LegacyHashRedirector />
 
-      <IntroOverlay />
+      {/* Interactive Figma Multiplayer Swarm Build intro overlay */}
+      <SwarmBuildOverlay />
       <Navbar
          loadingPath={routeLoading.path}
          loadingProgress={routeLoading.progress}

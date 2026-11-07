@@ -110,14 +110,130 @@
       overflow-y: visible;
     }
 
-    #introOverlay {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      background-color: #030406;
-      overflow: hidden;
+    /* Swarm Initial Blank Canvas: elements start completely blank from frame zero */
+    html.swarm-initial-blank .ref-brand,
+    html.swarm-initial-blank .ref-nav-center,
+    html.swarm-initial-blank #navPitBtn,
+    html.swarm-initial-blank .ref-header-actions .ref-btn,
+    html.swarm-initial-blank h1,
+    html.swarm-initial-blank h2,
+    html.swarm-initial-blank h3,
+    html.swarm-initial-blank h4,
+    html.swarm-initial-blank .hero-tag-row,
+    html.swarm-initial-blank .slogan-word,
+    html.swarm-initial-blank .hero-subtext,
+    html.swarm-initial-blank .hero-cta-row,
+    html.swarm-initial-blank .hero-visual-box-desktop,
+    html.swarm-initial-blank .hero-enter,
+    html.swarm-initial-blank .subsystem-header,
+    html.swarm-initial-blank .subsystem-tabs-bar,
+    html.swarm-initial-blank .subsystem-visual-panel,
+    html.swarm-initial-blank .subsystem-telemetry-hud,
+    html.swarm-initial-blank .subsystem-detail-card,
+    html.swarm-initial-blank .ref-about-left,
+    html.swarm-initial-blank .ref-stats-grid,
+    html.swarm-initial-blank .ref-stat-box,
+    html.swarm-initial-blank .ref-events-head,
+    html.swarm-initial-blank .ref-event-item,
+    html.swarm-initial-blank .ref-sponsors-left,
+    html.swarm-initial-blank .sponsors-marquee-container,
+    html.swarm-initial-blank .ref-glimpses-header-wrap,
+    html.swarm-initial-blank .glimpses-marquee-container,
+    html.swarm-initial-blank .glimpse-card,
+    html.swarm-initial-blank .ref-team-grid,
+    html.swarm-initial-blank .image-frame,
+    html.swarm-initial-blank .ref-skills-row,
+    html.swarm-initial-blank .ref-join-cta-inner,
+    html.swarm-initial-blank .ref-join-cta-btn,
+    html.swarm-initial-blank .team-header-row,
+    html.swarm-initial-blank .team-eyebrow-row,
+    html.swarm-initial-blank .ref-eyebrow,
+    html.swarm-initial-blank .team-subtext,
+    html.swarm-initial-blank .filters,
+    html.swarm-initial-blank .chip,
+    html.swarm-initial-blank .sponsor-card,
+    html.swarm-initial-blank .sponsor-grid,
+    html.swarm-initial-blank .sponsor-cta-banner,
+    html.swarm-initial-blank .about-header-row,
+    html.swarm-initial-blank .about-lead-copy,
+    html.swarm-initial-blank .about-story-text,
+    html.swarm-initial-blank .about-principle-item,
+    html.swarm-initial-blank .about-story-visual,
+    html.swarm-initial-blank .about-prof-card,
+    html.swarm-initial-blank .prof-item,
+    html.swarm-initial-blank .about-visual-card,
+    html.swarm-initial-blank .pillar-card,
+    html.swarm-initial-blank .about-affiliation-card,
+    html.swarm-initial-blank .join-hero-wrap,
+    html.swarm-initial-blank .join-header-row,
+    html.swarm-initial-blank .join-lead-copy,
+    html.swarm-initial-blank .join-banner,
+    html.swarm-initial-blank .join-sections-toolbar,
+    html.swarm-initial-blank .join-card,
+    html.swarm-initial-blank .crew-card,
+    html.swarm-initial-blank .step-card,
+    html.swarm-initial-blank .join-form-wrapper,
+    html.swarm-initial-blank .join-form-card,
+    html.swarm-initial-blank .faq-card,
+    html.swarm-initial-blank .join-contact-box,
+    html.swarm-initial-blank .track-header,
+    html.swarm-initial-blank .track-specs-grid,
+    html.swarm-initial-blank .track-spec-card,
+    html.swarm-initial-blank .track-arena-wrapper,
+    html.swarm-initial-blank .track-leaderboard,
+    html.swarm-initial-blank .team-card,
+    html.swarm-initial-blank .event-card,
+    html.swarm-initial-blank .featured-event-card,
+    html.swarm-initial-blank .comp-milestone-card,
+    html.swarm-initial-blank .comp-hero-header-row,
+    html.swarm-initial-blank .comp-hero-stats-badge,
+    html.swarm-initial-blank .comp-filter-section,
+    html.swarm-initial-blank .comp-filter-container,
+    html.swarm-initial-blank .comp-filter-pills,
+    html.swarm-initial-blank .comp-filter-btn,
+    html.swarm-initial-blank .comp-filter-count,
+    html.swarm-initial-blank .comp-sidebar-sticky,
+    html.swarm-initial-blank .comp-timeline-track,
+    html.swarm-initial-blank .events-controls-section,
+    html.swarm-initial-blank .events-controls-bar,
+    html.swarm-initial-blank .events-filter-group,
+    html.swarm-initial-blank .events-filter-btn,
+    html.swarm-initial-blank .events-view-switcher,
+    html.swarm-initial-blank .ref-card {
+      opacity: 0 !important;
+    }
+
+    .swarm-built,
+    html.swarm-initial-blank .swarm-built,
+    html.swarm-initial-blank .swarm-built article,
+    html.swarm-initial-blank .swarm-built .prof-item,
+    html.swarm-initial-blank .swarm-built .comp-filter-btn,
+    html.swarm-initial-blank .swarm-built .comp-filter-count,
+    html.swarm-initial-blank .swarm-built.ref-stat-box,
+    html.swarm-initial-blank .swarm-built .ref-stat-box,
+    html.swarm-initial-blank .swarm-built.ref-event-item,
+    html.swarm-initial-blank .swarm-built .ref-event-item,
+    html.swarm-initial-blank .swarm-built.glimpse-card,
+    html.swarm-initial-blank .swarm-built .glimpse-card,
+    html.swarm-initial-blank .swarm-built.image-frame,
+    html.swarm-initial-blank .swarm-built .image-frame,
+    html.swarm-initial-blank .swarm-built.subsystem-detail-card,
+    html.swarm-initial-blank .swarm-built.subsystem-visual-panel,
+    html.swarm-initial-blank .swarm-built.ref-join-cta-inner,
+    html.swarm-initial-blank .swarm-built img {
+      opacity: 1 !important;
+      transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
   </style>
+  <script>
+    // Early Blank Slate: ensure page starts completely blank before agents assemble it
+    try {
+      var isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!isReduced) {
+        document.documentElement.classList.add('swarm-initial-blank');
+      }
+    } catch (e) {}
+  </script>
 </head>
 
 <body>
