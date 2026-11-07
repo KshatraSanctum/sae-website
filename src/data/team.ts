@@ -288,6 +288,14 @@ export const BATCH_2K24_MEMBERS: CoreTeamMember[] = [
     objectPosition: "center 20%",
   },
   {
+    name: "Harsh Raj",
+    post: "Member",
+    image: "/team/harsh_raj.webp",
+    linkedin: "https://www.linkedin.com/in/harsh-raj-9aba8624b/",
+    email: "harshraj2004grd@gmail.com",
+    objectPosition: "center 20%",
+  },
+  {
     name: "Yash Srivastava",
     post: "Member",
     image: "/team/yash_srivastava.webp",
