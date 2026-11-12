@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useMobileNavigation } from '../../hooks/useMobileNavigation';
-import { shouldShowIntro } from '../../intro';
 
 interface NavItem {
   path: string;
@@ -31,7 +30,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const location = useLocation();
   const { isOpen: mobileOpen, toggle: toggleMobileMenu, close: closeMobileMenu } = useMobileNavigation(location.pathname);
   const [scrolled, setScrolled] = useState(false);
-  const [isIntroRunning] = useState(() => shouldShowIntro());
 
   const isHome = location.pathname === '/';
 
