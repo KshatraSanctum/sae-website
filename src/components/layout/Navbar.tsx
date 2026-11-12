@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           to="/"
           aria-label="SAE BIT Sindri home"
         >
-          <span className={`ref-brand-logo-ring ${isIntroRunning ? 'nav-logo-hidden' : ''}`} id="navBrandLogoRing">
+          <span className="ref-brand-logo-ring" id="navBrandLogoRing">
             <img src="/bit-sindri-sae-logo.png" alt="SAE BIT Sindri Society Logo" width="36" height="36" decoding="async" />
           </span>
           <span className="ref-brand-text">
