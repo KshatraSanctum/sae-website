@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ROW_1_SPONSORS = [
+  { name: 'BIT Sindri Alumni', tier: 'Gold Sponsor', logo: '/sponsors/bit-sindri-alumni.png' },
   { name: 'Tata Motors', tier: 'Industrial Partner', logo: '/sponsors/tata.svg' },
   { name: 'Dassault Systèmes', tier: 'Software Partner', logo: '/sponsors/dassault-systemes.png' },
   { name: 'JK Tyre', tier: 'Tyre Partner', logo: '/sponsors/jk-tyre.png' },
@@ -13,6 +14,7 @@ const ROW_1_SPONSORS = [
 ];
 
 const ROW_2_SPONSORS = [
+  { name: 'KTMPL', tier: 'Industrial Partner', logo: '/sponsors/ktmpl.png' },
   { name: 'Altair', tier: 'Software Partner', logo: '/sponsors/altair.svg' },
   { name: 'Bharat Petroleum', tier: 'Energy Partner', logo: '/sponsors/bharat-petroleum.png' },
   { name: 'TotalEnergies', tier: 'Lubricants Partner', logo: '/sponsors/total.svg' },
