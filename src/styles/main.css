@@ -1666,6 +1666,198 @@
       margin-top: auto;
     }
 
+    /* Gold sponsor card highlights */
+    .sponsor-card.is-gold {
+      border-color: rgba(240, 185, 40, 0.42);
+      background: linear-gradient(180deg, rgba(240, 185, 40, 0.05) 0%, rgba(14, 17, 24, 0.85) 100%);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 25px rgba(240, 185, 40, 0.06);
+    }
+
+    .sponsor-card.is-gold::before {
+      background: linear-gradient(90deg, transparent, #f0ba28, transparent);
+      height: 2.5px;
+    }
+
+    .sponsor-card.is-gold:hover {
+      border-color: rgba(240, 185, 40, 0.7);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 28px rgba(240, 185, 40, 0.16);
+    }
+
+    .sponsor-card-badge-wrap {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 2;
+    }
+
+    .sponsor-card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(240, 185, 40, 0.22), rgba(240, 185, 40, 0.08));
+      border: 1px solid rgba(240, 185, 40, 0.5);
+      color: #ffd666;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .sponsor-card-action {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .sponsor-poster-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      justify-content: center;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(240, 185, 40, 0.08);
+      border: 1px solid rgba(240, 185, 40, 0.3);
+      color: #ffd666;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sponsor-poster-btn:hover {
+      background: rgba(240, 185, 40, 0.18);
+      border-color: rgba(240, 185, 40, 0.6);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(240, 185, 40, 0.15);
+    }
+
+    /* Modal Backdrop & Dialog for Sponsor Announcement Poster */
+    .sponsor-poster-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(4, 7, 13, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    .sponsor-poster-modal-dialog {
+      position: relative;
+      width: min(92vw, 560px);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      background: #0d0f14;
+      border: 1px solid rgba(240, 185, 40, 0.35);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(240, 185, 40, 0.12);
+      animation: modalZoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes modalZoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.94) translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .sponsor-poster-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(10, 12, 16, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .sponsor-poster-close:hover {
+      background: rgba(240, 185, 40, 0.25);
+      border-color: rgba(240, 185, 40, 0.7);
+      color: #ffd666;
+      transform: scale(1.08);
+    }
+
+    .sponsor-poster-frame {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #06080c;
+      overflow: hidden;
+      max-height: calc(92vh - 110px);
+    }
+
+    .sponsor-poster-img {
+      width: 100%;
+      max-height: calc(92vh - 110px);
+      object-fit: contain;
+      display: block;
+    }
+
+    .sponsor-poster-footer {
+      padding: 16px 20px;
+      background: rgba(12, 15, 22, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .sponsor-poster-badge {
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .sponsor-poster-footer h3 {
+      font-size: 16px;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .sponsor-poster-footer p {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin: 2px 0 0;
+    }
+
     .sponsor-cta-banner {
       background:
         radial-gradient(circle at 12% 50%, rgba(246, 183, 25, 0.14), transparent 50%),

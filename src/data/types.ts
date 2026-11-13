@@ -45,4 +45,6 @@ export interface SponsorItem {
   tierLabel: string;
   logo: string;
   description: string;
+  poster?: string;
+  badge?: string;
 }

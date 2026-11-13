@@ -2,6 +2,24 @@ import type { SponsorItem } from './types';
 
 export const SPONSORS: SponsorItem[] = [
   {
+    name: "BIT Sindri Alumni International",
+    category: "Global Alumni Network & Student Patron",
+    tier: "institutional",
+    tierLabel: "Gold Sponsor",
+    logo: "/sponsors/bit-sindri-alumni.png",
+    poster: "/sponsors/bit-sindri-alumni-gold-poster.jpg",
+    badge: "Gold Sponsor • FKDC",
+    description: "Official Gold Sponsor for the Formula Kart Design Challenge (FKDC). A distinguished global network of BITians actively advancing automotive innovation, student engineering excellence, and competitive collegiate motorsport."
+  },
+  {
+    name: "KTMPL",
+    category: "Mining & Heavy Earthmoving Infrastructure",
+    tier: "industrial",
+    tierLabel: "Industrial Partner",
+    logo: "/sponsors/ktmpl.png",
+    description: "Kalyaneswari Tasra Mining Pvt. Ltd., Mine Developer and Operator (MDO) spearheading the Tasra Open Cast Project in Sindri, backing our collegiate engineers with heavy machinery insights and industrial collaboration."
+  },
+  {
     name: "JK Tyre & Industries",
     category: "Tyre & Mobility Partner",
     tier: "technical",
